@@ -1,0 +1,16 @@
+# ===== 本地运行相关（Cloudflare 部署不需要）=====
+server.js
+package.json
+progress.db
+_check.js
+
+# ===== 部署说明文档 =====
+DEPLOY*.md
+
+# ===== 过程中的临时产物（截图、脚本、提取文件）=====
+_*
+index.backup-*.html
+
+# ===== 系统文件 =====
+Thumbs.db
+Desktop.ini
