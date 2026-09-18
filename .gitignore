@@ -9,6 +9,7 @@ DEPLOY*.md
 
 # ===== 过程中的临时产物（截图、脚本、提取文件）=====
 _*
+!_worker.js
 index.backup-*.html
 
 # ===== 系统文件 =====
