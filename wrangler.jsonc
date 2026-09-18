@@ -5,5 +5,12 @@
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./public"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "k408-db",
+      "database_id": "57ead5bf-a80a-4d8d-b4cf-0ff5a59d50b0"
+    }
+  ]
 }
