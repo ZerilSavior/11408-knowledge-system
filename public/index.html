@@ -1396,6 +1396,76 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .w-engmini .wgo{width:100%;padding:8px;border:1px solid var(--ink);border-radius:8px;font-size:13px;font-weight:700;background:var(--panel)}
 .w-engmini .wgo:hover{background:var(--ink);color:#fff}
 .snav .wbadge{background:var(--kc-mistake);color:#fff;border-radius:999px;font-size:11px;padding:0 7px;font-weight:700;flex:none;align-self:center}
+
+/* ===== 个性化学习计划 ===== */
+.p-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(120deg,#1B1F24,#2c333c);color:#FBFBF8;border-radius:var(--radius);padding:18px 22px;margin:4px 0 22px;box-shadow:var(--shadow);flex-wrap:wrap}
+.p-banner .pbb-l{display:flex;flex-direction:column;gap:6px;min-width:240px;flex:1}
+.p-banner .pbb-l b{font-size:17px;letter-spacing:.3px}
+.p-banner .pbb-l span{font-size:13px;color:#C9CED6}
+.p-banner .pbb-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:4px}
+.p-banner .pbb-bar i{display:block;height:100%;background:#5FC9A6;border-radius:4px}
+.p-banner button{background:#FBFBF8;color:#1B1F24;border:none;border-radius:9px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.p-banner button:hover{opacity:.9}
+.p-set{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 20px;margin-bottom:18px;box-shadow:var(--shadow)}
+.p-set summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--ink);user-select:none}
+.p-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:16px;align-items:end}
+.p-form label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--ink-2)}
+.p-form input{padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:var(--panel-2);color:var(--ink);box-sizing:border-box}
+.p-btn{background:var(--ink);color:var(--panel);border:none;border-radius:9px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;height:40px}
+.p-btn:hover{opacity:.88}
+.p-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 16px}
+.p-stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px 17px;box-shadow:var(--shadow)}
+.p-stat .n{font-size:26px;font-weight:800;line-height:1.1;color:var(--ink)}
+.p-stat .n small{font-size:13px;font-weight:600;color:var(--ink-3);margin-left:3px}
+.p-stat .l{font-size:12.5px;color:var(--ink-2);margin-top:5px}
+.p-alert{border-radius:var(--radius);padding:13px 18px;font-size:13.5px;line-height:1.7;margin-bottom:18px;border:1px solid}
+.p-alert.ok{background:#E7F4EE;border-color:#9ED7C0;color:#0B6B4F}
+.p-alert.warn{background:#FBEEDD;border-color:#E7C48F;color:#8A5A12}
+.p-alert.bad{background:#F8E7E2;border-color:#E0A493;color:#8E3520}
+.p-cols{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+@media(max-width:1080px){.p-cols{grid-template-columns:1fr}}
+.p-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:18px}
+.p-card h3{margin:0 0 4px;font-size:16px}
+.p-card .sub{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+.p-grp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink-2);margin:14px 0 7px}
+.p-grp .p-dot{width:9px;height:9px;border-radius:50%}
+.p-leaf{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:9px;border:1px solid transparent}
+.p-leaf:hover{background:var(--panel-2)}
+.p-leaf.done .p-ti{color:var(--ink-3);text-decoration:line-through}
+.p-cb{width:17px;height:17px;flex:none;accent-color:var(--kc-done);cursor:pointer}
+.p-leaf .p-lt{flex:1;display:flex;align-items:center;gap:9px;min-width:0;font-size:14px}
+.p-leaf .p-ti{color:var(--ink)}
+.p-go{border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer;flex:none}
+.p-go:hover{border-color:var(--ink-3);color:var(--ink)}
+.p-prog{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:13px;color:var(--ink-2)}
+.p-prog .pbar{flex:1}
+.p-quick{display:flex;flex-direction:column;gap:12px}
+.p-q{display:flex;align-items:center;gap:13px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.p-q .qi{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.p-q .qm{flex:1;min-width:0}
+.p-q .qm b{font-size:14px;display:block}
+.p-q .qm span{font-size:12px;color:var(--ink-3)}
+.p-q button{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;background:var(--ink);color:var(--panel);flex:none}
+.p-q button:disabled{opacity:.4;cursor:default}
+.p-alloc{display:flex;flex-direction:column;gap:9px}
+.p-alloc .pa{display:grid;grid-template-columns:96px 1fr 118px;gap:10px;align-items:center;font-size:12.5px}
+.p-alloc .pa .pan{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-alloc .pa .pab{height:9px;border-radius:5px;background:var(--panel-2);overflow:hidden}
+.p-alloc .pa .pab i{display:block;height:100%;border-radius:5px}
+.p-alloc .pa .pam{color:var(--ink-3);text-align:right;font-size:11.5px}
+.p-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0 4px}
+.p-stack i{display:block;height:100%}
+.p-tl{display:grid;grid-template-columns:78px 1fr;gap:12px;padding:11px 6px;border-bottom:1px dashed var(--line)}
+.p-tl.now{background:var(--panel-2);border-radius:9px;border-bottom-color:transparent}
+.p-tl-d{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.p-tl-d b{font-size:13.5px}
+.p-tl-d span{font-size:11px;color:var(--ink-3)}
+.p-tl-s{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.p-tl-s span{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--panel-2);color:var(--ink-2)}
+.p-tl-meta{font-size:12px;color:var(--ink-3)}
+.p-more{width:100%;margin-top:12px;background:none;border:1px dashed var(--line);color:var(--ink-2);border-radius:9px;padding:9px;font-size:13px;cursor:pointer}
+.p-more:hover{border-color:var(--ink-3)}
+.p-sidebtn{position:relative}
 </style>
 
 </head>
@@ -1537,6 +1607,8 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
 
         <div class="stat-row" id="statRow"></div>
+
+        <div id="planBannerSlot"></div>
 
 
 
@@ -1760,6 +1832,30 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
         </div>
 
         <div id="wordsApp"></div>
+
+      </div>
+
+    </section>
+
+    <!-- ===== 个性化学习计划 ===== -->
+
+    <section class="view" id="view-plan">
+
+      <div class="view-inner">
+
+        <div class="words-head">
+
+          <div>
+
+            <h2>个性化学习计划</h2>
+
+            <div class="nt-sub">输入学习天数与每天时长，按真题考频自动排期 · 艾宾浩斯复习贯穿全程</div>
+
+          </div>
+
+        </div>
+
+        <div id="planApp"></div>
 
       </div>
 
@@ -6141,7 +6237,7 @@ const SYLLABUS = [
 
 const LS_KEY = 'k408-knowledge-v1';
 
-let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[], words:{} };
+let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[], words:{}, plan:null };
 
 try{
 
@@ -6289,6 +6385,8 @@ function cloudSave(immediate){
 
     api('/api/data', 'POST', { key: 'words', value: state.words }).catch(()=>{});
 
+    api('/api/data', 'POST', { key: 'plan', value: state.plan }).catch(()=>{});
+
     api('/api/data', 'POST', { key: 'drawings', value: state.drawings }).catch(()=>{});
 
     try{
@@ -6328,6 +6426,8 @@ async function cloudLoad(){
       if(r.data.items) state.items = mergeItems(state.items, r.data.items);
 
       if(r.data.words) state.words = mergeWords(state.words||{}, r.data.words);
+
+      if(r.data.plan) state.plan = r.data.plan;
 
       if(r.data.drawings) state.drawings = Object.assign({}, state.drawings, r.data.drawings);
 
@@ -6657,7 +6757,7 @@ const WORDS=(typeof window.WORDS_DATA!=='undefined'&&Array.isArray(window.WORDS_
 const WORD_DAILY_DEF=80;
 let wSession=null;
 const wView={letter:'ALL',kw:''};
-function wDailyN(){ return state.wordDaily||WORD_DAILY_DEF; }
+function wDailyN(){ return planWordPerDay(); }
 function wEnsure(i){ if(!state.words[i]) state.words[i]={m:0,rv:{stage:0,count:0,last:0,next:Date.now()+RV_DAY}}; return state.words[i]; }
 function wStats(){
   let learned=0,done=0,due=0; const now=Date.now();
@@ -6707,7 +6807,237 @@ function wordSidebarItem(){
    +'<span class="smeta">'+st.learned+' / '+st.total+' 已学'+(st.done?' · 巩固 '+st.done:'')+'</span></span>'
    +(st.due?'<span class="wbadge">'+st.due+'</span>':'<span class="spct" style="color:var(--net)">'+(st.total?Math.round(100*st.learned/st.total):0)+'%</span>')+'</button>';
 }
+/* ================= 个性化学习计划（考频优先 + 容量排期 + 艾宾浩斯） ================= */
+const PLAN_DEFAULT_DAYS=60, PLAN_DEFAULT_HOURS=12, PLAN_EXAM_DEF='2026-12-19';
+const PLAN_SUB_ORDER=['math1','math2','math3','ds','co','os','net','poli1','poli2','poli3','poli4','poli5','poli6','eng'];
+const PLAN_LEAF_MIN={ds:30,co:32,os:28,net:25,math1:30,math2:28,math3:28,poli1:12,poli2:12,poli3:12,poli4:12,poli5:12,poli6:10,eng:18};
+const PLAN_REVIEW_MIN=30, PLAN_WORD_SEC=27;
+function planCfg(){ return state.plan||null; }
+function planTodayStr(){ const d=new Date(); return planFmt(d); }
+function planFmt(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function planParse(s){ const a=String(s).split('-').map(Number); return new Date(a[0],a[1]-1,a[2]); }
+function planAddDays(s,n){ const d=planParse(s); d.setDate(d.getDate()+n); return planFmt(d); }
+function planDiff(a,b){ return Math.round((planParse(b)-planParse(a))/86400000); }
+const PLAN_WD=['日','一','二','三','四','五','六'];
+function planWd(s){ return '周'+PLAN_WD[planParse(s).getDay()]; }
+function planTopicName(t){ return (typeof t==='string')?t:((t&&t.name)?t.name:''); }
+function planLeafTitle(sub,ci,si,ti){ const sec=sub.chapters[ci].sections[si]; return (ti===undefined||ti===null)?sec.name:planTopicName(sec.topics[ti]); }
+function planLeafQueue(){
+  const q=[];
+  PLAN_SUB_ORDER.forEach(id=>{
+    const sub=getSubject(id); if(!sub)return;
+    sub.chapters.forEach((ch,ci)=>{
+      const siOrder=ch.sections.map((s,si)=>si).sort((a,b)=>{
+        const fa=sectionMaxFreq(id,ci,a,ch.sections[a]), fb=sectionMaxFreq(id,ci,b,ch.sections[b]);
+        return (fb?fb.p:-1)-(fa?fa.p:-1);
+      });
+      siOrder.forEach(si=>{
+        const sec=ch.sections[si];
+        if(sec.topics.length){
+          const tiOrder=sec.topics.map((t,ti)=>ti).sort((a,b)=>{
+            const fa=freqOf(id+'/'+ci+'/'+si+'/'+a), fb=freqOf(id+'/'+ci+'/'+si+'/'+b);
+            return (fb?fb.p:-1)-(fa?fa.p:-1);
+          });
+          tiOrder.forEach(ti=>{ const path=id+'/'+ci+'/'+si+'/'+ti;
+            q.push({path,sub:id,subName:sub.name,color:sub.color,title:planLeafTitle(sub,ci,si,ti),lv:(freqOf(path)||{}).lv||0,w:PLAN_LEAF_MIN[id]||25}); });
+        }else{
+          const path=id+'/'+ci+'/'+si;
+          q.push({path,sub:id,subName:sub.name,color:sub.color,title:sec.name,lv:(freqOf(path)||{}).lv||0,w:PLAN_LEAF_MIN[id]||25});
+        }
+      });
+    });
+  });
+  return q;
+}
+function planWordPerDay(){ const c=planCfg(); return (c&&c.days)?Math.max(10,Math.ceil(WORDS.length/c.days)):(state.wordDaily||WORD_DAILY_DEF); }
+function planBuild(){
+  const cfg=planCfg(); if(!cfg)return null;
+  const q=planLeafQueue();
+  const wordPerDay=Math.max(10,Math.ceil(WORDS.length/cfg.days));
+  const wordMin=wordPerDay*PLAN_WORD_SEC/60;
+  const budget=Math.max(40,cfg.hours*60-wordMin-PLAN_REVIEW_MIN);
+  const totalMin0=q.reduce((a,l)=>a+l.w,0);
+  // spread=true：每天时长装得下均摊量，按全局累计目标把考点均匀铺到 D 天（稳扎稳打、多留复习时间）；
+  // spread=false：均摊量超过每天容量，按最大容量切，needDays 会大于 D，触发不可行预警
+  const avgMin=totalMin0/cfg.days;
+  const spread=avgMin<=budget, dayCap=spread?avgMin:budget;
+  const days=[]; let cur=null,assigned=0;
+  q.forEach(leaf=>{
+    if(!cur){ cur={leaves:[],mins:0}; days.push(cur); }
+    else if(spread){ if(cur.leaves.length && assigned>=days.length*dayCap){ cur={leaves:[],mins:0}; days.push(cur); } }
+    else if(cur.leaves.length && cur.mins+leaf.w>dayCap){ cur={leaves:[],mins:0}; days.push(cur); }
+    cur.leaves.push(leaf); cur.mins+=leaf.w; assigned+=leaf.w;
+  });
+  days.forEach((d,i)=>{ d.idx=i; d.date=planAddDays(cfg.start,i); d.weekday=planWd(d.date); d.wordNew=wordPerDay; });
+  const totalMin=totalMin0, needDays=Math.max(1,days.length);
+  const allocMap={};
+  days.forEach(d=>d.leaves.forEach(l=>{
+    if(!allocMap[l.sub])allocMap[l.sub]={name:l.subName,color:l.color,count:0,min:0,ds:{}};
+    const a=allocMap[l.sub]; a.count++; a.min+=l.w; a.ds[d.idx]=1;
+  }));
+  const allocArr=Object.values(allocMap).map(a=>({name:a.name,color:a.color,count:a.count,min:a.min,days:Object.keys(a.ds).length}));
+  const finishDate=days.length?days[days.length-1].date:cfg.start;
+  const examLeft=planDiff(planTodayStr(),cfg.exam);
+  const feasible=needDays<=cfg.days;
+  const beforeExam=planDiff(finishDate,cfg.exam)>=0;
+  let suggestHours=0;
+  if(!feasible){ suggestHours=Math.ceil(((totalMin/cfg.days)+wordMin+PLAN_REVIEW_MIN)/60*2)/2; }
+  let done=0; q.forEach(l=>{ if(state.mastery[l.path]==='mastered')done++; });
+  return {cfg,q,days,totalMin,needDays,wordPerDay,wordMin,budget,dayCap,finishDate,examLeft,feasible,beforeExam,suggestHours,allocArr,done,total:q.length};
+}
+function planTodayIndex(b){
+  const d=planDiff(b.cfg.start,planTodayStr());
+  if(d<0)return {idx:0,status:'before'};
+  if(d>=b.days.length)return {idx:b.days.length-1,status:'after'};
+  return {idx:d,status:'today'};
+}
+function planSetupHTML(forceOpen){
+  const c=planCfg()||{};
+  let nLeaf=0; SYLLABUS.forEach(s=>eachLeaf(s,()=>nLeaf++));
+  const days=c.days||PLAN_DEFAULT_DAYS, hours=c.hours||PLAN_DEFAULT_HOURS;
+  const start=c.start||planTodayStr(), exam=c.exam||PLAN_EXAM_DEF;
+  const btn=planCfg()?'更新计划':'生成我的学习计划';
+  return '<details class="p-set"'+(forceOpen?' open':'')+'><summary>'+(planCfg()?'调整学习天数 / 每天时长 / 日期':'① 设置你的学习参数')+'</summary>'
+   +'<div class="p-form">'
+   +'<label>学习天数<input id="pDays" type="number" min="7" max="400" value="'+days+'"></label>'
+   +'<label>每天学习时长（小时）<input id="pHours" type="number" min="1" max="16" step="0.5" value="'+hours+'"></label>'
+   +'<label>开始日期<input id="pStart" type="date" value="'+start+'"></label>'
+   +'<label>考研日期<input id="pExam" type="date" value="'+exam+'"></label>'
+   +'<button class="p-btn" onclick="planSave()">'+btn+'</button>'
+   +'</div>'
+   +(forceOpen?'<div class="sub" style="margin-top:12px;color:var(--ink-3);font-size:12.5px;line-height:1.7">按你的天数与每天时长，系统把 '+nLeaf+' 个考点（数学→408→政治→英语，章内按真题考频高频先学）和 '+WORDS.length+' 个大纲词自动切分到每一天，并为笔记/错题复习预留时间。</div>':'')
+   +'</details>';
+}
+function planSave(){
+  const days=Math.max(7,Math.min(400,parseInt(document.getElementById('pDays').value)||PLAN_DEFAULT_DAYS));
+  const hours=Math.max(1,Math.min(16,parseFloat(document.getElementById('pHours').value)||PLAN_DEFAULT_HOURS));
+  const start=document.getElementById('pStart').value||planTodayStr();
+  const exam=document.getElementById('pExam').value||PLAN_EXAM_DEF;
+  state.plan={days,hours,start,exam,v:1}; saveState(); pShowAll=false; renderPlan(); renderSidebar();
+}
+let pShowAll=false;
+function planGroupLeaves(leaves){
+  let html='',last=null;
+  leaves.forEach(l=>{
+    if(l.sub!==last){ html+='<div class="p-grp"><span class="p-dot" style="background:'+l.color+'"></span>'+l.subName+'</div>'; last=l.sub; }
+    const done=state.mastery[l.path]==='mastered';
+    html+='<div class="p-leaf'+(done?' done':'')+'" data-p="'+l.path+'">'
+      +'<input type="checkbox" class="p-cb" '+(done?'checked':'')+' onclick="planToggleLeaf(\''+l.path+'\')">'
+      +'<span class="p-lt">'+freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span></span>'
+      +'<button class="p-go" onclick="location.hash=\'#/tree/'+l.path+'\'">考点 ›</button></div>';
+  });
+  return html;
+}
+function planToggleLeaf(path){
+  if(state.mastery[path]==='mastered')delete state.mastery[path]; else state.mastery[path]='mastered';
+  saveState();
+  const li=document.querySelector('#planToday .p-leaf[data-p="'+path+'"]');
+  if(li)li.classList.toggle('done',state.mastery[path]==='mastered');
+  planRefreshCounts(); renderSidebar();
+}
+function planRefreshCounts(){
+  const b=planBuild(); if(!b)return; const ti=planTodayIndex(b); const day=b.days[ti.idx];
+  if(!day)return;
+  const td=day.leaves.filter(l=>state.mastery[l.path]==='mastered').length;
+  const tel=document.getElementById('pTodayProg'); if(tel)tel.textContent=td+' / '+day.leaves.length+' 完成';
+  const tb=document.getElementById('pTodayBar'); if(tb)tb.style.width=(day.leaves.length?Math.round(100*td/day.leaves.length):0)+'%';
+  const oe=document.getElementById('pOvProg'); if(oe)oe.textContent='计划完成 '+b.done+' / '+b.total;
+  const ob=document.getElementById('pOvBar'); if(ob)ob.style.width=(b.total?Math.round(100*b.done/b.total):0)+'%';
+}
+function planTimelineHTML(b,startIdx){
+  const max=b.days.length-startIdx, n=pShowAll?max:Math.min(7,max); let h='';
+  for(let k=0;k<n;k++){ const d=b.days[startIdx+k]; if(!d)break;
+    const subs=[...new Set(d.leaves.map(l=>l.subName))];
+    const dn=d.leaves.filter(l=>state.mastery[l.path]==='mastered').length;
+    const hrs=((d.mins+b.wordMin+PLAN_REVIEW_MIN)/60).toFixed(1);
+    const now=(startIdx+k===planTodayIndex(b).idx);
+    h+='<div class="p-tl'+(now?' now':'')+'"><div class="p-tl-d"><b>'+d.date.slice(5)+'</b><span>'+d.weekday+' · 第'+(d.idx+1)+'天</span></div>'
+      +'<div class="p-tl-m"><div class="p-tl-s">'+subs.map(s=>'<span>'+s+'</span>').join('')+'</div>'
+      +'<div class="p-tl-meta">'+d.leaves.length+' 考点 · 约 '+hrs+' 小时 · 新词 '+b.wordPerDay+(dn?' · 已完成 '+dn:'')+'</div></div></div>';
+  }
+  return h;
+}
+function planGoWords(){ location.hash='#/words'; setTimeout(()=>{ try{ wStart(); }catch(e){} },90); }
+function renderPlan(){
+  const app=$('#planApp'); if(!app)return;
+  if(!planCfg()){ app.innerHTML=planSetupHTML(true); return; }
+  const b=planBuild(), ti=planTodayIndex(b), day=b.days[ti.idx];
+  const ovPct=b.total?Math.round(100*b.done/b.total):0;
+  const td=day?day.leaves.filter(l=>state.mastery[l.path]==='mastered').length:0;
+  const tpct=day&&day.leaves.length?Math.round(100*td/day.leaves.length):0;
+  const wordDue=wDueIdxs().length, wordLeft=wNewIdxs(b.wordPerDay).length;
+  const dueN=dueItems().length;
+  let alert='';
+  if(!b.feasible){
+    alert='<div class="p-alert bad"><b>时间偏紧：</b>'+b.total+' 个考点按每天 '+b.cfg.hours+' 小时约需 <b>'+b.needDays+'</b> 天，超过你设定的 '+b.cfg.days+' 天。建议把每天时长提高到约 <b>'+b.suggestHours+' 小时</b>，或把学习天数增加到 '+b.needDays+' 天。</div>';
+  }else if(!b.beforeExam){
+    alert='<div class="p-alert bad"><b>考前学不完：</b>按当前强度学完日为 '+b.finishDate+'，晚于考研日 '+b.cfg.exam+'，请提高每天时长或提前开始。</div>';
+  }else{
+    const slack=planDiff(b.finishDate,b.cfg.exam);
+    alert='<div class="p-alert ok"><b>计划可行：</b>约需 '+b.needDays+' 天学完全部考点，学完日 '+b.finishDate+'，距考研还有 '+slack+' 天可用于真题与冲刺。单词按每天 '+b.wordPerDay+' 个均摊，复习时间已预留。</div>';
+  }
+  let h=planSetupHTML(false);
+  h+='<div class="p-hero">'
+    +'<div class="p-stat"><div class="n">'+Math.max(0,b.examLeft)+'<small>天</small></div><div class="l">距考研（'+b.cfg.exam.slice(5)+'）</div></div>'
+    +'<div class="p-stat"><div class="n">'+(ti.idx+1)+'<small>/ '+b.needDays+'</small></div><div class="l">'+(ti.status==='before'?'计划尚未开始，首日 '+b.days[0].date:(ti.status==='after'?'考点已排完 · 冲刺期':'今天 '+day.date+' '+day.weekday))+'</div></div>'
+    +'<div class="p-stat"><div class="n">'+(day?day.leaves.length:0)+'<small>考点</small></div><div class="l">今日新学任务</div></div>'
+    +'<div class="p-stat"><div class="n">'+b.done+'<small>/ '+b.total+'</small></div><div class="l">计划考点已掌握</div></div>'
+    +'</div>';
+  h+=alert;
+  h+='<div class="p-cols"><div>';
+  // 今日考点
+  h+='<div class="p-card" id="planToday"><h3>'+(ti.status==='after'?'冲刺 / 复盘':'今日学习任务')+'</h3>'
+    +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 约 '+((day?day.mins:0)/60+b.wordMin/60+PLAN_REVIEW_MIN/60).toFixed(1)+' 小时（考点 '+((day?day.mins:0)/60).toFixed(1)+'h＋单词 '+(b.wordMin/60).toFixed(1)+'h＋复习 '+(PLAN_REVIEW_MIN/60).toFixed(1)+'h）':'全部考点已排完')+'</div>';
+  if(day&&day.leaves.length) h+=planGroupLeaves(day.leaves);
+  else h+='<div class="sub">考点计划已结束，今天用于真题、错题与薄弱点复盘。</div>';
+  h+='<div class="p-prog"><span id="pTodayProg">'+td+' / '+(day?day.leaves.length:0)+' 完成</span><div class="pbar" style="flex:1"><i id="pTodayBar" style="width:'+tpct+'%;background:var(--kc-done)"></i></div><span>'+tpct+'%</span></div>';
+  h+='</div>';
+  // 未来预览
+  h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.needDays+' 天':'从今天起 7 天（可展开全部）')+' · 章内按真题考频高频先学</div>'
+    +'<div id="pTimeline">'+planTimelineHTML(b,ti.idx)+'</div>'
+    +(b.days.length-ti.idx>7?'<button class="p-more" onclick="planToggleAll()">'+(pShowAll?'收起，只看 7 天':'展开全部 '+b.needDays+' 天计划')+'</button>':'')
+    +'</div>';
+  h+='</div><div>';
+  // 右侧：单词 / 复习 / 整体进度 / 学科分配
+  h+='<div class="p-quick">'
+    +'<div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词</b><span>新词 '+wordLeft+' / 目标 '+b.wordPerDay+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>'
+    +'<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div>'
+    +'</div>';
+  h+='<div class="p-card" style="margin-top:14px"><h3>计划总进度</h3>'
+    +'<div class="p-prog" style="margin-top:6px"><span id="pOvProg">计划完成 '+b.done+' / '+b.total+'</span></div>'
+    +'<div class="pbar" style="margin:8px 0"><i id="pOvBar" style="width:'+ovPct+'%;background:var(--kc-done)"></i></div>'
+    +'<div class="sub" style="margin-bottom:12px">考点总学时约 '+Math.round(b.totalMin/60)+' 小时 · 每天单词 '+(b.wordMin/60).toFixed(1)+'h＋复习 '+(PLAN_REVIEW_MIN/60).toFixed(1)+'h 已计入排期</div>'
+    +'<div class="p-stack">'+b.allocArr.map(a=>'<i title="'+a.name+' '+a.count+'考点" style="width:'+(100*a.min/b.totalMin)+'%;background:'+a.color+'"></i>').join('')+'</div>'
+    +'<div class="p-alloc">'+b.allocArr.map(a=>'<div class="pa"><span class="pan">'+a.name+'</span><span class="pab"><i style="width:'+(100*a.min/b.totalMin)+'%;background:'+a.color+'"></i></span><span class="pam">'+a.count+' 考点 · '+a.days+' 天</span></div>').join('')+'</div>'
+    +'</div>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+function planToggleAll(){ pShowAll=!pShowAll; renderPlan(); }
+function planSidebarItem(){
+  const route=currentRoute(), on=route.type==='plan';
+  let meta='个性化排期';
+  const b=planCfg()?planBuild():null;
+  if(b){ const ti=planTodayIndex(b); meta='第'+(ti.idx+1)+'/'+b.needDays+' 天 · 考研'+Math.max(0,b.examLeft)+'天'; }
+  return '<button class="snav '+(on?'active':'')+' p-sidebtn" data-goto="#/plan" style="'+(on?'border-left:3px solid var(--ink)':'')+'">'
+    +'<span class="scol" style="background:var(--ink);'+(on?'':'opacity:.5')+'"></span>'
+    +'<span class="sinfo"><span class="sname">学习计划<span class="en">PLAN</span></span><span class="smeta">'+meta+'</span></span>'
+    +(b?'<span class="spct" style="color:var(--ink)">'+(b.total?Math.round(100*b.done/b.total):0)+'%</span>':'')+'</button>';
+}
+function planOverviewBanner(){
+  if(!planCfg()){
+    return '<div class="p-banner"><div class="pbb-l"><b>制定个性化学习计划</b><span>输入学习天数与每天时长，按真题考频自动排期</span></div><button onclick="location.hash=\'#/plan\'">一键生成</button></div>';
+  }
+  const b=planBuild(), ti=planTodayIndex(b), day=b.days[ti.idx];
+  const pct=b.total?Math.round(100*b.done/b.total):0;
+  return '<div class="p-banner"><div class="pbb-l">'
+    +'<b>第 '+(ti.idx+1)+' / '+b.needDays+' 天 · 距考研 '+Math.max(0,b.examLeft)+' 天</b>'
+    +'<span>今日 '+(day?day.leaves.length:0)+' 考点 · 新词 '+b.wordPerDay+' · 待复习 '+dueItems().length+' · 计划完成 '+b.done+'/'+b.total+'</span>'
+    +'<div class="pbb-bar"><i style="width:'+pct+'%"></i></div></div>'
+    +'<button onclick="location.hash=\'#/plan\'">今日学习</button></div>';
+}
 function renderWords(){
+
   const app=$('#wordsApp'); if(!app)return;
   if(!WORDS.length){ app.innerHTML='<div class="w-hero">词库数据未加载（data/words.js）。部署后的网址可正常加载；若本地双击打开被浏览器拦截，请通过线上域名访问。</div>'; return; }
   if(wSession) return renderWordsStudy(app);
@@ -6884,6 +7214,8 @@ function renderSidebar(){
     </span>
     <span class="spct" style="color:${dueItems().length?"var(--kc-wait)":"var(--kc-note)"}">${dueItems().length?dueItems().length:state.items.length}</span>
   </button>`;
+  $('#sideNav').insertAdjacentHTML('afterbegin', planSidebarItem());
+
   $('#sideNav').insertAdjacentHTML('beforeend', wordSidebarItem());
 
   $('#overallPct').textContent = overallStats().pct + '%';
@@ -6924,6 +7256,12 @@ function currentRoute(){
 
   }
 
+  if(h.indexOf('#/plan')===0){
+
+    return {type:'plan'};
+
+  }
+
   if(h.indexOf('#/words')===0){
 
     return {type:'words', path:''};
@@ -6959,6 +7297,8 @@ function render(){
 
   $('#view-words').classList.toggle('active', route.type==='words');
 
+  $('#view-plan').classList.toggle('active', route.type==='plan');
+
   const curSub = route.type==='tree' ? route.path.split('/')[0] : '';
 
   document.querySelectorAll('#topnav button').forEach(b=>{
@@ -6968,6 +7308,8 @@ function render(){
     if(route.type==='tree') on = b.dataset.nav === '#/tree/'+curSub;
 
     else if(route.type==='words') on = b.dataset.nav === '#/tree/eng';
+
+    else if(route.type==='plan') on = false;
 
     else if(route.type==='notes' || route.type==='maps' || route.type==='map') on = b.dataset.nav === '#/notes';
 
@@ -6979,7 +7321,7 @@ function render(){
 
   });
 
-  if(route.type==='overview') renderOverview();
+  if(route.type==='overview'){ renderOverview(); const pb=$('#planBannerSlot'); if(pb)pb.innerHTML=planOverviewBanner(); }
 
   else if(route.type==='notes') renderNotes();
 
@@ -6988,6 +7330,8 @@ function render(){
   else if(route.type==='map') renderMap();
 
   else if(route.type==='words') renderWords();
+
+  else if(route.type==='plan') renderPlan();
 
   else renderTree();
 
