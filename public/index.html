@@ -462,6 +462,50 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
   .draw-head{gap:6px}
 }
 
+/* ============ 学习中心 / 学习记录（笔记·导图·错题） ============ */
+:root{ --kc-note:#2E63A8; --kc-map:#1B1F24; --kc-mistake:#B3402A; --kc-done:#0E8A68; --kc-wait:#A97A0B; }
+.path-select{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:7px 12px;font-size:13px;color:var(--ink-2);font-family:inherit;max-width:300px}
+.path-select:focus{outline:none;border-color:var(--kc-note)}
+.lc-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.lc-filters .path-select{padding:7px 12px}
+.study-journal{margin-top:20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);padding:16px 18px}
+.sj-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;margin-bottom:10px}
+.sj-head .sj-hint{margin-left:auto;font-size:11.5px;color:var(--ink-3);font-weight:500;font-family:var(--font-mono)}
+.sj-quick{margin-top:0}
+.sj-quick textarea{min-height:62px}
+.sj-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 2px}
+.sj-actions button{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 15px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border-color:var(--kc);color:var(--kc)}
+.sj-actions button:hover{background:var(--kc);color:#fff;border-color:var(--kc)}
+.sj-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.sj-item{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel-2);border-left:4px solid var(--kc)}
+.sj-kind{flex:none;font-size:10.5px;font-weight:700;font-family:var(--font-mono);letter-spacing:.5px;color:#fff;background:var(--kc);border-radius:6px;padding:3px 8px;margin-top:2px}
+.sj-main{flex:1;min-width:0}
+.sj-title{font-weight:700;font-size:13.5px;line-height:1.4;cursor:pointer;color:var(--ink);word-break:break-word}
+.sj-title:hover{color:var(--kc-note)}
+.sj-preview{font-size:12px;color:var(--ink-3);line-height:1.55;margin-top:2px;max-height:38px;overflow:hidden;word-break:break-word}
+.sj-ops{flex:none;display:flex;gap:6px}
+.sj-ops button{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:7px;padding:4px 10px;font-size:11.5px;font-weight:600;cursor:pointer}
+.sj-ops .del:hover{border-color:var(--kc-mistake);color:var(--kc-mistake)}
+.sj-empty{font-size:12.5px;color:var(--ink-3);padding:8px 2px}
+.tag.k-note{background:var(--kc-note)}
+.tag.k-map{background:var(--kc-map)}
+.tag.k-mistake{background:var(--kc-mistake)}
+.tag.st-open{background:#fff;color:var(--kc-wait);border:1px solid var(--kc-wait)}
+.tag.st-mastered{background:var(--kc-done);color:#fff}
+.ncard-topic{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-3);margin:0 0 8px;cursor:pointer;max-width:100%}
+.ncard-topic:hover{color:var(--kc-note)}
+.ncard-topic .tc-label{font-family:var(--font-mono);font-weight:700;color:var(--ink-3);flex:none}
+.ncard-topic .tc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ncard-topic.uncat{font-style:italic}
+.ncard .ncard-meta .sttag{margin-left:auto}
+.map-crumb{font-size:12.5px;color:var(--ink-3);max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.map-crumb a{color:var(--kc-note);font-weight:600;cursor:pointer}
+.mk-field{display:flex;flex-direction:column;gap:6px}
+.mk-field label,.mk-field-row label{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.mk-area{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px;line-height:1.6;font-family:inherit;resize:vertical;background:var(--panel);color:var(--ink)}
+.mk-area:focus{outline:none;border-color:var(--kc-note);box-shadow:0 0 0 3px rgba(46,99,168,.12)}
+.mk-field-row{display:flex;align-items:center;gap:10px}
+
 /* ============ 思维导图 ============ */
 .mapbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .map-title-input{flex:1;min-width:180px;border:none;border-bottom:2px solid var(--line);background:transparent;font-family:var(--font-display);font-weight:900;font-size:21px;padding:4px 2px;color:var(--ink);transition:border-color .18s}
@@ -649,8 +693,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
       <button data-nav="#/tree/poli5">思修</button>
       <button data-nav="#/tree/poli6">时政</button>
       <button data-nav="#/tree/eng">英语一</button>
-      <button data-nav="#/notes">我的笔记</button>
-      <button data-nav="#/maps">思维导图</button>
+      <button data-nav="#/notes">学习中心</button>
     </nav>
     <div class="topspacer"></div>
     <div class="progress-mini" title="整体学习进度">
@@ -707,8 +750,8 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
           </h3>
           <ul>
             <li>骨架为「学科 → 章节 → 小节 → 考点」四级结构，完整收录 2026 考纲条目。</li>
-            <li>每个考点预留四个知识板块：核心概念、重点难点、常考题型、关联考点，当前显示「待延伸」空态。</li>
-            <li>后续只需告诉我「延伸 XX 考点」，即可逐层向下填充知识内容；也可以在顶栏「我的笔记」中自由添加自己学到的新知识点笔记（支持 Markdown、代码块与手绘涂鸦），或用「思维导图」像幕布 / XMind 一样列大纲、画导图，无需对话。</li>
+            <li>每个考点均设四个知识板块：核心概念、重点难点、常考题型、关联考点，已按考纲系统填充，可继续在详情页补充与订正。</li>
+            <li>后续只需告诉我「延伸 XX 考点」，即可逐层向下填充知识内容；也可以在任意考点详情页添加自己的「笔记 / 导图 / 错题」并自动关联到该考点，或在顶栏「学习中心」统一管理——笔记支持 Markdown、代码块与手绘涂鸦，导图支持大纲 / 思维导图双视图，错题可标记待复习 / 已掌握，登录后云端同步。</li>
             <li>学习状态（未学 / 学习中 / 已掌握）与笔记自动保存在浏览器本地，支持一键导出 JSON 备份。</li>
           </ul>
         </div>
@@ -744,56 +787,42 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
       </div>
     </section>
 
-    <!-- ===== 我的笔记视图 ===== -->
-    <section class="view" id="view-notes">
-      <div class="view-inner">
-        <div class="notes-head">
-          <div class="notes-title">
-            <h2>我的笔记</h2>
-            <div class="nt-sub" id="notesCount">0 条笔记</div>
-          </div>
-          <div class="notes-actions">
-            <div class="notes-search">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-              <input id="notesSearchInput" type="text" placeholder="搜索笔记标题或内容…" autocomplete="off">
-            </div>
-            <button class="iconbtn primary" id="addNoteBtn">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              添加笔记
-            </button>
-          </div>
-        </div>
-        <div class="notes-filters" id="notesFilters">
-          <button class="nfilter on" data-filter="all">全部</button>
-          <button class="nfilter" data-filter="ds">数据结构</button>
-          <button class="nfilter" data-filter="co">组成原理</button>
-          <button class="nfilter" data-filter="os">操作系统</button>
-          <button class="nfilter" data-filter="net">计算机网络</button>
-          <button class="nfilter" data-filter="other">其他 / 综合</button>
-        </div>
-        <div class="notes-grid" id="notesGrid"></div>
-      </div>
-    </section>
-
-    <!-- ===== 思维导图：导图列表 ===== -->
-    <section class="view" id="view-maps">
-      <div class="view-inner">
-        <div class="notes-head">
-          <div class="notes-title">
-            <h2>思维导图</h2>
-            <div class="nt-sub" id="mapsCount">0 张</div>
-          </div>
-          <div class="notes-actions">
-            <button class="iconbtn primary" id="addMapBtn">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              新建导图
-            </button>
-          </div>
-        </div>
-        <div class="notes-grid" id="mapsGrid"></div>
-      </div>
-    </section>
-
+    <!-- ===== 学习中心（笔记 / 导图 / 错题，统一关联考点） ===== -->
+    <section class="view" id="view-notes">
+      <div class="view-inner">
+        <div class="notes-head">
+          <div class="notes-title">
+            <h2>学习中心</h2>
+            <div class="nt-sub" id="notesCount">0 条记录</div>
+          </div>
+          <div class="notes-actions">
+            <div class="notes-search">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+              <input id="notesSearchInput" type="text" placeholder="搜索标题、正文、题干…" autocomplete="off">
+            </div>
+            <button class="iconbtn primary" id="addNoteBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>笔记</button>
+            <button class="iconbtn" id="addMapBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>导图</button>
+            <button class="iconbtn" id="addMistakeBtn" style="color:#B3402A"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>错题</button>
+          </div>
+        </div>
+        <div class="lc-filters">
+          <div class="seg" id="kindFilters">
+            <button data-kind="all" class="on">全部</button>
+            <button data-kind="note">笔记</button>
+            <button data-kind="map">导图</button>
+            <button data-kind="mistake">错题</button>
+          </div>
+          <select id="notesSubject" class="path-select" aria-label="按学科筛选"></select>
+          <select id="mistakeStatus" class="path-select" aria-label="错题状态">
+            <option value="all">全部状态</option>
+            <option value="open">待复习</option>
+            <option value="mastered">已掌握</option>
+          </select>
+        </div>
+        <div class="notes-grid" id="notesGrid"></div>
+      </div>
+    </section>
+
     <!-- ===== 思维导图：单张导图编辑 ===== -->
     <section class="view" id="view-map">
       <div class="view-inner">
@@ -802,6 +831,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
             返回
           </button>
+          <span class="map-crumb" id="mapCrumb"></span>
           <input id="mapTitleInput" type="text" placeholder="导图标题" spellcheck="false" autocomplete="off">
           <div class="seg" id="mapModeSeg">
             <button data-mode="outline" class="on">大纲</button>
@@ -837,13 +867,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
     <div class="editor-head">
       <h3 id="noteEditorTitle">添加新笔记</h3>
       <div class="editor-head-actions">
-        <select id="noteSubject" aria-label="所属学科">
-          <option value="other">其他 / 综合</option>
-          <option value="ds">数据结构</option>
-          <option value="co">计算机组成原理</option>
-          <option value="os">操作系统</option>
-          <option value="net">计算机网络</option>
-        </select>
+        <select id="notePath" aria-label="关联考点" class="path-select"></select>
         <button class="iconbtn" id="noteCloseBtn" aria-label="关闭" style="padding:6px">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
@@ -886,13 +910,53 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
       </div>
     </div>
     <div class="editor-foot">
-      <span class="md-hint" style="margin-right:auto">笔记保存在本机浏览器，可随「导出学习记录」备份</span>
+      <span class="md-hint" style="margin-right:auto">笔记关联到所选考点，登录后云端同步、可随「导出学习记录」备份</span>
       <button class="iconbtn" id="noteCancelBtn">取消</button>
       <button class="iconbtn primary" id="noteSaveBtn">保存笔记</button>
     </div>
   </div>
 </div>
 
+<!-- ===== 错题编辑器 ===== -->
+<div class="overlay tall" id="mistakeOverlay">
+  <div class="editor-box">
+    <div class="editor-head">
+      <h3 id="mistakeEditorTitle">添加错题</h3>
+      <div class="editor-head-actions">
+        <select id="mistakePath" aria-label="关联考点" class="path-select"></select>
+        <button class="iconbtn" id="mistakeCloseBtn" aria-label="关闭" style="padding:6px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </div>
+    <div class="editor-page">
+      <input type="text" class="note-title-input" id="mistakeTitle" placeholder="错题标题（可留空，自动取题干开头）" autocomplete="off">
+      <div class="mk-field">
+        <label>题干 / 题目（支持 Markdown、$公式$、链接、涂鸦链接）</label>
+        <textarea id="mistakeQuestion" class="mk-area" spellcheck="false" placeholder="把题目贴在这里，支持 Markdown 与 $公式$…"></textarea>
+      </div>
+      <div class="mk-field">
+        <label>我的错解 / 错因</label>
+        <textarea id="mistakeWrong" class="mk-area" spellcheck="false" placeholder="当时怎么想的、错在哪一步、踩了什么坑…"></textarea>
+      </div>
+      <div class="mk-field">
+        <label>正确解析 / 对应知识点</label>
+        <textarea id="mistakeAnalysis" class="mk-area" spellcheck="false" placeholder="正确解法、结论、对应知识点与口诀…"></textarea>
+      </div>
+      <div class="mk-field-row">
+        <label>复习状态</label>
+        <select id="mistakeStatusInput" class="path-select">
+          <option value="open">待复习</option>
+          <option value="mastered">已掌握</option>
+        </select>
+      </div>
+    </div>
+    <div class="editor-foot">
+      <span class="md-hint" style="margin-right:auto">错题关联到所选考点，登录后云端同步</span>
+      <button class="iconbtn" id="mistakeCancelBtn">取消</button>
+      <button class="iconbtn primary" id="mistakeSaveBtn">保存错题</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== 涂鸦画板 ===== -->
 <div class="overlay tall" id="drawOverlay">
   <div class="draw-box">
@@ -2938,12 +3002,50 @@ const SYLLABUS = [
  * 状态层：学习状态 + 个人笔记（localStorage 持久化）
  * ============================================================ */
 const LS_KEY = 'k408-knowledge-v1';
-let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[] };
+let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[] };
 try{
   const raw = localStorage.getItem(LS_KEY);
   if(raw){ const p = JSON.parse(raw); state = Object.assign(state, p); }
 }catch(e){}
-function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} cloudSave(); }
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} cloudSave(); }
+/* ===== 学习条目（笔记 / 导图 / 错题统一库，以考点为中心）=====
+   item: {id, kind:'note'|'map'|'mistake', path(关联考点路径,''=未分类), subject,
+   title, created, updated,
+   note -> content(Markdown)；map -> root(大纲树)；
+   mistake -> question/wrong/analysis/status('open'|'mastered')} */
+function mergeItems(localArr, cloudArr){
+  const map = {};
+  (localArr||[]).forEach(it=>{ if(it&&it.id) map[it.id]=it; });
+  (cloudArr||[]).forEach(it=>{
+    if(!it||!it.id) return;
+    const ex = map[it.id];
+    if(!ex || (it.updated||0) > (ex.updated||0)) map[it.id]=it;
+  });
+  return Object.keys(map).map(k=>map[k]).sort((a,b)=>(b.updated||0)-(a.updated||0));
+}
+/* 一次性迁移：旧版全局「我的笔记 myNotes」「思维导图 maps」并入 items（按 id 幂等，不丢数据）*/
+function migrateLegacyItems(){
+  if(!Array.isArray(state.items)) state.items = [];
+  let changed = false;
+  const have = {}; state.items.forEach(it=>{ if(it&&it.id) have[it.id]=true; });
+  (state.myNotes||[]).forEach(n=>{
+    if(have[n.id]) return;
+    state.items.push({ id:n.id, kind:'note', path:'', subject:n.subject||'other',
+      title:n.title||'未命名笔记', content:n.content||'', created:n.created, updated:n.updated });
+    have[n.id]=true; changed=true;
+  });
+  (state.maps||[]).forEach(m=>{
+    if(have[m.id]) return;
+    state.items.push({ id:m.id, kind:'map', path:'', subject:m.subject||'other',
+      title:m.title||'未命名导图', root:m.root, created:m.created, updated:m.updated });
+    have[m.id]=true; changed=true;
+  });
+  if(changed || (state.myNotes&&state.myNotes.length) || (state.maps&&state.maps.length)){
+    state.myNotes = []; state.maps = [];
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  }
+}
+migrateLegacyItems();
 
 /* ---------- 云端同步（可选） ---------- */
 /* 由 server.js 提供 /api/state 接口；服务器不可用时自动回退本地，不影响使用 */
@@ -2969,7 +3071,11 @@ function cloudSave(immediate){
   const doSave = () => {
     // 分别保存 mastery / notes / user_diagrams
     api('/api/data', 'POST', { key: 'mastery', value: state.mastery }).catch(()=>{});
-    api('/api/data', 'POST', { key: 'notes', value: state.notes }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'notes', value: state.notes }).catch(()=>{});
+
+    api('/api/data', 'POST', { key: 'items', value: state.items }).catch(()=>{});
+
+    api('/api/data', 'POST', { key: 'drawings', value: state.drawings }).catch(()=>{});
     try{
       const ud = JSON.parse(localStorage.getItem('user_diagrams') || '{}');
       api('/api/data', 'POST', { key: 'user_diagrams', value: ud }).catch(()=>{});
@@ -2985,11 +3091,19 @@ async function cloudLoad(){
   try{
     const r = await api('/api/data', 'GET');
     if(r.ok && r.data){
-      if(r.data.mastery) state.mastery = r.data.mastery;
-      if(r.data.notes) state.notes = r.data.notes;
+      if(r.data.mastery) state.mastery = Object.assign({}, state.mastery, r.data.mastery);
+      if(r.data.notes) state.notes = Object.assign({}, state.notes, r.data.notes);
+
+      if(r.data.items) state.items = mergeItems(state.items, r.data.items);
+
+      if(r.data.drawings) state.drawings = Object.assign({}, state.drawings, r.data.drawings);
+
+      try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
       if(r.data.user_diagrams) localStorage.setItem('user_diagrams', JSON.stringify(r.data.user_diagrams));
     }
-  }catch(e){ console.warn('cloud load failed', e); }
+  }catch(e){ console.warn('cloud load failed', e); }
+
+  if(typeof render==='function'){ try{ render(); }catch(e){} }
 }
 
 function showLogin(){
@@ -3019,7 +3133,7 @@ function showLogin(){
         localStorage.setItem('auth_token', r.token);
         localStorage.setItem('auth_user', r.username);
         ov.remove();
-        cloudLoad().then(()=> renderDetail());
+        cloudLoad();
       } else {
         msg.textContent = r.error || '失败';
         msg.style.display = 'block';
@@ -3199,21 +3313,14 @@ function renderSidebar(){
       </span>
       <span class="spct" style="color:${s.color}">${st.pct}%</span>
     </button>`;
-  }).join('') + `<button class="snav ${route.type==='notes'?'active':''}" data-goto="#/notes" style="${route.type==='notes'?'border-left:3px solid #8A929C':''}">
-    <span class="scol" style="background:#8A929C;${route.type==='notes'?'':'opacity:.35'}"></span>
-    <span class="sinfo">
-      <span class="sname">我的笔记<span class="en">NOTES</span></span>
-      <span class="smeta">${state.myNotes.length} 条 · 自由添加</span>
-    </span>
-    <span class="spct" style="color:#8A929C">${state.myNotes.length}</span>
-  </button><button class="snav ${route.type==='maps'||route.type==='map'?'active':''}" data-goto="#/maps" style="${route.type==='maps'||route.type==='map'?'border-left:3px solid #1B1F24':''}">
-    <span class="scol" style="background:#1B1F24;${route.type==='maps'||route.type==='map'?'':'opacity:.35'}"></span>
-    <span class="sinfo">
-      <span class="sname">思维导图<span class="en">MIND MAP</span></span>
-      <span class="smeta">${state.maps.length} 张 · 大纲 / 导图</span>
-    </span>
-    <span class="spct" style="color:#1B1F24">${state.maps.length}</span>
-  </button>`;
+  }).join('') + `<button class="snav ${['notes','maps','map'].includes(route.type)?'active':''}" data-goto="#/notes" style="${['notes','maps','map'].includes(route.type)?'border-left:3px solid var(--kc-note)':''}">
+    <span class="scol" style="background:var(--kc-note);${['notes','maps','map'].includes(route.type)?'':'opacity:.35'}"></span>
+    <span class="sinfo">
+      <span class="sname">学习中心<span class="en">JOURNAL</span></span>
+      <span class="smeta">${state.items.length} 条 · 笔记 / 导图 / 错题</span>
+    </span>
+    <span class="spct" style="color:var(--kc-note)">${state.items.length}</span>
+  </button>`;
   $('#overallPct').textContent = overallStats().pct + '%';
   $('#overallBar').style.width = overallStats().pct + '%';
 }
@@ -3244,21 +3351,21 @@ function render(){
   const route = currentRoute();
   $('#view-overview').classList.toggle('active', route.type==='overview');
   $('#view-tree').classList.toggle('active', route.type==='tree');
-  $('#view-notes').classList.toggle('active', route.type==='notes');
-  $('#view-maps').classList.toggle('active', route.type==='maps');
+  $('#view-notes').classList.toggle('active', route.type==='notes' || route.type==='maps');
+  $('#view-map').classList.toggle('active', route.type==='map');
   $('#view-map').classList.toggle('active', route.type==='map');
   const curSub = route.type==='tree' ? route.path.split('/')[0] : '';
   document.querySelectorAll('#topnav button').forEach(b=>{
     let on = false;
     if(route.type==='tree') on = b.dataset.nav === '#/tree/'+curSub;
-    else if(route.type==='notes') on = b.dataset.nav === '#/notes';
-    else if(route.type==='maps' || route.type==='map') on = b.dataset.nav === '#/maps';
+    else if(route.type==='notes' || route.type==='maps' || route.type==='map') on = b.dataset.nav === '#/notes';
+    else if(false) on = false;
     else on = b.dataset.nav === '#/';
     b.classList.toggle('active', on);
   });
   if(route.type==='overview') renderOverview();
   else if(route.type==='notes') renderNotes();
-  else if(route.type==='maps') renderMaps();
+  else if(route.type==='maps'){ kindFilter='map'; renderNotes(); }
   else if(route.type==='map') renderMap();
   else renderTree();
 }
@@ -3523,15 +3630,23 @@ function renderDetail(){
         : emptyBox('关联考点待延伸','将在此列出与本章节知识相互支撑的上下游考点。')) + `</div>`;
   }
 
-  /* 笔记（任意节点可记） */
-  const path = isLeafNode(node) ? leafPath(node) : route.path;
-  const noteText = state.notes[path] || '';
-  html += `<div class="note-box">
-    <div class="nb-t">我的笔记<span class="save-state" id="noteState">自动保存</span></div>
-    <textarea id="noteInput" placeholder="记录该考点的易错点、口诀、题目链接或个人理解…">${esc(noteText)}</textarea>
-    <div class="nb-foot">笔记仅保存在本机浏览器（localStorage），建议定期导出备份。</div>
-  </div>`;
-
+  /* ===== 我的学习记录（速记 + 笔记 / 导图 / 错题，均关联本节点）===== */
+  const path = isLeafNode(node) ? leafPath(node) : route.path;
+  const noteText = state.notes[path] || '';
+  const myItems = itemsOf(path);
+  html += `<div class="study-journal">
+    <div class="sj-head">我的学习记录<span class="sj-hint" id="noteState">自动保存 · 登录后云同步</span></div>
+    <div class="note-box sj-quick">
+      <textarea id="noteInput" placeholder="速记：随手写一句话、口诀、链接（自动保存）…">${esc(noteText)}</textarea>
+    </div>
+    <div class="sj-actions">
+      <button type="button" data-add="note" style="--kc:var(--kc-note)">＋ 笔记</button>
+      <button type="button" data-add="map" style="--kc:var(--kc-map)">＋ 导图</button>
+      <button type="button" data-add="mistake" style="--kc:var(--kc-mistake)">＋ 错题</button>
+    </div>
+    <div class="sj-list">${myItems.length ? myItems.map(journalRow).join('') : '<div class="sj-empty">还没有关联到这里的笔记 / 导图 / 错题，点上方按钮添加。</div>'}</div>
+  </div>`;
+
   pane.innerHTML = html;
   renderMath(pane);
   /* 事件：编辑章节框架图 */
@@ -3554,16 +3669,35 @@ function renderDetail(){
       renderSidebar();
     });
   }
-  /* 事件：笔记即时保存 */
-  const noteInput = $('#noteInput');
-  if(noteInput){
-    noteInput.addEventListener('input', ()=>{
-      state.notes[path] = noteInput.value.trim();
-      saveState();
-      const ns = $('#noteState');
-      if(ns) ns.textContent = '已保存';
-    });
-  }
+  /* 事件：速记即时保存 */
+  const noteInput = $('#noteInput');
+  if(noteInput){
+    noteInput.addEventListener('input', ()=>{
+      state.notes[path] = noteInput.value.trim();
+      saveState();
+      const ns = $('#noteState');
+      if(ns) ns.textContent = '已保存';
+    });
+  }
+  /* 事件：添加 笔记 / 导图 / 错题（默认关联本考点）*/
+  pane.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>{
+    const kind=b.dataset.add;
+    if(kind==='note') openNoteEditor(null, path);
+    else if(kind==='mistake') openMistakeEditor(null, path);
+    else if(kind==='map') newMap(path);
+  }));
+  /* 事件：本考点学习条目操作 */
+  pane.querySelectorAll('[data-edit-item]').forEach(b=>b.addEventListener('click',()=>openItemById(b.dataset.editItem)));
+  pane.querySelectorAll('[data-open-map]').forEach(b=>b.addEventListener('click',()=>{ location.hash='#/map/'+b.dataset.openMap; }));
+  pane.querySelectorAll('[data-toggle-mistake]').forEach(b=>b.addEventListener('click',()=>{
+    const it=getItem(b.dataset.toggleMistake); if(!it) return;
+    it.status = it.status==='mastered' ? 'open' : 'mastered'; it.updated=Date.now();
+    saveState(); renderDetail(); renderSidebar();
+  }));
+  pane.querySelectorAll('[data-del-item]').forEach(b=>b.addEventListener('click',()=>{
+    bindDelConfirm(b,()=>{ deleteItem(b.dataset.delItem); saveState(); renderDetail(); renderSidebar(); toast('已删除'); });
+  }));
+
   /* 事件：子节点跳转 */
   pane.querySelectorAll('[data-goto]').forEach(el=>{
     el.addEventListener('click', ()=>{ location.hash = el.dataset.goto; });
@@ -3607,7 +3741,7 @@ function openSearch(){
   $('#overlay').classList.add('open');
   const inp = $('#searchInput');
   inp.value = '';
-  $('#searchResults').innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与我的笔记</div>`;
+  $('#searchResults').innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`;
   inp.focus();
 }
 function closeSearch(){ $('#overlay').classList.remove('open'); }
@@ -3615,7 +3749,7 @@ function closeSearch(){ $('#overlay').classList.remove('open'); }
 function runSearch(q){
   const results = $('#searchResults');
   const kw = q.trim().toLowerCase();
-  if(!kw){ results.innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与我的笔记</div>`; return; }
+  if(!kw){ results.innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`; return; }
   const hits = searchIndex.filter(it=> it.name.toLowerCase().includes(kw) || it.parents.join(' ').toLowerCase().includes(kw));
   let html = '';
   const grouped = {};
@@ -3631,26 +3765,29 @@ function runSearch(q){
       </div>`;
     });
   });
-  const noteHits = state.myNotes.filter(n=> (n.title||'').toLowerCase().includes(kw) || (n.content||'').toLowerCase().includes(kw));
-  if(noteHits.length){
-    html += `<div class="sr-group"><span class="gdot" style="background:#8A929C"></span>我的笔记</div>`;
-    noteHits.slice(0,8).forEach(n=>{
-      html += `<div class="sr-row" data-note="${esc(n.id)}">
-        <span style="color:${subColor(n.subject)};font-size:11px;font-family:var(--font-mono);font-weight:700">${esc(subName(n.subject))}</span>
-        <span class="sr-name">${highlight(n.title, kw)}</span>
-        <span class="sr-path">笔记 · ${fmtTime(n.updated)}</span>
-      </div>`;
-    });
-  }
-  if(!hits.length && !noteHits.length){ results.innerHTML = `<div class="sr-empty">未找到与「${esc(q)}」相关的考点或笔记</div>`; return; }
-  results.innerHTML = html;
-  results.querySelectorAll('.sr-row').forEach(row=>{
-    row.addEventListener('click', ()=>{
-      closeSearch();
-      location.hash = row.dataset.note ? '#/notes/'+row.dataset.note : row.dataset.goto;
-    });
-  });
-}
+  const itemHits = state.items.filter(x=> itemSearchText(x).toLowerCase().includes(kw));
+  if(itemHits.length){
+    html += `<div class="sr-group"><span class="gdot" style="background:#2E63A8"></span>我的学习记录</div>`;
+    itemHits.slice(0,8).forEach(x=>{
+      const k=ITEM_KINDS[x.kind]||ITEM_KINDS.note;
+      const where = (x.path && pathInfo(x.path)) ? esc(pathInfo(x.path).sub.name+' · '+pathBreadcrumb(x.path)) : '未分类';
+      html += `<div class="sr-row" data-item="${esc(x.id)}">
+        <span style="color:${k.color};font-size:11px;font-family:var(--font-mono);font-weight:700">${k.label}</span>
+        <span class="sr-name">${highlight(itemTitle(x), kw)}</span>
+        <span class="sr-path">${where}</span>
+      </div>`;
+    });
+  }
+  if(!hits.length && !itemHits.length){ results.innerHTML = `<div class="sr-empty">未找到与「${esc(q)}」相关的考点或学习记录</div>`; return; }
+  results.innerHTML = html;
+  results.querySelectorAll('.sr-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      if(row.dataset.item){ const it=getItem(row.dataset.item); closeSearch(); if(it){ if(it.kind==='map') location.hash='#/map/'+it.id; else openItemById(it.id); } return; }
+      closeSearch();
+      location.hash = row.dataset.goto;
+    });
+  });
+}
 function highlight(text, kw){
   const idx = text.toLowerCase().indexOf(kw);
   if(idx<0) return esc(text);
@@ -3674,126 +3811,267 @@ function fmtTime(ts){
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
-let notesFilter = 'all';
-let notesQuery = '';
-
-function renderNotes(){
-  const route = currentRoute();
-  $('#notesCount').textContent = `${state.myNotes.length} 条笔记`;
-  document.querySelectorAll('#notesFilters .nfilter').forEach(b=>{
-    b.classList.toggle('on', b.dataset.filter===notesFilter);
-  });
-
-  let list = state.myNotes.slice().sort((a,b)=>(b.updated||0)-(a.updated||0));
-  if(notesFilter!=='all') list = list.filter(n=>n.subject===notesFilter);
-  if(notesQuery){
-    const q = notesQuery.toLowerCase();
-    list = list.filter(n=> (n.title||'').toLowerCase().includes(q) || (n.content||'').toLowerCase().includes(q));
-  }
-
-  const grid = $('#notesGrid');
-  if(!list.length){
-    grid.innerHTML = `<div class="d-empty">
-      <div class="de-glyph"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></svg></div>
-      <h3>${state.myNotes.length ? '没有匹配的笔记' : '还没有笔记'}</h3>
-      <p>${state.myNotes.length ? '换个关键词或学科筛选试试。' : '点击右上角「添加笔记」，把学到的新知识点直接记在这里，无需通过对话生成。笔记自动保存在本机浏览器。'}</p>
-    </div>`;
-  }else{
-    grid.innerHTML = list.map(noteCard).join('');
-  }
-
-  grid.querySelectorAll('.ncard').forEach(card=>{
-    const id = card.dataset.id;
-    const editBtn = card.querySelector('[data-edit]');
-    if(editBtn) editBtn.addEventListener('click', ()=>openNoteEditor(id));
-    const delBtn = card.querySelector('[data-del]');
-    if(delBtn) delBtn.addEventListener('click', ()=>delNote(id, delBtn));
-  });
-
-  if(route.id) openNoteEditor(route.id);
-}
-
-function noteCard(n){
-  const sc = subColor(n.subject);
-  const time = n.updated ? fmtTime(n.updated) : '';
-  const preview = n.content ? mdRender(n.content) : '';
-  return `<div class="ncard" style="--nc:${sc}" data-id="${esc(n.id)}">
-    <div class="ncard-body">
-      <div class="ncard-meta"><span class="tag sub" style="background:${sc}">${esc(subName(n.subject))}</span></div>
-      <div class="ncard-title">${esc(n.title)}</div>
-      ${preview?`<div class="ncard-text">${preview}</div>`:''}
-    </div>
-    <div class="ncard-foot">
-      <span class="ncard-time">${time}</span>
-      <span class="ncard-act">
-        <button class="iconbtn mini" data-edit>编辑</button>
-        <button class="iconbtn mini danger-btn" data-del>删除</button>
-      </span>
-    </div>
-  </div>`;
-}
-
-let editingId = null;
-function openNoteEditor(id){
-  editingId = id || null;
-  const n = id ? state.myNotes.find(x=>x.id===id) : null;
-  $('#noteEditorTitle').textContent = n ? '编辑笔记' : '添加新笔记';
-  $('#noteTitle').value = n ? n.title : '';
-  $('#noteSubject').value = n && n.subject ? n.subject : 'other';
-  $('#noteContent').value = n ? (n.content||'') : '';
-  $('#noteOverlay').classList.add('open');
-  setMdMode('split');
-  updatePreview();
-  $('#noteTitle').focus();
-}
-function closeNoteEditor(){
-  $('#noteOverlay').classList.remove('open');
-  editingId = null;
-  if(currentRoute().type==='notes' && location.hash.indexOf('#/notes/')===0){
-    location.hash = '#/notes';
-  }
-}
-function saveNote(){
-  const title = $('#noteTitle').value.trim();
-  const subject = $('#noteSubject').value;
-  const content = $('#noteContent').value.trim();
-  if(!title){ toast('请填写笔记标题'); $('#noteTitle').focus(); return; }
-  const now = Date.now();
-  if(editingId){
-    const n = state.myNotes.find(x=>x.id===editingId);
-    if(n){ n.title=title; n.subject=subject; n.content=content; n.updated=now; }
-  }else{
-    state.myNotes.push({id:'n'+now+Math.random().toString(36).slice(2,8), title, subject, content, created:now, updated:now});
-  }
-  saveState();
-  closeNoteEditor();
-  renderNotes();
-  renderSidebar();
-  toast('笔记已保存');
-}
-function delNote(id, btn){
-  if(!btn.classList.contains('confirming')){
-    btn.classList.add('confirming');
-    btn.textContent = '确认删除';
-    setTimeout(()=>{ btn.classList.remove('confirming'); btn.textContent='删除'; }, 2600);
-    return;
-  }
-  const target = state.myNotes.find(x=>x.id===id);
-  if(target && target.content){
-    (target.content.match(/drawing:\/\/([\w]+)/g)||[]).forEach(d=>{
-      delete state.drawings[d.replace(/^drawing:\/\//,'')];
-    });
-  }
-  state.myNotes = state.myNotes.filter(x=>x.id!==id);
-  saveState();
-  renderNotes();
-  renderSidebar();
-  toast('笔记已删除');
-}
-
-/* ============================================================
- * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
- * ============================================================ */
+/* ---------- 学习条目统一库：类型配置 / 考点路径 / CRUD / 学习中心 ---------- */
+const ITEM_KINDS = {
+  note:    { label:'笔记', color:'var(--kc-note)' },
+  map:     { label:'导图', color:'var(--kc-map)' },
+  mistake: { label:'错题', color:'var(--kc-mistake)' }
+};
+let kindFilter='all', subjFilter='all', mistakeFilter='all', notesQuery='';
+let editingId=null, mistakeEditingId=null;
+
+const pathInfoMap = (()=>{ const m={}; searchIndex.forEach(x=>m[x.path]=x); return m; })();
+function pathInfo(p){ return p ? (pathInfoMap[p]||null) : null; }
+function itemSubject(it){
+  if(it.path){ const info=pathInfoMap[it.path]; if(info) return info.sub.id; }
+  return it.subject || 'other';
+}
+function pathBreadcrumb(p){
+  const info=pathInfoMap[p];
+  if(!info) return '';
+  return info.parents.slice(1).concat([info.name]).join(' / ');
+}
+function pathOptionsHtml(){
+  let h='<option value="">未分类（综合 / 不绑定考点）</option>';
+  SYLLABUS.forEach(sub=>{
+    h += '<optgroup label="'+esc(sub.name)+'">';
+    sub.chapters.forEach((ch,ci)=>{
+      h += '<option value="'+sub.id+'/'+ci+'">'+esc(ch.name)+'</option>';
+      ch.sections.forEach((sec,si)=>{
+        const sp=sub.id+'/'+ci+'/'+si;
+        h += '<option value="'+sp+'">　'+esc(sec.name)+'</option>';
+        sec.topics.forEach((tp,ti)=>{
+          h += '<option value="'+sp+'/'+ti+'">　　'+esc(tp.name)+'</option>';
+        });
+      });
+    });
+    h += '</optgroup>';
+  });
+  return h;
+}
+function fillPathSelects(){
+  const html=pathOptionsHtml();
+  const a=$('#notePath'), b=$('#mistakePath');
+  if(a) a.innerHTML=html;
+  if(b) b.innerHTML=html;
+  const s=$('#notesSubject');
+  if(s && !s.dataset.filled){
+    let oh='<option value="all">全部学科</option>';
+    SYLLABUS.forEach(sub=>{ oh+='<option value="'+sub.id+'">'+esc(sub.name)+'</option>'; });
+    oh+='<option value="other">未分类 / 综合</option>';
+    s.innerHTML=oh; s.dataset.filled='1';
+  }
+}
+function genItemId(p){ return 'it'+Date.now()+Math.random().toString(36).slice(2,7)+(p||''); }
+function getItem(id){ return state.items.find(x=>x.id===id)||null; }
+function itemsOf(path){ return state.items.filter(x=>x.path===path).sort((a,b)=>(b.updated||0)-(a.updated||0)); }
+function countItems(kind){ return kind ? state.items.filter(x=>x.kind===kind).length : state.items.length; }
+function stripMd(s){
+  return (s||'').replace(/```[\s\S]*?```/g,' ').replace(/\$[^$]*\$/g,' ')
+    .replace(/[#>*_`~!\[\]()]/g,' ').replace(/https?:\S+/g,' ').replace(/drawing:\/\/\S+/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function itemTitle(it){
+  if(it.title && it.title.trim()) return it.title.trim();
+  if(it.kind==='mistake') return stripMd(it.question).slice(0,24) || '未命名错题';
+  if(it.kind==='map') return it.title || '未命名导图';
+  return stripMd(it.content).slice(0,24) || '未命名笔记';
+}
+function mapNodeText(n){ let s=n.text||''; (n.children||[]).forEach(c=>{ s+=' '+mapNodeText(c); }); return s; }
+function itemSearchText(it){
+  if(it.kind==='note') return (it.title||'')+' '+(it.content||'');
+  if(it.kind==='mistake') return [it.title,it.question,it.wrong,it.analysis].join(' ');
+  if(it.kind==='map') return (it.title||'')+' '+(it.root?mapNodeText(it.root):'');
+  return it.title||'';
+}
+function itemDigestHtml(it){
+  if(it.kind==='map') return esc((it.root?mapNodeCount(it.root):0)+' 个主题 · 大纲 / 思维导图双视图');
+  return mdRenderMath((it.kind==='mistake' ? (it.question||'') : (it.content||''))||'');
+}
+function journalDigest(it){
+  if(it.kind==='map') return (it.root?mapNodeCount(it.root):0)+' 个主题 · 大纲 / 思维导图';
+  return stripMd(it.kind==='mistake' ? (it.question||'') : (it.content||'')).slice(0,80);
+}
+function setItemSubject(it){ it.subject=itemSubject(it); }
+function deleteItem(id){
+  const it=getItem(id); if(!it) return;
+  const text=[it.content,it.question,it.wrong,it.analysis].join(' ');
+  (text.match(/drawing:\/\/[\w]+/g)||[]).forEach(d=>{ delete state.drawings[d.replace(/^drawing:\/\//,'')]; });
+  state.items = state.items.filter(x=>x.id!==id);
+  saveState();
+}
+function bindDelConfirm(btn, fn){
+  if(!btn.classList.contains('confirming')){
+    btn.classList.add('confirming'); const old=btn.textContent; btn.textContent='确认';
+    setTimeout(()=>{ btn.classList.remove('confirming'); btn.textContent=old; },2600);
+    return;
+  }
+  fn();
+}
+function afterItemChange(){
+  saveState();
+  const rt=currentRoute();
+  if(rt.type==='notes' || rt.type==='maps') renderNotes();
+  else if(rt.type==='tree' && typeof renderDetail==='function') renderDetail();
+  renderSidebar();
+}
+function filteredItems(){
+  let list=state.items.slice().sort((a,b)=>(b.updated||0)-(a.updated||0));
+  if(kindFilter!=='all') list=list.filter(x=>x.kind===kindFilter);
+  if(subjFilter!=='all') list=list.filter(x=>itemSubject(x)===subjFilter);
+  if(mistakeFilter!=='all') list=list.filter(x=>x.kind==='mistake' && x.status===mistakeFilter);
+  if(notesQuery){ const q=notesQuery.toLowerCase(); list=list.filter(x=>itemSearchText(x).toLowerCase().includes(q)); }
+  return list;
+}
+function itemCard(it){
+  const k=ITEM_KINDS[it.kind]||ITEM_KINDS.note;
+  const info=pathInfo(it.path);
+  const topic = (it.path && info)
+    ? '<div class="ncard-topic" data-goto-tree="'+it.path+'"><span class="tc-label">考点</span><span class="tc-name">'+esc(info.sub.name+' · '+pathBreadcrumb(it.path))+'</span></div>'
+    : '<div class="ncard-topic uncat"><span class="tc-label">未分类</span><span class="tc-name">编辑可关联到具体考点</span></div>';
+  let stat='';
+  if(it.kind==='mistake'){ const done=it.status==='mastered';
+    stat='<span class="tag sttag '+(done?'st-mastered':'st-open')+'">'+(done?'已掌握':'待复习')+'</span>'; }
+  const openAttr = it.kind==='map' ? 'data-open-map="'+it.id+'"' : 'data-edit-item="'+it.id+'"';
+  const openLabel = it.kind==='map' ? '打开' : '编辑';
+  return '<div class="ncard" style="--nc:'+k.color+'"><div class="ncard-body">'
+    +'<div class="ncard-meta"><span class="tag sub k-'+it.kind+'">'+k.label+'</span>'+stat+'</div>'
+    +topic
+    +'<div class="ncard-title">'+esc(itemTitle(it))+'</div>'
+    +'<div class="ncard-text">'+itemDigestHtml(it)+'</div></div>'
+    +'<div class="ncard-foot"><span class="ncard-time">'+(it.updated?fmtTime(it.updated):'')+'</span>'
+    +'<span class="ncard-act"><button class="iconbtn mini primary" '+openAttr+'>'+openLabel+'</button>'
+    +'<button class="iconbtn mini danger-btn" data-del-item="'+it.id+'">删除</button></span></div></div>';
+}
+function journalRow(it){
+  const k=ITEM_KINDS[it.kind]||ITEM_KINDS.note;
+  let ops='';
+  if(it.kind==='map') ops+='<button data-open-map="'+it.id+'">打开</button>';
+  else{
+    ops+='<button data-edit-item="'+it.id+'">编辑</button>';
+    if(it.kind==='mistake'){ const done=it.status==='mastered';
+      ops+='<button data-toggle-mistake="'+it.id+'" class="'+(done?'':'del')+'">'+(done?'已掌握':'待复习')+'</button>'; }
+  }
+  ops+='<button class="del" data-del-item="'+it.id+'">删除</button>';
+  const titleClick = it.kind==='map' ? '' : 'data-edit-item="'+it.id+'"';
+  return '<div class="sj-item" style="--kc:'+k.color+'"><span class="sj-kind">'+k.label+'</span>'
+    +'<div class="sj-main"><div class="sj-title" '+titleClick+'>'+esc(itemTitle(it))+'</div>'
+    +'<div class="sj-preview">'+esc(journalDigest(it))+'</div></div>'
+    +'<div class="sj-ops">'+ops+'</div></div>';
+}
+function bindItemCardEvents(scope){
+  scope.querySelectorAll('[data-edit-item]').forEach(b=>b.addEventListener('click',()=>openItemById(b.dataset.editItem)));
+  scope.querySelectorAll('[data-open-map]').forEach(b=>b.addEventListener('click',()=>{ location.hash='#/map/'+b.dataset.openMap; }));
+  scope.querySelectorAll('[data-goto-tree]').forEach(b=>b.addEventListener('click',ev=>{ ev.stopPropagation(); location.hash='#/tree/'+b.dataset.gotoTree; }));
+  scope.querySelectorAll('[data-del-item]').forEach(b=>b.addEventListener('click',()=>{
+    bindDelConfirm(b,()=>{ deleteItem(b.dataset.delItem); afterItemChange(); toast('已删除'); });
+  }));
+}
+function renderNotes(){
+  fillPathSelects();
+  const cnt=$('#notesCount');
+  if(cnt) cnt.textContent='共 '+state.items.length+' 条 · 笔记 '+countItems('note')+' · 导图 '+countItems('map')+' · 错题 '+countItems('mistake');
+  document.querySelectorAll('#kindFilters button').forEach(b=>b.classList.toggle('on', b.dataset.kind===kindFilter));
+  const ss=$('#notesSubject'); if(ss) ss.value=subjFilter;
+  const ms=$('#mistakeStatus'); if(ms) ms.value=mistakeFilter;
+  const grid=$('#notesGrid');
+  const list=filteredItems();
+  if(!list.length){
+    const empty = state.items.length
+      ? '<h3>没有匹配的记录</h3><p>换个类型、学科、状态或关键词试试。</p>'
+      : '<h3>还没有学习记录</h3><p>在任意考点详情页可添加「笔记 / 导图 / 错题」，自动关联到该考点；也可用右上角按钮直接新建。</p>';
+    grid.innerHTML='<div class="d-empty"><div class="de-glyph"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M8 13h8M8 17h6"/></svg></div>'+empty+'</div>';
+  }else{
+    grid.innerHTML=list.map(itemCard).join('');
+    renderMath(grid);
+    bindItemCardEvents(grid);
+  }
+  const r=currentRoute();
+  if(r.id && (r.type==='notes')){ const deep=r.id; setTimeout(()=>openItemById(deep),0); }
+}
+/* ---- 笔记编辑器（关联考点） ---- */
+function openNoteEditor(id, presetPath){
+  fillPathSelects();
+  editingId=id||null;
+  const n=id?getItem(id):null;
+  $('#noteEditorTitle').textContent=n?'编辑笔记':'添加新笔记';
+  $('#noteTitle').value=n?(n.title||''):'';
+  $('#notePath').value=n?(n.path||''):(presetPath||'');
+  $('#noteContent').value=n?(n.content||''):'';
+  $('#noteOverlay').classList.add('open');
+  setMdMode('split'); updatePreview();
+  $('#noteTitle').focus();
+}
+function closeNoteEditor(){
+  $('#noteOverlay').classList.remove('open'); editingId=null;
+  if(location.hash.indexOf('#/notes/')===0) location.hash='#/notes';
+}
+function saveNote(){
+  const title=$('#noteTitle').value.trim();
+  const path=$('#notePath').value||'';
+  const content=$('#noteContent').value.trim();
+  if(!title){ toast('请填写笔记标题'); $('#noteTitle').focus(); return; }
+  const now=Date.now();
+  let it=editingId?getItem(editingId):null;
+  if(it){ it.title=title; it.path=path; it.content=content; it.updated=now; setItemSubject(it); }
+  else{ it={id:genItemId('n'),kind:'note',path,subject:'other',title,content,created:now,updated:now};
+    setItemSubject(it); state.items.push(it); }
+  saveState(); closeNoteEditor(); afterItemChange(); toast('笔记已保存');
+}
+/* ---- 错题编辑器（关联考点） ---- */
+function openMistakeEditor(id, presetPath){
+  fillPathSelects();
+  mistakeEditingId=id||null;
+  const m=id?getItem(id):null;
+  $('#mistakeEditorTitle').textContent=m?'编辑错题':'添加错题';
+  $('#mistakeTitle').value=m?(m.title||''):'';
+  $('#mistakePath').value=m?(m.path||''):(presetPath||'');
+  $('#mistakeQuestion').value=m?(m.question||''):'';
+  $('#mistakeWrong').value=m?(m.wrong||''):'';
+  $('#mistakeAnalysis').value=m?(m.analysis||''):'';
+  $('#mistakeStatusInput').value=m?(m.status||'open'):'open';
+  $('#mistakeOverlay').classList.add('open');
+  $('#mistakeQuestion').focus();
+}
+function closeMistakeEditor(){
+  $('#mistakeOverlay').classList.remove('open'); mistakeEditingId=null;
+  if(location.hash.indexOf('#/notes/')===0) location.hash='#/notes';
+}
+function saveMistake(){
+  const path=$('#mistakePath').value||'';
+  const question=$('#mistakeQuestion').value.trim();
+  if(!question){ toast('请填写题干（或题目内容）'); $('#mistakeQuestion').focus(); return; }
+  const title=$('#mistakeTitle').value.trim();
+  const wrong=$('#mistakeWrong').value.trim();
+  const analysis=$('#mistakeAnalysis').value.trim();
+  const status=$('#mistakeStatusInput').value||'open';
+  const now=Date.now();
+  let m=mistakeEditingId?getItem(mistakeEditingId):null;
+  if(m){ Object.assign(m,{title,path,question,wrong,analysis,status,updated:now}); setItemSubject(m); }
+  else{ m={id:genItemId('k'),kind:'mistake',path,subject:'other',title,question,wrong,analysis,status,created:now,updated:now};
+    setItemSubject(m); state.items.push(m); }
+  saveState(); closeMistakeEditor(); afterItemChange(); toast('错题已保存');
+}
+function openItemById(id){
+  const it=getItem(id); if(!it) return;
+  if(it.kind==='map'){ location.hash='#/map/'+it.id; }
+  else if(it.kind==='mistake'){ openMistakeEditor(id); }
+  else { openNoteEditor(id); }
+}
+/* ---- 新建导图（关联考点） ---- */
+function newMap(presetPath){
+  const n=countItems('map')+1;
+  const m={ id:genItemId('m'), kind:'map', path:presetPath||'', subject:'other',
+    title:'未命名导图 '+n, root:newNode('中心主题'), created:Date.now(), updated:Date.now() };
+  setItemSubject(m); state.items.push(m);
+  saveState(); renderSidebar();
+  location.hash='#/map/'+m.id;
+  return m;
+}
+
+/* ============================================================
+ * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
+ * ============================================================ */
 const mdRenderer = {
   html(html){ return esc(html); },
   image(href, title, text){
@@ -3823,6 +4101,19 @@ const mdRenderer = {
   }
 };
 if(window.marked) marked.use({gfm:true, breaks:true, renderer:mdRenderer});
+/* 数学公式保护：先抽出 $$...$$ / $...$ 占位，避免 marked 破坏公式内的 _ ^ { }，解析后还原，再交给 KaTeX */
+function mdRenderMath(text){
+  if(!text) return '';
+  try{
+    const store=[];
+    const prot = text.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{
+      store.push(m); return '@@MATH'+(store.length-1)+'@@';
+    });
+    let html = window.marked ? marked.parse(prot) : esc(prot);
+    html = html.replace(/@@MATH(\d+)@@/g, (mm,i)=> store[+i]!=null ? store[+i] : mm);
+    return html;
+  }catch(e){ return mdRender(text); }
+}
 function mdRender(text){
   if(!text) return '';
   try{ return window.marked ? marked.parse(text) : esc(text); }
@@ -4047,7 +4338,7 @@ let mdTimer = null;
 function updatePreview(){
   const src = $('#noteContent');
   const prev = $('#notePreview');
-  if(prev && src) prev.innerHTML = mdRender(src.value);
+  if(prev && src){ prev.innerHTML = mdRenderMath(src.value); renderMath(prev); }
 }
 function setMdMode(mode){
   mdMode = mode;
@@ -4152,7 +4443,7 @@ const mapModes = {};             // key: mapId -> 'outline' | 'mind'
 function curMap(){
   const r = currentRoute();
   if(r.type!=='map') return null;
-  return state.maps.find(m=>m.id===r.id) || null;
+  return state.items.find(m=>m.kind==='map' && m.id===r.id) || null;
 }
 function touchMap(m){
   m.updated = Date.now();
@@ -4411,54 +4702,21 @@ function renderMindStage(stage){
 }
 
 /* ---------- 视图调度与事件 ---------- */
-function renderMaps(){
-  const cnt = $('#mapsCount');
-  if(cnt) cnt.textContent = state.maps.length + ' 张';
-  const grid = $('#mapsGrid');
-  if(!state.maps.length){
-    grid.innerHTML = `<div class="d-empty"><div class="de-glyph"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3.5 9h17M3.5 15h17"/></svg></div><h3>还没有思维导图</h3><p>点击右上角「新建导图」：先用大纲记录知识结构，一键切换成思维导图视图。</p></div>`;
-    return;
-  }
-  grid.innerHTML = state.maps.slice().sort((a,b)=>b.updated-a.updated).map(m=>{
-    const cnt2 = mapNodeCount(m.root);
-    return `<div class="ncard" style="--nc:#8A929C">
-      <div class="ncard-body">
-        <div class="ncard-meta"><span class="tag sub" style="background:#8A929C">思维导图</span></div>
-        <div class="ncard-title">${esc(m.title)}</div>
-        <div class="ncard-text">${cnt2} 个主题 · 大纲 / 思维导图双视图</div>
-      </div>
-      <div class="ncard-foot">
-        <span class="ncard-time">${fmtTime(m.updated)}</span>
-        <span class="ncard-act">
-          <button class="iconbtn mini primary" data-open="${m.id}">打开</button>
-          <button class="iconbtn mini danger-btn" data-del="${m.id}">删除</button>
-        </span>
-      </div>
-    </div>`;
-  }).join('');
-  grid.querySelectorAll('[data-open]').forEach(b=>{
-    b.addEventListener('click', ()=>location.hash = '#/map/'+b.dataset.open);
-  });
-  grid.querySelectorAll('[data-del]').forEach(b=>{
-    b.addEventListener('click', ev=>{
-      ev.stopPropagation();
-      if(!b.classList.contains('confirming')){
-        b.classList.add('confirming');
-        b.textContent = '确认删除';
-        setTimeout(()=>{ b.classList.remove('confirming'); b.textContent='删除'; }, 2600);
-        return;
-      }
-      state.maps = state.maps.filter(x=>x.id!==b.dataset.del);
-      saveState();
-      renderMaps();
-      renderSidebar();
-      toast('导图已删除');
-    });
-  });
-}
+function renderMaps(){
+  kindFilter='map';
+  renderNotes();
+}
 function renderMap(){
   const m = curMap();
-  if(!m){ location.hash = '#/maps'; return; }
+  if(!m){ location.hash = '#/notes'; return; }
+  const crumb=$('#mapCrumb');
+  if(crumb){
+    crumb.innerHTML = (m.path && pathInfo(m.path))
+      ? '关联考点 · <a>'+esc(pathInfo(m.path).sub.name+' · '+pathBreadcrumb(m.path))+'</a>'
+      : '<span style="font-style:italic">未关联考点（可在学习中心补绑）</span>';
+    const a=crumb.querySelector('a');
+    if(a) a.addEventListener('click', ()=>{ location.hash='#/tree/'+m.path; });
+  }
   const ti = $('#mapTitleInput');
   if(ti && ti.value !== m.title) ti.value = m.title;
   const mode = mapModes[m.id] || 'outline';
@@ -4468,14 +4726,8 @@ function renderMap(){
   else renderMindStage(stage);
 }
 function bindMapEvents(){
-  $('#addMapBtn').addEventListener('click', ()=>{
-    const n = state.maps.length + 1;
-    const m = {id:'m'+Date.now()+Math.random().toString(36).slice(2,7), title:'未命名导图 '+n, root:newNode('中心主题'), created:Date.now(), updated:Date.now()};
-    state.maps.push(m);
-    saveState();
-    location.hash = '#/map/'+m.id;
-  });
-  $('#mapBackBtn').addEventListener('click', ()=>location.hash = '#/maps');
+  $('#addMapBtn').addEventListener('click', ()=>{ newMap(''); });
+  $('#mapBackBtn').addEventListener('click', ()=>{ const m=curMap(); location.hash=(m&&m.path)?('#/tree/'+m.path):'#/notes'; });
   $('#mapAddRootBtn').addEventListener('click', ()=>{
     const m = curMap();
     if(m) mapAddChild(m.root.id, true);
@@ -4651,7 +4903,7 @@ function armReset(){
     resetTimer = setTimeout(disarmReset, 3000);
   }else{
     clearTimeout(resetTimer);
-    state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[] };
+    state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[] };
     saveState();
     render();
     disarmReset();
@@ -4778,7 +5030,8 @@ function init(){
     if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==='k'){ ev.preventDefault(); openSearch(); }
     if(ev.key==='Escape' && $('#overlay').classList.contains('open')) closeSearch();
     if(ev.key==='Escape' && $('#noteOverlay').classList.contains('open')) closeNoteEditor();
-    if(ev.key==='Escape' && $('#drawOverlay').classList.contains('open')) closeDrawEditor();
+    if(ev.key==='Escape' && $('#drawOverlay').classList.contains('open')) closeDrawEditor();
+    if(ev.key==='Escape' && $('#mistakeOverlay').classList.contains('open')) closeMistakeEditor();
   });
 
   /* 我的笔记 */
@@ -4788,11 +5041,19 @@ function init(){
   $('#noteCancelBtn').addEventListener('click', closeNoteEditor);
   $('#noteSaveBtn').addEventListener('click', saveNote);
   $('#notesSearchInput').addEventListener('input', ev=>{ notesQuery = ev.target.value; renderNotes(); });
-  $('#notesFilters').addEventListener('click', ev=>{
-    const b = ev.target.closest('.nfilter');
-    if(b){ notesFilter = b.dataset.filter; renderNotes(); }
-  });
-
+  $('#kindFilters').addEventListener('click', ev=>{
+    const b = ev.target.closest('button[data-kind]');
+    if(b){ kindFilter = b.dataset.kind; renderNotes(); }
+  });
+  $('#notesSubject').addEventListener('change', ev=>{ subjFilter = ev.target.value; renderNotes(); });
+  $('#mistakeStatus').addEventListener('change', ev=>{ mistakeFilter = ev.target.value; if(mistakeFilter!=='all') kindFilter='mistake'; renderNotes(); });
+  $('#addMistakeBtn').addEventListener('click', ()=>openMistakeEditor(null,''));
+  /* 错题编辑器 */
+  $('#mistakeOverlay').addEventListener('click', ev=>{ if(ev.target.id==='mistakeOverlay') closeMistakeEditor(); });
+  $('#mistakeCloseBtn').addEventListener('click', closeMistakeEditor);
+  $('#mistakeCancelBtn').addEventListener('click', closeMistakeEditor);
+  $('#mistakeSaveBtn').addEventListener('click', saveMistake);
+
   /* 笔记编辑器：工具栏 / 模式切换 / 实时预览 */
   $('#mdToolbar').addEventListener('click', ev=>{
     const b = ev.target.closest('[data-cmd]');
