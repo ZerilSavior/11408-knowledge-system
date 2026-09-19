@@ -262,6 +262,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
   padding:18px 20px;color:var(--ink-3);font-size:13px;display:flex;align-items:center;gap:12px;
 }
 .empty-box .eb-title{color:var(--ink-2);font-weight:600;font-size:13.5px;margin-bottom:2px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;display:flex;align-items:center;justify-content:center} .dlg{background:var(--panel);border-radius:14px;width:90%;max-width:680px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)} .dlg-t{padding:16px 20px;font-weight:700;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between} .dlg-x{background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-3)} .dlg-b{padding:20px} .dlg-f{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end} .btn{padding:8px 18px;border-radius:8px;border:1px solid var(--line);cursor:pointer;font-size:13px} .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)} .btn.ghost{background:transparent} .btn:hover{opacity:.85}
 .kp-prose{font-size:14px;color:var(--ink);line-height:1.85;white-space:pre-wrap;word-wrap:break-word;word-break:break-word}
 .kp-list{list-style:none;display:flex;flex-direction:column;gap:7px}
 .kp-list li{display:flex;gap:9px;font-size:13.5px;color:var(--ink-2);line-height:1.6}
@@ -3098,7 +3099,15 @@ function renderDetail(){
   else if(node.chapter && !node.section){
     /* 章节容器：子小节概览 */
     const cs = chapterStats(sub, sub.chapters.indexOf(node.chapter));
-    html += `<div class="kv" style="margin-bottom:6px"><span class="k">本章节考点</span><span class="v" style="color:${selColor}">${cs.mastered}/${cs.total} 已掌握</span></div>`;
+    const chapIdx = sub.chapters.indexOf(node.chapter);
+    const dKey = sub.id + '/' + chapIdx;
+    const userDiag = getUserDiagram(dKey);
+    /* 自定义框架图 */
+    html += `<div class="kv" style="margin-bottom:6px"><span class="k">本章节考点</span><span class="v" style="color:${selColor}">${cs.mastered}/${cs.total} 已掌握</span>
+      <button class="iconbtn" data-edit-diagram="${dKey}" style="margin-left:auto;--selc:${selColor}">${userDiag?'✎ 编辑框架图':'+ 添加框架图'}</button></div>`;
+    if(userDiag){
+      html += `<div class="d-block"><div class="db-t"><span class="no dg-badge">图</span>章节框架<span class="hint">STRUCTURE</span></div><div class="dg-wrap">${userDiag.html}</div></div>`;
+    }
     html += `<div class="sub-outline">` + node.chapter.sections.map((sec,si)=>{
       const secPath = `${sub.id}/${sub.chapters.indexOf(node.chapter)}/${si}`;
       const m = sec.topics.length ? null : state.mastery[secPath];
@@ -3177,6 +3186,10 @@ function renderDetail(){
 
   pane.innerHTML = html;
   renderMath(pane);
+  /* 事件：编辑章节框架图 */
+  pane.querySelectorAll('[data-edit-diagram]').forEach(el=>{
+    el.addEventListener('click', ()=> openDiagramEditor(el.dataset.editDiagram));
+  });
 
   /* 事件：掌握状态 */
   const segEl = pane.querySelector('[data-mastery]');
@@ -3466,6 +3479,110 @@ function mdRender(text){
   if(!text) return '';
   try{ return window.marked ? marked.parse(text) : esc(text); }
   catch(e){ return esc(text); }
+}
+
+/* ===== 用户自定义框架图（localStorage） ===== */
+function getUserDiagram(key){
+  try{
+    const raw = localStorage.getItem('user_diagrams');
+    if(!raw) return null;
+    const all = JSON.parse(raw);
+    return all[key] || null;
+  }catch(e){ return null; }
+}
+function saveUserDiagram(key, data){
+  try{
+    const raw = localStorage.getItem('user_diagrams');
+    const all = raw ? JSON.parse(raw) : {};
+    all[key] = data;
+    localStorage.setItem('user_diagrams', JSON.stringify(all));
+  }catch(e){ alert('保存失败：' + e.message); }
+}
+function deleteUserDiagram(key){
+  try{
+    const raw = localStorage.getItem('user_diagrams');
+    if(!raw) return;
+    const all = JSON.parse(raw);
+    delete all[key];
+    localStorage.setItem('user_diagrams', JSON.stringify(all));
+  }catch(e){}
+}
+/* 把缩进文本解析成树结构 -> 渲染成 HTML */
+function outlineToDiagram(text){
+  const lines = text.split('\n').filter(l => l.trim());
+  if(!lines.length) return '';
+  // 解析缩进：每 2 个空格算一层
+  const nodes = lines.map(l => {
+    const m = l.match(/^(\s*)(.*)$/);
+    const depth = Math.floor((m[1].length) / 2);
+    return { depth, text: m[2].trim(), children: [] };
+  });
+  const root = { depth: -1, children: [] };
+  const stack = [root];
+  nodes.forEach(n => {
+    while(stack.length > 1 && stack[stack.length-1].depth >= n.depth) stack.pop();
+    stack[stack.length-1].children.push(n);
+    stack.push(n);
+  });
+  function renderNode(n){
+    if(n.children.length === 0){
+      return `<div class="dg-node leaf">${n.text}</div>`;
+    }
+    const kids = n.children.map(renderNode).join('');
+    return `<div class="dg-branch"><div class="dg-node">${n.text}</div><div class="dg-kids">${kids}</div></div>`;
+  }
+  return `<div class="dg">${root.children.map(renderNode).join('')}</div>`;
+}
+/* 打开编辑器弹窗 */
+function openDiagramEditor(key, currentHtml){
+  const existing = getUserDiagram(key);
+  const curText = existing ? existing.text : '';
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.innerHTML = `<div class="dlg" style="max-width:680px">
+    <div class="dlg-t">编辑章节框架图<button class="dlg-x">×</button></div>
+    <div class="dlg-b">
+      <p style="margin:0 0 10px;color:var(--ink-2);font-size:13px">用缩进表示层级，每缩进 2 个空格算一层。例如：</p>
+      <pre style="background:var(--panel-2);padding:10px;border-radius:8px;font-size:12px;margin:0 0 14px;line-height:1.6">极限
+  数列极限
+    定义（ε-N）
+    性质（唯一性/有界性）
+    计算（两个重要极限/夹逼）
+  函数极限
+    定义（ε-δ）
+    性质
+    计算</pre>
+      <textarea id="diagInput" style="width:100%;height:200px;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;line-height:1.6;resize:vertical" placeholder="在这里输入框架图内容...">${curText}</textarea>
+      <div id="diagPreview" style="margin-top:14px;max-height:300px;overflow:auto"></div>
+    </div>
+    <div class="dlg-f">
+      <button class="btn ghost" id="diagDelete">删除</button>
+      <button class="btn ghost" id="diagPreviewBtn">预览</button>
+      <button class="btn primary" id="diagSave">保存</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const input = overlay.querySelector('#diagInput');
+  const preview = overlay.querySelector('#diagPreview');
+  function doPreview(){
+    preview.innerHTML = '<div class="dg-wrap" style="max-height:280px;overflow:auto"><div class="dg">' + outlineToDiagram(input.value) + '</div></div>';
+  }
+  overlay.querySelector('#diagPreviewBtn').onclick = doPreview;
+  overlay.querySelector('#diagSave').onclick = () => {
+    const text = input.value.trim();
+    if(!text){ deleteUserDiagram(key); }
+    else { saveUserDiagram(key, { text, html: outlineToDiagram(text) }); }
+    overlay.remove();
+    renderDetail();
+  };
+  overlay.querySelector('#diagDelete').onclick = () => {
+    deleteUserDiagram(key);
+    overlay.remove();
+    renderDetail();
+  };
+  overlay.querySelector('.dlg-x').onclick = () => overlay.remove();
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  if(curText) doPreview();
 }
 
 /* 课件 concept：自己做可控的 Markdown 转换 + KaTeX 渲染 */
