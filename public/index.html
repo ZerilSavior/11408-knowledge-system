@@ -2722,7 +2722,7 @@ async function cloudLoad(){
 
 function showLogin(){
   const ov = document.createElement('div');
-  ov.className = 'overlay';
+  ov.className = 'overlay open';
   ov.style.zIndex = '1000';
   ov.innerHTML = `<div class="dlg" style="max-width:380px">
     <div class="dlg-t">考研知识体系<button class="dlg-x" style="display:none">×</button></div>
@@ -3614,7 +3614,7 @@ function openDiagramEditor(key, currentHtml){
   const existing = getUserDiagram(key);
   const curText = existing ? existing.text : '';
   const overlay = document.createElement('div');
-  overlay.className = 'overlay';
+  overlay.className = 'overlay open';
   overlay.innerHTML = `<div class="dlg" style="max-width:680px">
     <div class="dlg-t">编辑章节框架图<button class="dlg-x">×</button></div>
     <div class="dlg-b">
