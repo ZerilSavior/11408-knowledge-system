@@ -1336,6 +1336,66 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
 }
 
+/* ===== 英语词汇模块 ===== */
+#view-words .words-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+#view-words .words-head h2{font-family:var(--font-display);font-size:24px;font-weight:900}
+.w-hero{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:18px}
+.w-herotop{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.w-stats{display:flex;gap:28px;flex-wrap:wrap}
+.w-stat .n{font-family:var(--font-mono);font-size:26px;font-weight:800;line-height:1.1}
+.w-stat .l{font-size:12.5px;color:var(--ink-3)}
+.w-stat .n.g{color:var(--kc-done)}.w-stat .n.r{color:var(--kc-mistake)}
+.w-go{background:var(--ink);color:#fff;border-radius:10px;padding:11px 24px;font-weight:700;font-size:14px;white-space:nowrap}
+.w-go:hover{background:#2A2F36}
+.w-hero .pbar{margin-top:16px;height:8px}
+.w-herosub{font-size:12.5px;color:var(--ink-3);margin-top:8px}
+.w-tabs{margin-bottom:14px}
+.w-search input{width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-size:13.5px}
+.w-search input:focus{outline:none;border-color:var(--ink-2)}
+.w-abc{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.w-abc button{min-width:32px;padding:5px 0;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:12.5px;font-weight:600;color:var(--ink-2);font-family:var(--font-mono)}
+.w-abc button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.w-abc button .badge{color:var(--ink-3);font-size:10px;margin-left:2px}
+.w-abc button.on .badge{color:rgba(255,255,255,.7)}
+.w-list{display:flex;flex-direction:column;gap:8px}
+.w-row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.w-row.s1{border-left:3px solid var(--kc-done)}.w-row.s2{border-left:3px solid var(--kc-wait)}.w-row.s3{border-left:3px solid var(--kc-mistake)}
+.w-main{flex:1;min-width:0}
+.w-word{font-weight:700;font-size:15.5px;font-family:var(--font-mono)}
+.w-phon{color:var(--ink-3);font-size:12.5px;margin-left:8px;font-family:var(--font-mono)}
+.w-mean{color:var(--ink-2);font-size:13px;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.w-rv{flex:none;font-size:11px;font-family:var(--font-mono);white-space:nowrap}
+.w-rv.done{color:var(--kc-done)}.w-rv.due{color:var(--kc-mistake)}.w-rv.up{color:var(--kc-wait)}
+.w-marks{flex:none;display:flex;gap:5px}
+.w-mk{border:1px solid var(--line);border-radius:7px;padding:4px 10px;font-size:12px;font-weight:600;background:var(--panel);white-space:nowrap}
+.w-mk:hover{border-color:var(--ink-2)}
+.w-mk.k1.on{background:var(--kc-done);border-color:var(--kc-done);color:#fff}
+.w-mk.k2.on{background:var(--kc-wait);border-color:var(--kc-wait);color:#fff}
+.w-mk.k3.on{background:var(--kc-mistake);border-color:var(--kc-mistake);color:#fff}
+.w-study{max-width:680px;margin:0 auto}
+.w-sprog{font-size:13px;color:var(--ink-3);margin-bottom:12px;font-family:var(--font-mono)}
+.w-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:52px 32px;text-align:center;min-height:300px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;margin-bottom:20px}
+.w-card .cw{font-size:40px;font-weight:800;font-family:var(--font-mono);letter-spacing:.5px}
+.w-card .cp{font-size:16px;color:var(--ink-3);margin-top:10px;font-family:var(--font-mono)}
+.w-card .cm{margin-top:26px;font-size:16px;color:var(--ink-2);line-height:1.8;display:none}
+.w-card.flipped .cm{display:block}
+.w-card .ctip{margin-top:22px;font-size:12px;color:var(--ink-3)}
+.w-card.flipped .ctip{display:none}
+.w-actions{display:flex;gap:12px}
+.w-act{flex:1;padding:14px 0;border-radius:12px;font-weight:700;font-size:15px;border:1px solid}
+.w-act.a3{background:var(--kc-mistake);border-color:var(--kc-mistake);color:#fff}
+.w-act.a2{background:var(--kc-wait);border-color:var(--kc-wait);color:#fff}
+.w-act.a1{background:var(--kc-done);border-color:var(--kc-done);color:#fff}
+.w-quit{font-size:12.5px;color:var(--ink-3);margin-top:14px;display:block;text-align:center;background:none}
+.w-done{text-align:center;padding:60px 20px}
+.w-done .big{font-size:22px;font-weight:800;margin-bottom:10px}
+.w-done .counts{color:var(--ink-2);margin-bottom:22px;line-height:1.9}
+.w-engmini{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.w-engmini .et{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-2);margin-bottom:6px;gap:8px}
+.w-engmini .pbar{height:6px;margin-bottom:8px}
+.w-engmini .wgo{width:100%;padding:8px;border:1px solid var(--ink);border-radius:8px;font-size:13px;font-weight:700;background:var(--panel)}
+.w-engmini .wgo:hover{background:var(--ink);color:#fff}
+.snav .wbadge{background:var(--kc-mistake);color:#fff;border-radius:999px;font-size:11px;padding:0 7px;font-weight:700;flex:none;align-self:center}
 </style>
 
 </head>
@@ -1677,6 +1737,34 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
     </section>
 
+    </section>
+
+    <!-- ===== 英语词汇 ===== -->
+
+    <section class="view" id="view-words">
+
+      <div class="view-inner">
+
+        <div class="words-head">
+
+          <div>
+
+            <h2>英语词汇 · 考研大纲</h2>
+
+            <div class="nt-sub">艾宾浩斯遗忘曲线 · 1/2/4/7/15/30 天间隔复习</div>
+
+          </div>
+
+          <button class="iconbtn" onclick="location.hash='#/tree/eng'">返回英语考纲</button>
+
+        </div>
+
+        <div id="wordsApp"></div>
+
+      </div>
+
+    </section>
+
   </div>
 
 </div>
@@ -1929,6 +2017,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
 
 
+<script src="data/words.js"></script>
 <script>
 
 /* ============================================================
@@ -6052,7 +6141,7 @@ const SYLLABUS = [
 
 const LS_KEY = 'k408-knowledge-v1';
 
-let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[] };
+let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[], words:{} };
 
 try{
 
@@ -6140,6 +6229,8 @@ function migrateLegacyItems(){
   }
 }
 migrateLegacyItems();
+if(!state.words) state.words={};
+
 ensureAllReviews();
 
 
@@ -6196,6 +6287,8 @@ function cloudSave(immediate){
 
     api('/api/data', 'POST', { key: 'items', value: state.items }).catch(()=>{});
 
+    api('/api/data', 'POST', { key: 'words', value: state.words }).catch(()=>{});
+
     api('/api/data', 'POST', { key: 'drawings', value: state.drawings }).catch(()=>{});
 
     try{
@@ -6233,6 +6326,8 @@ async function cloudLoad(){
       if(r.data.notes) state.notes = Object.assign({}, state.notes, r.data.notes);
 
       if(r.data.items) state.items = mergeItems(state.items, r.data.items);
+
+      if(r.data.words) state.words = mergeWords(state.words||{}, r.data.words);
 
       if(r.data.drawings) state.drawings = Object.assign({}, state.drawings, r.data.drawings);
 
@@ -6557,6 +6652,120 @@ function isSectionOpen(subId, ci, si){ return openState[`${subId}/${ci}/${si}`] 
 
  * ============================================================ */
 
+/* ================= 英语大纲词汇（艾宾浩斯背单词） ================= */
+const WORDS=(typeof window.WORDS_DATA!=='undefined'&&Array.isArray(window.WORDS_DATA))?window.WORDS_DATA:[];
+const WORD_DAILY_DEF=80;
+let wSession=null;
+const wView={letter:'ALL',kw:''};
+function wDailyN(){ return state.wordDaily||WORD_DAILY_DEF; }
+function wEnsure(i){ if(!state.words[i]) state.words[i]={m:0,rv:{stage:0,count:0,last:0,next:Date.now()+RV_DAY}}; return state.words[i]; }
+function wStats(){
+  let learned=0,done=0,due=0; const now=Date.now();
+  for(const k in state.words){ const r=state.words[k]; if(!r||!r.rv)continue; learned++; const c=reviewState(r,now).code; if(c==='done')done++; else if(c==='due')due++; }
+  return {total:WORDS.length,learned,done,due};
+}
+function wDueIdxs(now){ now=now||Date.now(); const a=[]; for(const k in state.words){const r=state.words[k]; if(r&&r.rv&&reviewState(r,now).code==='due')a.push(+k);} return a.sort((x,y)=>(state.words[x].rv.next||0)-(state.words[y].rv.next||0)); }
+function wNewIdxs(n){ const a=[]; for(let i=0;i<WORDS.length&&a.length<n;i++){ if(!state.words[i])a.push(i);} return a; }
+function wGrade(i,g){
+  const r=wEnsure(i),now=Date.now(),rv=r.rv; r.m=g; const first=!rv.last; rv.last=now;
+  if(g===1){
+    if(first){ rv.stage=0; rv.next=now+RV_DAY*REVIEW_INTERVALS[0]; }
+    else { rv.stage=Math.min(rv.stage+1,REVIEW_INTERVALS.length); rv.count=rv.stage;
+           rv.next=rv.stage>=REVIEW_INTERVALS.length?null:now+RV_DAY*REVIEW_INTERVALS[rv.stage]; }
+  } else if(g===2){ rv.next=now+RV_DAY; }
+  else { rv.stage=0; rv.count=0; rv.next=now+RV_DAY; }
+  saveState();
+}
+function mergeWords(local,cloud){
+  const out=Object.assign({},local||{});
+  for(const k in (cloud||{})){ const b=cloud[k]; if(!b||!b.rv)continue; const a=out[k];
+    if(!a||(b.rv.stage||0)>((a.rv&&a.rv.stage)||0)||(b.rv.last||0)>((a.rv&&a.rv.last)||0)) out[k]=b; }
+  return out;
+}
+function wStart(){
+  const due=wDueIdxs(), nw=wNewIdxs(wDailyN());
+  wSession={queue:due.concat(nw),pos:0,stats:{1:0,2:0,3:0},due:due.length,neww:nw.length,flipped:false};
+  renderWords();
+}
+function wQuit(){ wSession=null; renderWords(); }
+function wFlip(){ if(wSession){wSession.flipped=!wSession.flipped; renderWords();} }
+function wAnswer(g){ const s=wSession; if(!s||s.pos>=s.queue.length)return; wGrade(s.queue[s.pos],g); s.stats[g]++; s.pos++; s.flipped=false; renderWords(); }
+function wRvTag(i){ const r=state.words[i]; if(!r||!r.rv)return ''; const c=reviewState(r).code; if(c==='done')return '<span class="w-rv done">已巩固</span>'; if(c==='due')return '<span class="w-rv due">待复习</span>'; return '<span class="w-rv up">'+reviewLabel(r)+'</span>'; }
+function wLetters(){ const m={}; WORDS.forEach((x,i)=>{const L=x[0][0].toLowerCase(); (m[L]=m[L]||[]).push(i);}); return m; }
+function wEsc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function wordEngCard(){
+  const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0;
+  return '<div class="w-engmini"><div class="et"><span>大纲词汇</span><span>'+st.learned+' / '+st.total+' · 巩固 '+st.done+(st.due?' · 待复习 '+st.due:'')+'</span></div>'
+    +'<div class="pbar"><i style="width:'+pct+'%;background:var(--net);display:block;height:100%;border-radius:4px"></i></div>'
+    +'<button class="wgo" onclick="location.hash=\'#/words\'">背单词 / 复习'+(st.due?' ('+st.due+')':'')+'</button></div>';
+}
+function wordSidebarItem(){
+  const st=wStats(), wa=(currentRoute().type==='words');
+  return '<button class="snav '+(wa?'active':'')+'" data-goto="#/words" style="'+(wa?'border-left:3px solid var(--net)':'')+'">'
+   +'<span class="scol" style="background:var(--net);'+(wa?'':'opacity:.5')+'"></span>'
+   +'<span class="sinfo"><span class="sname">英语词汇<span class="en">WORDS</span></span>'
+   +'<span class="smeta">'+st.learned+' / '+st.total+' 已学'+(st.done?' · 巩固 '+st.done:'')+'</span></span>'
+   +(st.due?'<span class="wbadge">'+st.due+'</span>':'<span class="spct" style="color:var(--net)">'+(st.total?Math.round(100*st.learned/st.total):0)+'%</span>')+'</button>';
+}
+function renderWords(){
+  const app=$('#wordsApp'); if(!app)return;
+  if(!WORDS.length){ app.innerHTML='<div class="w-hero">词库数据未加载（data/words.js）。部署后的网址可正常加载；若本地双击打开被浏览器拦截，请通过线上域名访问。</div>'; return; }
+  if(wSession) return renderWordsStudy(app);
+  const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0, leftNew=wNewIdxs(wDailyN()).length;
+  let h='<div class="w-hero"><div class="w-herotop"><div class="w-stats">'
+   +'<div class="w-stat"><div class="n r">'+st.due+'</div><div class="l">待复习</div></div>'
+   +'<div class="w-stat"><div class="n">'+leftNew+'</div><div class="l">今日待学新词（目标 '+wDailyN()+'）</div></div>'
+   +'<div class="w-stat"><div class="n g">'+st.learned+'</div><div class="l">已学 / '+st.total+'</div></div>'
+   +'<div class="w-stat"><div class="n g">'+st.done+'</div><div class="l">已巩固</div></div>'
+   +'</div><button class="w-go" onclick="wStart()">开始今日学习</button></div>'
+   +'<div class="pbar"><i style="width:'+pct+'%;background:var(--net);display:block;height:100%;border-radius:4px"></i></div>'
+   +'<div class="w-herosub">学习队列＝到期复习词 + 今日新词；按艾宾浩斯 1/2/4/7/15/30 天间隔安排：认识推进，模糊明天再见，不认识重置。进度随账号云端同步。</div></div>';
+  h+='<div class="w-tabs"><div class="w-search"><input id="wSearchInput" placeholder="搜索英文单词或中文释义…" value="'+wEsc(wView.kw)+'"></div></div>';
+  h+='<div class="w-abc" id="wAbc"></div><div class="w-list" id="wList"></div>';
+  app.innerHTML=h;
+  renderWordsAbc(); renderWordsList();
+  const si=$('#wSearchInput');
+  si.addEventListener('input',e=>{ wView.kw=e.target.value; wView.letter='ALL'; renderWordsAbc(); renderWordsList(); const n=$('#wSearchInput'); n.focus(); const t=n.value; n.setSelectionRange(t.length,t.length); });
+}
+function renderWordsAbc(){
+  const el=$('#wAbc'); if(!el)return; const Lm=wLetters();
+  let h='<button class="'+(wView.letter==='ALL'?'on':'')+'" data-l="ALL">全部</button>';
+  for(let c=97;c<=122;c++){ const L=String.fromCharCode(c); if(Lm[L]) h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="'+L+'">'+L.toUpperCase()+'<span class="badge">'+Lm[L].length+'</span></button>'; }
+  el.innerHTML=h;
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{wView.letter=b.dataset.l;wView.kw='';renderWords();}));
+}
+function renderWordsList(){
+  const el=$('#wList'); if(!el)return; const Lm=wLetters(); let idxs=[];
+  const kw=wView.kw.trim().toLowerCase();
+  if(kw){ for(let i=0;i<WORDS.length;i++){ const w=WORDS[i]; if(w[0].toLowerCase().includes(kw)||w[2].toLowerCase().includes(kw))idxs.push(i); if(idxs.length>=200)break; } }
+  else if(wView.letter!=='ALL') idxs=(Lm[wView.letter]||[]).slice();
+  if(!kw&&wView.letter==='ALL'){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">选择上方字母浏览词库，或直接搜索单词 / 释义。</div>'; return; }
+  if(!idxs.length){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">没有匹配的单词。</div>'; return; }
+  el.innerHTML=idxs.map(i=>{const w=WORDS[i],r=state.words[i],m=r?r.m:0;
+    return '<div class="w-row s'+m+'"><div class="w-main"><div><span class="w-word">'+wEsc(w[0])+'</span><span class="w-phon">'+wEsc(w[1])+'</span></div><div class="w-mean">'+wEsc(w[2])+'</div></div>'
+      +wRvTag(i)
+      +'<div class="w-marks">'
+      +'<button class="w-mk k3 '+(m===3?'on':'')+'" onclick="wQuick('+i+',3)">不认识</button>'
+      +'<button class="w-mk k2 '+(m===2?'on':'')+'" onclick="wQuick('+i+',2)">模糊</button>'
+      +'<button class="w-mk k1 '+(m===1?'on':'')+'" onclick="wQuick('+i+',1)">认识</button>'
+      +'</div></div>'; }).join('');
+}
+function wQuick(i,g){ wGrade(i,g); renderWordsAbc(); renderWordsList(); }
+function renderWordsStudy(app){
+  const s=wSession;
+  if(!s.queue.length){ app.innerHTML='<div class="w-done"><div class="big">今天没有待学单词</div><div class="counts">到期复习与今日新词都已完成。</div><button class="w-go" onclick="wQuit()">返回词库</button></div>'; return; }
+  if(s.pos>=s.queue.length){
+    app.innerHTML='<div class="w-done"><div class="big">本轮学习完成</div>'
+      +'<div class="counts">共 '+s.queue.length+' 个（复习 '+s.due+' · 新词 '+s.neww+'）<br>认识 '+s.stats[1]+' · 模糊 '+s.stats[2]+' · 不认识 '+s.stats[3]+'</div>'
+      +'<button class="w-go" onclick="wQuit()">返回词库</button></div>'; return;
+  }
+  const i=s.queue[s.pos], w=WORDS[i];
+  app.innerHTML='<div class="w-study"><div class="w-sprog">第 '+(s.pos+1)+' / '+s.queue.length+' 个 · 复习 '+s.due+' · 新词 '+s.neww+'</div>'
+   +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+'</div><div class="cp">'+wEsc(w[1])+'</div><div class="cm">'+wEsc(w[2])+'</div><div class="ctip">点击卡片显示释义</div></div>'
+   +'<div class="w-actions"><button class="w-act a3" onclick="wAnswer(3)">不认识</button><button class="w-act a2" onclick="wAnswer(2)">模糊</button><button class="w-act a1" onclick="wAnswer(1)">认识</button></div>'
+   +'<button class="w-quit" onclick="wQuit()">退出本轮</button></div>';
+}
+
 function renderOverview(){
 
   const heroChips = $('#heroChips');
@@ -6623,6 +6832,8 @@ function renderOverview(){
 
         </button>
 
+        ${s.id==='eng'?wordEngCard():''}
+
       </div>
 
     </div>`;
@@ -6673,6 +6884,8 @@ function renderSidebar(){
     </span>
     <span class="spct" style="color:${dueItems().length?"var(--kc-wait)":"var(--kc-note)"}">${dueItems().length?dueItems().length:state.items.length}</span>
   </button>`;
+  $('#sideNav').insertAdjacentHTML('beforeend', wordSidebarItem());
+
   $('#overallPct').textContent = overallStats().pct + '%';
 
   $('#overallBar').style.width = overallStats().pct + '%';
@@ -6711,6 +6924,12 @@ function currentRoute(){
 
   }
 
+  if(h.indexOf('#/words')===0){
+
+    return {type:'words', path:''};
+
+  }
+
   if(h.startsWith('#/tree/')){
 
     const path = h.slice(7);
@@ -6738,6 +6957,8 @@ function render(){
   $('#view-map').classList.toggle('active', route.type==='map');
   $('#view-map').classList.toggle('active', route.type==='map');
 
+  $('#view-words').classList.toggle('active', route.type==='words');
+
   const curSub = route.type==='tree' ? route.path.split('/')[0] : '';
 
   document.querySelectorAll('#topnav button').forEach(b=>{
@@ -6745,6 +6966,8 @@ function render(){
     let on = false;
 
     if(route.type==='tree') on = b.dataset.nav === '#/tree/'+curSub;
+
+    else if(route.type==='words') on = b.dataset.nav === '#/tree/eng';
 
     else if(route.type==='notes' || route.type==='maps' || route.type==='map') on = b.dataset.nav === '#/notes';
 
@@ -6763,6 +6986,8 @@ function render(){
   else if(route.type==='maps'){ kindFilter='map'; renderNotes(); }
 
   else if(route.type==='map') renderMap();
+
+  else if(route.type==='words') renderWords();
 
   else renderTree();
 
