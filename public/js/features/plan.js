@@ -261,6 +261,34 @@ function planTodayIndex(b){
   return {idx:d,status:d>=b.D?'exammonth':'today'};
 }
 
+/* 今日任务锁定：当天清单首次生成即固定，勾完即完成，不再因掌握而从后续天补新题（未来天仍滚动） */
+function planTodayLockKey(b,day){
+  const ov=(state.planDay&&state.planDay[day.idx])||null, c=b.cfg;
+  return [day.date,ov?JSON.stringify(ov):'def',c.start,c.exam,c.learnEnd,
+    c.hds,c.hco,c.hos,c.hnet,c.mh1,c.mh2,c.mh3,c.hPoli,c.wordPerDay].join('|');
+}
+function planEnsureTodayLock(b,day){
+  if(!day||day.date!==planTodayStr())return day;
+  if(!state.planTodayLock)state.planTodayLock={};
+  const L=state.planTodayLock, key=planTodayLockKey(b,day), index=planLeafIndex();
+  let changed=false;
+  if(!L||L.date!==day.date||L.key!==key||!Array.isArray(L.paths)){
+    const base=day.leaves.map(l=>l.path);
+    let keep=[];
+    if(L.date===day.date&&Array.isArray(L.paths))keep=L.paths.filter(p=>planLeafDone(p)&&base.indexOf(p)<0);
+    L.date=day.date; L.key=key; L.paths=keep.concat(base); changed=true;
+  }
+  const seen={}, leaves=[];
+  L.paths.forEach(p=>{ if(seen[p])return; seen[p]=1; const m=index[p]; if(m)leaves.push(Object.assign({},m)); });
+  day.leaves=leaves;
+  day.mins={c408:0,math:0,poli:0};
+  leaves.forEach(l=>{ if(day.mins[l.mod]!=null)day.mins[l.mod]+=l.w; });
+  if(changed){ try{ saveState(); cloudSave(); }catch(e){} }
+  return day;
+}
+/* 取今天（锁定后）：渲染/侧栏/横幅统一走这里，保证今日清单不随掌握状态滚动补题 */
+function planToday(b){ const ti=planTodayIndex(b); return {ti,day:planEnsureTodayLock(b,b.days[ti.idx])}; }
+
 /* ---------- 手动换题（同模块 · 同时长 · 同级考频 · 1换1 · 过去锁定） ---------- */
 
 /* ---------- 手动换题（同模块 · 同时长 · 同级考频 · 1换1 · 过去锁定） ---------- */
@@ -297,6 +325,7 @@ function planApplyOverrides(days){
 function planSwapCandidates(date,fromPath){
   const b=planBuild(),index=planLeafIndex(); const from=index[fromPath]; if(!from)return [];
   const today=planTodayStr(); const pos={}; b.days.forEach(d=>d.leaves.forEach(l=>{pos[l.path]=d.date;}));
+  const lockNow=(date===today&&state.planTodayLock&&state.planTodayLock.date===date)?state.planTodayLock.paths:null;
   const out=[];
   Object.keys(index).forEach(p=>{
     if(p===fromPath)return; const l=index[p];
@@ -306,6 +335,7 @@ function planSwapCandidates(date,fromPath){
     if(l.mod!=='poli'&&Math.abs((l.lv||0)-(from.lv||0))>1)return;
     const pd=pos[p];
     if(pd===date)return; if(pd&&pd<today)return; if(pd&&pd<date)return;
+    if(lockNow&&lockNow.indexOf(p)>=0)return;
     l._date=pd||''; out.push(l);
   });
   out.sort((a,c)=>{
@@ -331,6 +361,10 @@ function planShowSwap(inner){ const el=planSwapOverlayEl();
 }
 
 function planSwap(date,fromPath,toPath){
+  if(state.planTodayLock&&state.planTodayLock.date===date&&Array.isArray(state.planTodayLock.paths)&&state.planTodayLock.paths.indexOf(fromPath)>=0){
+    if(state.planTodayLock.paths.indexOf(toPath)<0)state.planTodayLock.paths=state.planTodayLock.paths.map(p=>p===fromPath?toPath:p);
+    saveState(); cloudSave(); planCloseSwap(); renderPlan(); renderSidebar(); return;
+  }
   const ov=planOverrides(); if(!ov[date])ov[date]={swaps:[]};
   ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath);
   ov[date].swaps.push({from:fromPath,to:toPath});
@@ -490,7 +524,8 @@ function planGroupLeaves(day){
   order.forEach(mk=>{
     const ls=day.leaves.filter(l=>l.mod===mk); if(!ls.length)return;
     let last=null;
-    html+='<div class="p-grp"><span class="p-dot" style="background:'+colors[mk]+'"></span>'+names[mk]+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h</div>';
+    const gDone=ls.filter(l=>planLeafDone(l.path)).length;
+    html+='<div class="p-grp"><span class="p-dot" style="background:'+colors[mk]+'"></span>'+names[mk]+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h'+(gDone===ls.length?' <b style="color:var(--kc-done)">✓ 已完成</b>':' · '+gDone+'/'+ls.length)+'</div>';
     const lo=(day.leftover&&day.leftover[mk])||0;
     if(lo>=30&&day.custom) html+='<div class="p-leftover">⚠ 有子科已学完，空余 '+(lo/60).toFixed(1)+'h 未安排（按你今天设定的时长，引擎不擅自转给他科）；点「今日各科时长」把它补到未完成科目。</div>';
     ls.forEach(l=>{ if(l.subName!==last){ html+='<div class="p-subgrp">'+l.subName+'</div>'; last=l.subName; } html+=planLeafRow(l,day.date); });
@@ -504,7 +539,7 @@ function planToggleLeaf(path){
 }
 
 function planRefreshCounts(){
-  const b=planBuild(); if(!b)return; const ti=planTodayIndex(b); const day=b.days[ti.idx]; if(!day)return;
+  const b=planBuild(); if(!b)return; const {ti,day}=planToday(b); if(!day)return;
   const td=day.leaves.filter(l=>planLeafDone(l.path)).length;
   const tel=document.getElementById('pTodayProg'); if(tel)tel.textContent=td+' / '+day.leaves.length+' 完成';
   const tb=document.getElementById('pTodayBar'); if(tb)tb.style.width=(day.leaves.length?Math.round(100*td/day.leaves.length):0)+'%';
@@ -546,7 +581,7 @@ function planModAlerts(b){
 function renderPlan(){
   const app=$('#planApp'); if(!app)return;
   if(!planCfg()){ app.innerHTML=planSetupHTML(true); return; }
-  const b=planBuild(),ti=planTodayIndex(b),day=b.days[ti.idx];
+  const b=planBuild(),{ti,day}=planToday(b);
   const ovPct=b.total?Math.round(100*b.done/b.total):0;
   const td=day?day.leaves.filter(l=>planLeafDone(l.path)).length:0;
   const tpct=day&&day.leaves.length?Math.round(100*td/day.leaves.length):0;
@@ -566,6 +601,7 @@ function renderPlan(){
   h+='<div class="p-card" id="planToday"><h3>'+(ti.status==='exammonth'?'真题月 · 今日任务（政治/英语收尾）':'今日学习任务')+(ti.status!=='exammonth'?'<button class="p-daybtn" onclick="planEditDay('+ti.idx+')">⏱ 今日各科时长</button>':'')+'</h3>'
     +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 考点约 '+((day.mins.c408+day.mins.math+day.mins.poli)/60).toFixed(1)+'h＋英语 '+b.hEng+'h（'+planEngLine(day)+'）＋复习机动':'计划已结束')+'</div>';
   if(day&&day.leaves.length)h+=planGroupLeaves(day); else h+='<div class="sub">今天没有新考点，用于真题、错题与薄弱点复盘。</div>';
+  if(day&&day.leaves.length&&td===day.leaves.length)h+='<div class="p-alert ok" style="margin:8px 0"><b>今日考点已全部完成</b>，清单已锁定、不再安排新考点；剩余时间交给英语、错题与艾宾浩斯复习。</div>';
   h+='<div class="p-prog"><span id="pTodayProg">'+td+' / '+(day?day.leaves.length:0)+' 完成</span><div class="pbar" style="flex:1"><i id="pTodayBar" style="width:'+tpct+'%;background:var(--kc-done)"></i></div><span>'+tpct+'%</span></div>';
   h+='</div>';
   h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.days.length+' 天':'从今天起 7 天（可展开全部）')+' · 高频先学、新旧穿插，⇄可换同时长同级题</div>'
@@ -594,7 +630,7 @@ function planToggleAll(){ pShowAll=!pShowAll; renderPlan(); }
 function planSidebarItem(){
   const route=currentRoute(),on=route.type==='plan';
   let meta='四大模块排期';
-  try{ const b=planBuild(); if(b){ const ti=planTodayIndex(b); const day=b.days[ti.idx];
+  try{ const b=planBuild(); if(b){ const {ti,day}=planToday(b);
     const td=day?day.leaves.filter(l=>planLeafDone(l.path)).length:0;
     meta=(day&&day.leaves.length)?('今日 '+td+'/'+day.leaves.length):(ti.status==='exammonth'?'真题月':'新学已结束'); } }catch(e){}
   return '<button class="snav '+('')+'" data-goto="#/plan" style="'+(on?'border-left:3px solid var(--kc-wait)':'')+'">'
@@ -604,7 +640,7 @@ function planSidebarItem(){
 }
 
 function planOverviewBanner(){
-  try{ const b=planBuild(); if(!b)return ''; const ti=planTodayIndex(b); const day=b.days[ti.idx];
+  try{ const b=planBuild(); if(!b)return ''; const {ti,day}=planToday(b);
     if(!day)return '';
     const td=day.leaves.filter(l=>planLeafDone(l.path)).length;
     const eng=planEngLine(day);
@@ -614,5 +650,5 @@ function planOverviewBanner(){
   }catch(e){ return ''; }
 }
 
-Object.assign(globalThis, { PLAN_EXAM_DEF, PLAN_LEAF_MINS, PLAN_LEARNED_MINS, PLAN_POLI_MINS, PLAN_POLI_CAP_DATE, PLAN_WORD_DEF, LEARNED_CHAPTERS_DEFAULT, PLAN_C408_SUBS, PLAN_MATH_SUBS, PLAN_POLI_SUBS, PLAN_C408_DEF, PLAN_MATH_DEF, planCfg, planTodayStr, planFmt, planParse, planAddDays, planDiff, PLAN_WD, planWd, planTopicName, planLeafTitle, planDefaultLearnEnd, wRoundLearned, planWordPerDay, planSubH, learnedChapters, isLearnedChapter, isLearnedPath, leafMins, toggleLearnedChapter, planPoliNoteDone, planLeafDone, planMastered, planCollect, planSubQueue, planPoliQueue, planPoliCapH, planReadingBuildSafe, planReadingForDate, planBuild, planTodayIndex, planOverrides, planLeafIndex, planApplyOverrides, planSwapCandidates, planSwapOverlayEl, planCloseSwap, planShowSwap, planSwap, planUndoSwap, planOpenSwap, planDayOverlayEl, planCloseDay, planEditDay, planSaveDay, planResetDay, planSetupHTML, planSave, pShowAll, planLeafRow, planGroupLeaves, planToggleLeaf, planRefreshCounts, planEngLine, planTimelineHTML, planGoWords, planModAlerts, renderPlan, planToggleAll, planSidebarItem, planOverviewBanner });
-export { PLAN_EXAM_DEF, PLAN_LEAF_MINS, PLAN_LEARNED_MINS, PLAN_POLI_MINS, PLAN_POLI_CAP_DATE, PLAN_WORD_DEF, LEARNED_CHAPTERS_DEFAULT, PLAN_C408_SUBS, PLAN_MATH_SUBS, PLAN_POLI_SUBS, PLAN_C408_DEF, PLAN_MATH_DEF, planCfg, planTodayStr, planFmt, planParse, planAddDays, planDiff, PLAN_WD, planWd, planTopicName, planLeafTitle, planDefaultLearnEnd, wRoundLearned, planWordPerDay, planSubH, learnedChapters, isLearnedChapter, isLearnedPath, leafMins, toggleLearnedChapter, planPoliNoteDone, planLeafDone, planMastered, planCollect, planSubQueue, planPoliQueue, planPoliCapH, planReadingBuildSafe, planReadingForDate, planBuild, planTodayIndex, planOverrides, planLeafIndex, planApplyOverrides, planSwapCandidates, planSwapOverlayEl, planCloseSwap, planShowSwap, planSwap, planUndoSwap, planOpenSwap, planDayOverlayEl, planCloseDay, planEditDay, planSaveDay, planResetDay, planSetupHTML, planSave, pShowAll, planLeafRow, planGroupLeaves, planToggleLeaf, planRefreshCounts, planEngLine, planTimelineHTML, planGoWords, planModAlerts, renderPlan, planToggleAll, planSidebarItem, planOverviewBanner };
+Object.assign(globalThis, { PLAN_EXAM_DEF, PLAN_LEAF_MINS, PLAN_LEARNED_MINS, PLAN_POLI_MINS, PLAN_POLI_CAP_DATE, PLAN_WORD_DEF, LEARNED_CHAPTERS_DEFAULT, PLAN_C408_SUBS, PLAN_MATH_SUBS, PLAN_POLI_SUBS, PLAN_C408_DEF, PLAN_MATH_DEF, planCfg, planTodayStr, planFmt, planParse, planAddDays, planDiff, PLAN_WD, planWd, planTopicName, planLeafTitle, planDefaultLearnEnd, wRoundLearned, planWordPerDay, planSubH, learnedChapters, isLearnedChapter, isLearnedPath, leafMins, toggleLearnedChapter, planPoliNoteDone, planLeafDone, planMastered, planCollect, planSubQueue, planPoliQueue, planPoliCapH, planReadingBuildSafe, planReadingForDate, planBuild, planTodayIndex, planTodayLockKey, planEnsureTodayLock, planToday, planOverrides, planLeafIndex, planApplyOverrides, planSwapCandidates, planSwapOverlayEl, planCloseSwap, planShowSwap, planSwap, planUndoSwap, planOpenSwap, planDayOverlayEl, planCloseDay, planEditDay, planSaveDay, planResetDay, planSetupHTML, planSave, pShowAll, planLeafRow, planGroupLeaves, planToggleLeaf, planRefreshCounts, planEngLine, planTimelineHTML, planGoWords, planModAlerts, renderPlan, planToggleAll, planSidebarItem, planOverviewBanner });
+export { PLAN_EXAM_DEF, PLAN_LEAF_MINS, PLAN_LEARNED_MINS, PLAN_POLI_MINS, PLAN_POLI_CAP_DATE, PLAN_WORD_DEF, LEARNED_CHAPTERS_DEFAULT, PLAN_C408_SUBS, PLAN_MATH_SUBS, PLAN_POLI_SUBS, PLAN_C408_DEF, PLAN_MATH_DEF, planCfg, planTodayStr, planFmt, planParse, planAddDays, planDiff, PLAN_WD, planWd, planTopicName, planLeafTitle, planDefaultLearnEnd, wRoundLearned, planWordPerDay, planSubH, learnedChapters, isLearnedChapter, isLearnedPath, leafMins, toggleLearnedChapter, planPoliNoteDone, planLeafDone, planMastered, planCollect, planSubQueue, planPoliQueue, planPoliCapH, planReadingBuildSafe, planReadingForDate, planBuild, planTodayIndex, planTodayLockKey, planEnsureTodayLock, planToday, planOverrides, planLeafIndex, planApplyOverrides, planSwapCandidates, planSwapOverlayEl, planCloseSwap, planShowSwap, planSwap, planUndoSwap, planOpenSwap, planDayOverlayEl, planCloseDay, planEditDay, planSaveDay, planResetDay, planSetupHTML, planSave, pShowAll, planLeafRow, planGroupLeaves, planToggleLeaf, planRefreshCounts, planEngLine, planTimelineHTML, planGoWords, planModAlerts, renderPlan, planToggleAll, planSidebarItem, planOverviewBanner };
