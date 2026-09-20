@@ -822,3 +822,24 @@ git push origin main
   * math 未改（共 8 本）：用户点名的「张宇·基础30讲」「郭雨港·数一所有题型分类、通用解法详解（通解）」本就在列。
 * 验证：`check_modules.py` BAD=0；`test_books.js` 15 项、`test_plan.js` 59 项全绿；CDP（verify_locator.py，本地 http + 无头 Chrome）政治 datalist=7、408=14（8 本新书全在）、数学=8（张宇30讲 / 郭雨港通解在），首位与默认 kind=辅导讲义，input 的 list 关联成功，选「里昂25计组讲义 + P12」保存闭环正确、弹窗关闭，全程零 Runtime / console 异常。
 * 改动文件：`public/index.html`（locatorOverlay：option 顺序、input 加 list、新增 datalist 元素）、`public/js/features/study-loop.js`（DEFAULT_BOOKS 追加、openLocatorEditor 内联填充 datalist，未新增需导出的顶层符号）。
+
+
+## 18. 批 18：今日任务锁定（修「做完仍不停推新、永远做不完」）（2026-09-20）
+
+> 诉求（bug）：今日任务里某模块（如政治，今日 2 个考点）勾选掌握后，页面不显示完成，反而不断把后续天的考点前移补满当天配额，今日总数恒定、进度到不了 100%，「根本没有做完的时候」。要求：当天任务做完就显示完成、不再推新。
+
+* 根因：`features/plan.js` 的 `planBuild()` 每次渲染都用「当前未掌握队列」（`planSubQueue` / `planPoliQueue` 都 `.filter(l=>!planLeafDone(l.path))`）重新按天装箱，今日 `day.leaves` 是**滚动结果而非固定快照**；勾选掌握 → 该点出队 → 后面天的题前移补满当天时长，故今日总数不变。
+* 方案：只锁「真实今天」的清单（`state.planTodayLock`，懒创建），未来天保持滚动（提前完成自然前移，合理）；过去天 / 计划未开始的未来首日不锁。
+  * 新增 `planTodayLockKey(b,day)`：签名 = 当天日期 + 当天自定义时长（`state.planDay[idx]` 有无/内容）+ 计划模板（start/exam/learnEnd、408 四子科 hds/hco/hos/hnet、数学 mh1/mh2/mh3、政治 hPoli、wordPerDay）。日期变、改当天时长、改计划设置都会失配重建。
+  * 新增 `planEnsureTodayLock(b,day)`：仅当 `day.date===planTodayStr()` 生效；无锁 / 日期不符 / key 不符 / paths 非数组则以当前滚动 `day.leaves` 的 paths 为 base 重建，并把「同一把旧锁里今天已完成、但不在新 base」的 paths 保留在最前（改时长后已完成项不丢、分母不虚降）；随后用 `planLeafIndex()` 元数据重建 `day.leaves`、重算 `day.mins`；changed 时 saveState + cloudSave（同一天 key 稳定后只写一次）。空清单（真题月 / 已学完）也锁定，不反复写。
+  * 新增 `planToday(b)` 统一返回 `{ti,day:planEnsureTodayLock(...)}`；`renderPlan`、`planRefreshCounts`、`planSidebarItem`、`planOverviewBanner` 四处取今日全部改走它，保证进度口径一致、勾选后今日不补新、td 能到 len/len=100%。
+  * 手动换题：`planSwap` 对今天（锁为当天且 from 在锁内）直接替换 `lock.paths` 里的 from→to 并重渲染，不走 planOverrides；未来天维持原 overrides。`planSwapCandidates` 对今天额外排除已在 `lock.paths` 的题（新增局部 `lockNow`）。
+  * UI：每个模块组标题显示 `doneN/总数`，整组完成显示「✓ 已完成」（`planGroupLeaves`）；今日全部完成时在今日卡片显示绿色「今日考点已全部完成，清单已锁定、不再安排新考点…」（renderPlan）。
+* 云同步（`core/cloud.js`）：cloudSave 增 `key:'planTodayLock'` 推送；cloudLoad 增 `if(r.data.planTodayLock) state.planTodayLock=r.data.planTodayLock`（旧日期 / key 不符会在 planEnsureTodayLock 自动重建，故直接采用即可）。**注意 `state.planDay`（当天自定义时长）历史上一直未纳入云同步，本次仍未加**，多设备当天时长各自本地；planTodayLock 跨设备若两端当天时长不同会按各自 key 重建，单用户主力设备无影响。
+* 验证：
+  * `check_modules.py` BAD=0；`test_plan.js` 59 项、`test_books.js` 15 项保持全绿（锁定逻辑放在渲染包裹层，未改纯函数 `planBuild`，故原 59 项不受影响）。
+  * 新增 `test_today_lock.js` 13 项全绿：首日锁定 21 个（408 8 / 数一 11 / 政治 2）；完成 3 个后今日总数与路径集合不变（不补新）、计数=3；政治 2 个做完后政治组仍 2 个且全完成；全部做完 21/21；改当天时长后锁重建、已完成保留、出现新未完成题。
+  * CDP（`verify_today_lock.py`，本地 http + 无头 Chrome，注入今日开始的计划）：初始 0/21；政治两点打勾后总数仍 21、政治组「✓ 已完成」、进度 2/21，再次重渲染稳定不补；全部打勾后 21/21、三组均「✓ 已完成」、出现全部完成提示；全程零 Runtime / console 异常。（截图前景未登录云同步登录框为既有行为，与本次无关。）
+* 版本 / 提交：线上 Version **6c2d962f-6e0b-4a1c-8077-248b0051bd99**（仅上传 /js/features/plan.js、/js/core/cloud.js 两个变更资产）；commit **bf1e716**（本地=origin/main）。
+* 改动文件：`public/js/features/plan.js`（新增 planTodayLockKey / planEnsureTodayLock / planToday，renderPlan / planRefreshCounts / planSidebarItem / planOverviewBanner / planSwap / planSwapCandidates / planGroupLeaves 改造，末尾 Object.assign 与 export 各加 3 个新符号）、`public/js/core/cloud.js`（planTodayLock push/pull）。
+* 工作目录（未入库）新增：`patch_today_lock.py`、`test_today_lock.js`、`verify_today_lock.py`、截图 lock_init/lock_poli_done/lock_all_done.png。
