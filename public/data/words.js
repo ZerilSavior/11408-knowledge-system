@@ -1,5 +1,5 @@
 /* 考研英语词汇：大纲5489+红宝书+核心/拓展词组，全局字母序、同词去重合并来源；共 8044 条 */
-window.WORDS_DATA=[
+const WORDS_DATA=[
 ["a ban on sth","/","usage.禁令，禁…令","核心词组"],
 ["a band of","/","usage.一群，一帮(志趣相投的人)","拓展词组"],
 ["a battery of","/","usage.一排，一组，一连串","拓展词组"],
@@ -8045,3 +8045,6 @@ window.WORDS_DATA=[
 ["zoo","/zu:/","n.动物园",""],
 ["zoom","/zu:m/","vi.(飞机)陡升 n.陡升；嗡嗡声",""]
 ];
+
+Object.assign(globalThis, { WORDS_DATA });
+export { WORDS_DATA };
