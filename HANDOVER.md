@@ -3,7 +3,7 @@
 > 拿到本文档即可接手项目。最后更新：2026-09-20。
 > 一句话：一个
 >
-> **单文件原生 JS 单页应用（SPA）**
+> **零构建原生 ES Modules 单页应用（SPA，批 10 已模块化，详见文末「批 10：架构级重构」）**
 >
 > ，以考研大纲为骨架的多科知识图谱 + 进度 / 笔记 / 错题 / 背单词 / 个性化学习计划，前端纯静态，后端只用 Cloudflare Workers + D1 做
 >
@@ -25,7 +25,7 @@
 
 * **批 6–批 8（2026-09-20 上线，Version 6a52e374，详见文末「批 6–批 8 更新」一节）**：①真题模考 36 天 / 18 周期日程 + Cloudflare R2 试卷照片上传；②词库由 5489 扩充到 **8044**（大纲+红宝书+核心/拓展词组，带来源标签）；③数学 33 个高频题型按近 15 年真题次数**精确映射到章节**（框架来自郭雨港《数一所有题型分类、通用解法详解》，考频数据来自抖音 @晨曦学长）；④个性化排期引擎 **v2**（18h 四大模块时间盒、408/数一高频优先、政治按章节顺序与时间上限、模块/单词/阅读可行性预警、同级考点手动换题且时长守恒）；⑤英语**阅读打卡**（新东方基础 100+强化 100 共 200 篇，单词一轮后启动、每天≤4 篇）。
 
-* 主改造文件只有一个：`public/index.html`（约 1.06 万行、1.6 MB）。绝大多数需求都改这一个文件。
+* **批 10（2026-09-20）已做架构级模块化重构并上线（前端 commit 7917bef / 后端 fb00ec4，Version fa5e61e0）**：前端不再是单文件，`public/index.html` 瘦身为静态骨架，业务拆到 `public/js/` 下 19 个 ES Module、CSS 外置到 `public/styles/`；后端 `_worker.js` 拆为 `worker/` 下 7 个 ESM。**功能与重构前完全等价**。新结构、机制、验证方式见文末「批 10：架构级重构」，改功能先看那一节定位模块。
 
 
 
@@ -66,11 +66,11 @@
 
 
 
-* **前端**：原生 HTML + CSS + JavaScript，**无框架、无构建步骤**。hash 路由（`#/home`、`#/tree/...`、`#/words`、`#/plan`、`#/notes` 等）。
+* **前端**：原生 HTML + CSS + JavaScript，**无框架、无构建步骤（批 10 起为原生 ES Modules 多文件，浏览器直接跑、无需打包工具，见文末「批 10」）**。hash 路由（`#/home`、`#/tree/...`、`#/words`、`#/plan`、`#/notes` 等）。
 
 * **第三方库（CDN，带 SRI）**：`marked@12.0.2`（Markdown 渲染）、`KaTeX 0.16.11` + `contrib/auto-render`（数学公式）、`highlight.js 11.9.0`（代码高亮）。思维导图 / 框架图是**自研 canvas**（非 mermaid）。
 
-* **后端**：`_worker.js`（Cloudflare Worker）。
+* **后端**：Cloudflare Worker，批 10 起拆为 `worker/` 下 7 个原生 ESM——`index.js`（default fetch 入口/路由/异常兜底）+ `http.js`（JSON/CORS）、`crypto.js`（sha256/base64/令牌）、`schema.js`（三表幂等建表）、`auth.js`（注册/登录/Bearer 鉴权）、`data.js`（每用户 KV）、`photos.js`（R2，userId 目录隔离）；`wrangler.jsonc` 的 `main` 指向 `worker/index.js`，wrangler 自动打包，部署形态不变。
 
 
   * 静态资源：`public/` 目录由 Workers Assets 直接托管。
@@ -93,27 +93,20 @@
 
 ```
 408-knowledge-system/
-
 ├─ public/
-
-│  ├─ index.html          # ★ 主产物，几乎所有功能都在这（单文件 SPA）
-
-│  └─ data/
-
-│     └─ words.js          # window.WORDS\_DATA=\[\[word,phonetic,meaning],...]，5489 词
-
-├─ \_worker.js              # Cloudflare Worker：登录 + 通用 KV 同步
-
-├─ wrangler.jsonc          # 部署配置（assets=./public，D1 binding）
-
-├─ server.js               # 早期本地同步服务器（现已基本不用，主链路是 Worker）
-
-├─ package.json
-
-├─ README.md / DEPLOY\*.md   # 早期部署笔记
-
-├─ \_backup/                # ★ 每次大改前的 index.html 备份（index-pre-batchN-时间戳.html）
-
+│  ├─ index.html        # 瘦入口：静态 HTML 骨架 + CDN，body 末 <script type=module src=/js/main.js>
+│  ├─ js/               # ★ 前端业务（原生 ES Modules，批 10 起）
+│  │  ├─ main.js        # 入口：按序 import 词库+全部模块并聚合，末尾执行启动序列
+│  │  ├─ data/          # 内容数据层：diagrams.js / syllabus.js(考纲树+SUBJECT_SCORES+FREQ) / topic-content.js(考点四维内容)
+│  │  ├─ core/          # 核心层：store(状态+localStorage) / cloud(登录云同步) / util / md-render / ui-shell(侧栏+主渲染render+树+详情) / bootstrap / app-init(init)
+│  │  └─ features/      # 功能层：study-loop(学习闭环+排期引擎+书源错因) / words(词汇+卡片) / reading / exams(真题+R2) / mindmap(726速记) / notes(笔记/错题/学习记录) / drawings(框架图) / maps(思维导图)
+│  ├─ styles/           # 外置 CSS：base.css、exam.css
+│  └─ data/             # 词库与导图（ESM 化）：words.js(WORDS_DATA 8044) / word-rel.js(WORD_REL) / words-rare.js(WORDS_RARE) / mindmap/p001..p726.jpg
+├─ worker/              # ★ 后端（批 10 起 7 个 ESM）：index/http/crypto/schema/auth/data/photos.js
+├─ wrangler.jsonc       # main=worker/index.js，assets.directory=./public，D1 binding DB、R2 binding PHOTOS
+├─ start-web.bat        # 本地一键预览（起静态服务器并开浏览器，替代 file:// 双击，批 10 新增）
+├─ server.js / package.json  # 早期零依赖 Node 本地服务器（与 Worker 部署无关；勿给 package.json 加 type:module）
+├─ HANDOVER.md / README.md / DEPLOY*.md
 └─ .git/
 ```
 
@@ -262,11 +255,9 @@ state = {
 
 
 
-* **最简单**：直接双击 `public/index.html`（file:// 即可运行；words.js 用 `<script src>` 已兼容）。
-
-* 起本地静态服务（更接近线上）：在 `public/` 目录 `npx serve .` 或 `python -m http.server`。
-
-* 云同步在本地 file:// 也能调通 Worker（跨域已允许），需登录。
+* **批 10 起不能再双击 `public/index.html`**：前端改为 ES Modules，`file://` 下浏览器因 CORS 拦截模块加载，会出现页面空白 / 静默不执行。
+* **本地预览（推荐）**：双击项目根的 `start-web.bat`（自动执行 `python -m http.server 8123 --directory public` 并打开 http://127.0.0.1:8123/index.html）；或手动在项目根运行该命令后访问同一地址。停止服务在该窗口按 Ctrl+C。
+* 线上 https 不受影响；本地静态服务器同样能调通 Worker（CORS 已允许），登录 / 云同步可正常用。
 
 
 
@@ -695,3 +686,61 @@ git push origin main
 3. 手动天因 60/30min 粒度用不满非整点时长会留 30min 零头，如实 leftover 提示、未跨科凑整；若用户要零头自动凑整再改 consumeModule。
 4. 导图卡片是否纳入艾宾浩斯调度未定，当前只做翻页+页码进度。
 5. 英语掌握率三项权重 0.60/0.25/0.15 为拟定，可按用户反馈调。
+
+***
+
+## 14. 批 10：架构级重构（高内聚低耦合，2026-09-20 上线）
+
+> 动因：用户指出「AI 味道重，前端只写在一个 html、后端不分模块」，要求按功能 / 逻辑拆分、高内聚低耦合，且**功能必须完全不变、线上照常部署**。重构前最后上线基线 commit **0f72679**（线上 Version ff6a9a10），重构后前端 **7917bef**、后端 **fb00ec4**，线上 Version **fa5e61e0**。
+
+### 14.1 技术路线（已拍板）
+
+* **零构建原生 ES Modules，不引入 Vite/esbuild/任何打包器**：浏览器原生支持，部署仍是纯静态 Assets + Worker，wrangler 仅对 Worker 端 ESM 做自动打包。
+* 前端 `public/js/{data,core,features}/*.js`，入口 `<script type="module" src="/js/main.js">`；CSS 与词库数据物理分离。
+* 后端 Workers 原生 ESM 多文件（`worker/`），`wrangler.jsonc` main 改为 `worker/index.js`。
+* 代价：`file://` 双击失效（ESM 的 CORS 限制），本地预览改走静态服务器（`start-web.bat`，见第 6 节）；线上 https 不受影响。
+
+### 14.2 前端模块划分与加载顺序
+
+`main.js` 按固定顺序 import（该顺序即模块求值顺序，也是自挂全局的先后）：
+3 个词库（`../data/words.js`、`words-rare.js`、`word-rel.js`）→ `data/diagrams,syllabus,topic-content` → `core/store,cloud,util,md-render,ui-shell` → `features/study-loop,words,reading,exams,mindmap,notes,drawings,maps` → `core/bootstrap,app-init`。
+分层职责：
+
+* **data/**：纯内容数据，无 DOM 逻辑。`syllabus.js` 导出 `SYLLABUS / SUBJECT_SCORES / FREQ`（14 学科 690 叶子）；`topic-content.js` 文件头 `import { SYLLABUS } from './syllabus.js'`，按学科 Object.assign 拼 `TOPIC_CONTENT`；`diagrams.js` 为内置导图。
+* **core/**：跨功能基础设施。`store.js`（state + localStorage `k408-knowledge-v1` + saveState/migrate）、`cloud.js`（authToken/api/cloudSave/cloudLoad/showLogin/MASTERY，含匿名 initAuth 自执行 IIFE）、`util.js`、`md-render.js`（marked+KaTeX+highlight 配置）、`ui-shell.js`（renderSidebar / render 主分发 / renderTree / 考频排序 / buildTreeRows / **renderDetail 整函数**）、`bootstrap.js`（侧栏折叠等启动绑定）、`app-init.js`（`init()`，被 main 末尾调用）。
+* **features/**：一个文件一个功能域，彼此尽量不直接耦合，跨文件能力统一走 globalThis 上的共享符号（见 14.3）。`study-loop.js` 承载学习闭环与排期引擎（planBuild/planSwapCandidates/书源 BOOK_GROUPS/错因/掌握判定，含占位空函数 cloudInit）。
+
+### 14.3 ★关键机制：模块末尾自挂 globalThis（接手必懂，最易踩坑）
+
+* 每个模块在**自身求值末尾**立即执行 `Object.assign(globalThis, { ...本模块导出符号 }); export { ... };`；词库数据文件同样 `const X=...; Object.assign(globalThis,{X}); export{X};`。`main.js` 末尾再做一次全量 Object.assign 兜底。
+* **为什么不能只在 main.js 聚合**：ESM 的 import 在「模块求值阶段」就会运行各模块顶层代码，而 main.js 里的 Object.assign 要等**整棵模块图求值完成**后才执行。例如 `ui-shell.js` 顶层就引用了 `syllabus.js` 的 `FREQ`，若此刻 globalThis.FREQ 尚未挂上，会抛 `ReferenceError: FREQ is not defined`，且静态模块图会**静默中止**（不报 Runtime.exceptionThrown，表现为零异常但全站空白，只能靠动态 `import('/js/main.js').catch(e=>...)` 抓到真因）。让每个模块一求值完就自挂，按 main.js 的 import 顺序，先求值的先挂、后求值模块的顶层初始化即可引用。
+* 因此**新增顶层函数 / 常量后，务必把名字加进该模块末尾的 Object.assign 与 export 清单**，否则跨模块或被 init/事件回调引用时会 `is not defined`。
+
+### 14.4 重构过程踩过并修复的三个机械拆分坑（拆分器已修好，重跑不会再犯）
+
+1. **切段边界切在函数体内**：首版按功能分区 banner 注释的物理位置切段，但「我的学习记录」等 banner 实际写在 `renderDetail` 函数**体内**，把函数拦腰切断导致括号不平衡。修复：所有边界一律对齐到「其后第一个列 0 顶层声明行首」。
+2. **全局聚合时机太晚**：即 14.3，改为每模块求值末尾自挂。
+3. **顶层声明扫描漏 `async function`**：首版正则只认 `function/const/let/var`，漏掉 `cloudLoad`、`cloudInit` 等异步函数（顶层声明 388→395），导致 init() 报 `cloudInit is not defined`。修复：声明识别正则为 `^(?:async\s+function|function|const|let|var)\s+(name)`。匿名自执行 IIFE（如 cloud.js 的 initAuth）无需导出，正确地不被扫描。
+
+### 14.5 后端模块（与原 `_worker.js` 逐行等价）
+
+`index.js`（非 /api 走 env.ASSETS、OPTIONS 返 204、每请求 ensureSchema、register/login 免鉴权、其余 authenticate 取 userId、无效 401、分发 data/photos、try/catch 兜底 500）；`schema.js`（users/sessions/user_data 三表 CREATE IF NOT EXISTS）；`auth.js`（用户名≥2 密码≥4、UNIQUE 返「用户名已存在」、SHA-256 校验、token=双 randomUUID）；`data.js`（GET 读全部 KV、POST UPSERT）；`photos.js`（R2 上传剥 dataURL→atob、12MB 上限 413、key 强制 `userId+'/'` 前缀、越权 GET 裸 403 / DELETE json 403、私有 immutable 缓存头）；`http.js` / `crypto.js` 为工具。**所有 SQL、阈值、错误文案、CORS（反射 Origin，GET,POST,PUT,DELETE,OPTIONS）与原文件逐字保留**，已人工逐行核对。
+
+### 14.6 测试 harness 改造（重要）
+
+旧 `test_plan.js`（59 项断言）/ `test_books.js`（15 项）原本从单文件 index.html 切内联 `<script>` 再 `new Function` 注入 mock；重构后无内联脚本。新增 **`bundle_harness.js`**（在会话工作目录 `…/new-chat-4/`，未入库）：按 main.js 顺序读取词库 + 18 模块，正则去掉 `import` 行与 `export {...}` 行（保留 Object.assign 全局自挂），拼成单段 code，沿用同一套 DOM/localStorage 万能 Proxy mock（WORDS_DATA 用 8044 条 `['w'+i,'/','x']` 假数据），以 `new Function` 执行并 return 指定符号。两个测试改为 `require('./bundle_harness.js').load('符号1,符号2,...')`。重构未改业务逻辑，**59 + 15 项全绿**（计划排期、自定义时长动态装箱、配额转移、换题守恒、阅读窗口、书源去重重映射等）。新增断言时在对应 test_*.js 里加，load 的符号清单按需补。
+
+### 14.7 验证三件套（CDP 无头 Chrome，脚本在会话工作目录，未入库）
+
+* `check_modules.py`：把 `public/js`、`public/data`、`worker` 下所有 JS 复制成临时 `.mjs` 跑 `node --check`，输出 `BAD=N`（项目根 package.json 非 ESM，故须复制成 .mjs 检查）。
+* `runtime_check.py`：起 `python -m http.server --directory public`（端口 8123 / CDP 9371），无头 Chrome 重载后收集 Runtime.exceptionThrown / console.error，校验全局符号、14 学科、8044 词、总览侧栏 159 节点 / 14 卡、各 hash 路由渲染，应**异常=0**。
+* `detail_check.py`：直接定位叶子路由（如 `#/tree/co/2/5/1` Cache 映射 46 个 KaTeX、`#/tree/math1/0/0/0` 13 个），验证 Markdown/公式/掌握条件/学习记录区块。
+* `online_check.py`：经系统代理 127.0.0.1:11304 用无头 Chrome 打开线上 https://zeril.cn/ ，校验全部模块资源 200、渲染与零异常（部署后回归用）。
+* 注意 file:// 跑不了 ESM，所有浏览器自动化都必须先起 http.server 打开 http://127.0.0.1；端口 / profile 冲突就换新值。
+
+### 14.8 部署 / 回滚 / 后续怎么改
+
+* 部署形态与凭据、代理（127.0.0.1:11304）、令牌（cfut_ 票据，环境变量传入、禁入库）、边缘传播等待，均同第 7、8 节；`npx wrangler deploy` 会自动打包 worker/ 多文件、按 hash 增量上传 Assets。
+* 回滚点：重构前 commit **0f72679**（单文件前端 + 单文件 `_worker.js`）。`git checkout 0f72679 -- public worker _worker.js wrangler.jsonc` 可整体回退（注意重构后新增了 public/js、public/styles、worker 目录，回退后需删除这些目录并恢复 index.html / data 词库 / _worker.js）。
+* **拆分器 `split_frontend.py`（会话工作目录，未入库）幂等可重跑**：它从 0f72679 的单文件机械切出全部前端模块（含 14.3/14.4 的全部修复）。想重新生成时先 `git checkout 0f72679 -- public/index.html public/data/words.js public/data/words-rare.js public/data/word-rel.js` 恢复单文件基线，再跑 split_frontend.py + check_modules.py；`js/`、`styles/` 是生成物会被覆盖。**日常迭代不要重跑拆分器**（会覆盖手工修改），直接改对应 `public/js/**` 模块即可。
+* 改功能定位：考纲 / 考点内容 → `js/data/`；学习状态 / 云同步 → `js/core/store.js`、`cloud.js`；侧栏 / 树 / 详情布局 → `js/core/ui-shell.js`；计划 / 打卡 / 掌握判定 / 书源 → `js/features/study-loop.js`；词汇 → `features/words.js`；真题 / 照片 → `features/exams.js` + `worker/photos.js`；登录 / 数据 API → `worker/auth.js`、`data.js`。改完按 14.7 跑回归，再 commit / deploy / push。
