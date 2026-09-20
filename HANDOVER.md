@@ -843,3 +843,34 @@ git push origin main
 * 版本 / 提交：线上 Version **6c2d962f-6e0b-4a1c-8077-248b0051bd99**（仅上传 /js/features/plan.js、/js/core/cloud.js 两个变更资产）；commit **bf1e716**（本地=origin/main）。
 * 改动文件：`public/js/features/plan.js`（新增 planTodayLockKey / planEnsureTodayLock / planToday，renderPlan / planRefreshCounts / planSidebarItem / planOverviewBanner / planSwap / planSwapCandidates / planGroupLeaves 改造，末尾 Object.assign 与 export 各加 3 个新符号）、`public/js/core/cloud.js`（planTodayLock push/pull）。
 * 工作目录（未入库）新增：`patch_today_lock.py`、`test_today_lock.js`、`verify_today_lock.py`、截图 lock_init/lock_poli_done/lock_all_done.png。
+
+
+## 19. 批 19：英语词汇卡 Anki 化 + 修「列表已过词、卡片仍 0/1000 不同源」（2026-09-20）
+
+> 诉求（bug + 增强）：①每日新词上限 1000，但在「词汇列表」里已逐词标记/过了 1033 个后，打开词汇卡仍是「总进度 0/1000」、从 accountability 重新发新词——卡片不统计当天在列表里已判定的词、不扣每日新卡上限；②要求参考 GitHub 上 Anki 的逻辑，尽量 1:1 复刻卡片调度。
+
+* 根因（`features/words.js`）：卡片「今日新词进度」只是会话内临时计数（`wSession.graded`），`wStart()` 用 `wNewIdxs(wDailyN())` 每次取 1000 个「从未评分（无 rv.last）」的词，**不读今天在列表 `wGrade` 已过的词、也没有按天持久的新卡计数**；列表标记写 `rv.last`（侧栏「已背」会涨），但卡片每天仍按满额 1000 重发新词。
+* 数据模型扩展（`state.words[k]`，老数据懒兼容，无需迁移）：
+  * `rv.nd`：该词**首次「过一遍 / 毕业」的本地日期**（YYYY-MM-DD）。`wGrade()` 在 `first=!rv.last` 时写入当天（列表三档、卡片「认识」首次毕业都写）；复习旧词不覆盖。这是「一轮」与每日新卡计数的唯一依据。
+  * `ease`：SM-2 简易度，默认 2.50。`wBump()` 统一更新：不认识(Again) −0.20、模糊(Hard) −0.15、认识(Good) 不变，下限 1.30（三按钮，无 Easy 第四键）。当前仅记录 + 供难度排序，**不改变复习间隔**。
+* 新增纯函数（words.js，末尾 Object.assign / export 两处都已注册）：
+  * `wTodayStr(now)`：words 内部自带本地日期，不依赖 plan。
+  * `wNewLearnedToday(today)`：遍历 WORDS 数 `rv.nd===今天`（复习旧词不计）。
+  * `wNewRemain()`：`max(0, 每日上限 - 今天已新学)`，即 Anki 每日新卡剩余配额。
+* `wStart()` 改为配额制：`remain=max(0,cap-doneToday)`，`nw=wNewIdxs(remain)`；wSession 增 `newSet`（本批新词下标集合）、`cap`、`doneToday`、`newGraded`。`wAnswer(1)` 时若该下标在 `newSet` 则 `newGraded++`（复习卡认识不计新词）。当 due=0 且 remain=0 → batch 空 → 完成页「今日单词已完成 · 今日新词 N/N（每日上限）· 无到期复习」，当天再进都显示完成（满足「有认识的就一直显示完成」）。
+* 卡片页进度（`renderWordsStudy`）在原「总进度 x/y · 第 n 轮」下新增一行：「今日新词 tn/cap（本批新词剩 newLeft）· 到期复习剩 revLeft」；轮播完成页 counts 增加「今日新词 (doneToday+newGraded)/cap（已达标）」。词库首页 hero 第二个统计改为「今日新词剩余（已学 tNew/capN）」，副文案说明 Anki 机制与列表/卡片同源。
+* Anki 语义对齐与刻意取舍：
+  * 状态映射：新词=New；当批里标模糊/不认识进 `nxt` 下一轮、当天反复到「认识」毕业 = Learning steps(1m/10m) 的同日等价体验（不引入真实分钟定时器，整批一轮≈一个 learning step）；毕业=Review。
+  * 按钮映射：不认识=Again、模糊=Hard、认识=Good（不引入第四键 Easy）。
+  * **复习间隔保留用户既定的艾宾浩斯固定阶梯 1/2/4/7/15/30（store.js REVIEW_INTERVALS，未改成 SM-2 乘法间隔）**；ease 只记录与用于难度优先，避免违背用户多次强调的艾宾浩斯口径。
+  * 列表里任意档（含模糊/不认识）`wGrade` 都算「过一遍」、写 rv.nd 占当日新卡名额（列表是一次性逐词判定，与侧栏「已背=有 rv.last」口径一致）；卡片中必须最终「认识」才毕业占名额，中途模糊/不认识（wMark 不写 last/nd）当天反复再现。
+* 计划页联动（`features/plan.js`）：今日单词卡 `wordDone=wNewLearnedToday()`、`wordLeft=wNewIdxs(wNewRemain()).length`，文案「新词已学 N/上限 · 剩 X / 已达标 · 待复习 Y」；`planBuild()` 未来天的理论滚动排词（按每天满额推总进度）**未改**。
+* 云同步（`mergeWords`）：合并时 `win.rv.nd = a.rv.nd||b.rv.nd||win.rv.nd`（保留首次过词日），`win.ease=min(两端, 默认2.5)`（取更低熟练度=更需复习）；words 仍走既有 `key:'words'` 整体同步，cloud.js 无需改。
+* 验证：
+  * `check_modules.py` BAD=0；`test_plan.js` 59、`test_books.js` 15、`test_today_lock.js` 13 保持全绿。
+  * 新增 `test_words_anki.js` **19 项全绿**：初始配额；列表学 5 个后今日新学=5/剩余 0/不再发新词/刚学不到期/learned=5/nd=今天；达标后 wStart 空批；卡片全认识正好毕业 5 不超额；首张模糊不计今日新学；Again 两次 ease=2.10、Hard 两次=2.20、Good 保持 2.50、ease 下限 1.30；到期复习不计新词、不覆盖首次过词日。
+  * CDP（`verify_words_anki.py`，本地 http + 无头 Chrome）：cap=5 开卡两行进度正确（总进度 0/5、今日新词 0/5、复习剩 0）；首张模糊后总进度仍 0、今日新词仍 0、本批新词剩 5；继续全认识后今日新词=5、剩余 0、轮播完成页「今日新词 5/5（已达标）· 共 2 轮 · 认识5 模糊1」；再开卡=空批完成页；列表先过 1000（cap=1000）后 wStart 直接「今日单词已完成 1000/1000」（复现并验证用户截图场景已修）；全程零 Runtime/console 异常。截图 words_card / words_home_done / words_alldone / words_list_1000_done.png。
+  * 线上 https://zeril.cn/js/features/words.js 已含 wNewRemain/wNewLearnedToday/newSet（边缘传播后校验 True）。
+* 版本 / 提交：线上 Version **5511f92d-a4d8-4d11-8d1b-a8d62638b65e**（仅上传 /js/features/words.js、/js/features/plan.js 两个变更资产）；commit 见 git log（本批提交）。
+* 改动文件：`public/js/features/words.js`（新增 wTodayStr/wNewLearnedToday/wNewRemain，wEnsure/wBump 加 ease，wGrade 写 nd，wStart 配额+newSet，wAnswer 计 newGraded，renderWordsStudy 进度两行/完成页，renderWords hero，mergeWords 合并 nd/ease，两处注册表加 3 符号）、`public/js/features/plan.js`（今日新词 wordDone/wordLeft 与文案）。
+* 工作目录（未入库）新增：`patch_words_anki.py`、`test_words_anki.js`、`verify_words_anki.py`、截图 words_card/words_home_done/words_alldone/words_list_1000_done.png。

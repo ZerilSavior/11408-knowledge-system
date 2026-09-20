@@ -9,6 +9,11 @@ let wSession=null;
 const wView={letter:'a',kw:'',showAll:false,openKey:'',locateKey:''};
 
 function wDailyN(){ return planWordPerDay(); }
+function wTodayStr(now){ const d=new Date(now||Date.now()),p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+/* 今日首次「过一遍 / 毕业」的新词数（Anki 新卡按天计数，列表与卡片同源） */
+function wNewLearnedToday(today){ today=today||wTodayStr(); let n=0; for(let i=0;i<WORDS.length;i++){ const r=state.words[wKey(i)]; if(r&&r.rv&&r.rv.nd===today)n++; } return n; }
+/* 今日新卡剩余配额 = 每日上限 - 今天已新学（Anki new cards/day cap） */
+function wNewRemain(){ return Math.max(0,(wDailyN()||0)-wNewLearnedToday()); }
 
 function normWord(s){ return String(s).toLowerCase().trim().replace(/\s+/g,' '); }
 
@@ -34,6 +39,7 @@ function wEnsure(i){
   if(!r){ r={m:0,c1:0,c2:0,c3:0,diff:0,rv:{stage:0,count:0,last:0,next:Date.now()+RV_DAY}}; state.words[k]=r; }
   if(!r.rv)r.rv={stage:0,count:0,last:0,next:Date.now()+RV_DAY};
   if(r.c1==null)r.c1=0; if(r.c2==null)r.c2=0; if(r.c3==null)r.c3=0; if(r.diff==null)r.diff=0;
+  if(r.ease==null)r.ease=2.5;
   if(!r.ex)r.ex=[];
   return r;
 }
@@ -43,7 +49,11 @@ function wEnsure(i){
 function wBump(i,g){
   const r=wEnsure(i);
   if(g===1)r.c1=(r.c1||0)+1; else if(g===2)r.c2=(r.c2||0)+1; else if(g===3)r.c3=(r.c3||0)+1;
-  r.diff=(r.c2||0)+2*(r.c3||0); r.m=g; return r;
+  r.diff=(r.c2||0)+2*(r.c3||0);
+  if(r.ease==null)r.ease=2.5;
+  if(g===3)r.ease=Math.max(1.3,+(r.ease-0.20).toFixed(2));
+  else if(g===2)r.ease=Math.max(1.3,+(r.ease-0.15).toFixed(2));
+  r.m=g; return r;
 }
 
 function wStats(){
@@ -68,6 +78,7 @@ function wNewIdxs(n){
 /* 列表 / 一次性评分：三档完整艾宾浩斯 */
 function wGrade(i,g){
   const r=wBump(i,g),now=Date.now(),rv=r.rv; const first=!rv.last; rv.last=now;
+  if(first&&!rv.nd)rv.nd=wTodayStr(now);
   if(g===1){
     if(first){ rv.stage=0; rv.next=now+RV_DAY*REVIEW_INTERVALS[0]; }
     else { rv.stage=Math.min(rv.stage+1,REVIEW_INTERVALS.length); rv.count=rv.stage;
@@ -89,6 +100,8 @@ function mergeWords(local,cloud){
       const win=((bp>ap)||(bp===ap&&bl>al))?b:a; out[k]=win;
       win.c1=Math.max(a.c1||0,b.c1||0); win.c2=Math.max(a.c2||0,b.c2||0); win.c3=Math.max(a.c3||0,b.c3||0);
       win.diff=Math.max(a.diff||0,b.diff||0);
+      if(a.rv&&b.rv&&win.rv){ win.rv.nd=a.rv.nd||b.rv.nd||win.rv.nd; }
+      win.ease=Math.min(a.ease==null?2.5:a.ease, b.ease==null?2.5:b.ease);
       win.ex=(a.ex&&b.ex)?((a.ex.length>=b.ex.length)?a.ex:b.ex):(a.ex||b.ex||[]);
     }
   });
@@ -99,9 +112,11 @@ function mergeWords(local,cloud){
 /* ===== 卡片轮播：当批先全过一遍，模糊+不认识进下一轮，直到全部认识 ===== */
 function wStart(){
   migrateWords();
-  const due=wDueIdxs(), nw=wNewIdxs(wDailyN());
+  const cap=wDailyN(), doneToday=wNewLearnedToday(), remain=Math.max(0,cap-doneToday);
+  const due=wDueIdxs(), nw=wNewIdxs(remain);
+  const newSet={}; nw.forEach(x=>{newSet[x]=1;});
   const batch=due.concat(nw);
-  wSession={batch, cur:batch.slice(), nxt:[], pos:0, round:1, due:due.length, neww:nw.length, flipped:false, stats:{1:0,2:0,3:0}, graded:0};
+  wSession={batch,newSet, cur:batch.slice(), nxt:[], pos:0, round:1, due:due.length, neww:nw.length, cap, doneToday, newGraded:0, flipped:false, stats:{1:0,2:0,3:0}, graded:0};
   renderWords();
 }
 
@@ -112,7 +127,7 @@ function wFlip(){ if(wSession){wSession.flipped=!wSession.flipped; renderWords()
 function wAnswer(g){
   const s=wSession; if(!s||s.pos>=s.cur.length)return;
   const i=s.cur[s.pos];
-  if(g===1){ wGrade(i,1); s.stats[1]++; s.graded++; }
+  if(g===1){ const wasNew=!!s.newSet[i]; wGrade(i,1); s.stats[1]++; s.graded++; if(wasNew)s.newGraded++; }
   else { wMark(i,g); s.stats[g]++; s.nxt.push(i); }
   s.pos++; s.flipped=false;
   if(s.pos>=s.cur.length){ if(s.nxt.length){ s.cur=s.nxt; s.nxt=[]; s.pos=0; s.round++; } }
@@ -175,15 +190,15 @@ function renderWords(){
   if(!WORDS.length){ app.innerHTML='<div class="w-hero">词库数据未加载（data/words.js）。部署后的网址可正常加载；若本地双击打开被浏览器拦截，请通过线上域名访问。</div>'; return; }
   migrateWords();
   if(wSession) return renderWordsStudy(app);
-  const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0, leftNew=wNewIdxs(wDailyN()).length;
+  const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0, tNew=wNewLearnedToday(), capN=wDailyN(), leftNew=wNewIdxs(Math.max(0,capN-tNew)).length;
   let h='<div class="w-hero"><div class="w-herotop"><div class="w-stats">'
    +'<div class="w-stat"><div class="n r">'+st.due+'</div><div class="l">待复习</div></div>'
-   +'<div class="w-stat"><div class="n">'+leftNew+'</div><div class="l">今日待学新词（目标 '+wDailyN()+'）</div></div>'
+   +'<div class="w-stat"><div class="n">'+leftNew+'</div><div class="l">今日新词剩余（已学 '+tNew+'/'+capN+'）</div></div>'
    +'<div class="w-stat"><div class="n g">'+st.learned+'</div><div class="l">已背 / '+st.total+'</div></div>'
    +'<div class="w-stat"><div class="n g">'+st.done+'</div><div class="l">已巩固</div></div>'
    +'</div><button class="w-go" onclick="wStart()">开始今日学习</button></div>'
    +'<div class="pbar"><i style="width:'+pct+'%;background:var(--net);display:block;height:100%;border-radius:4px"></i></div>'
-   +'<div class="w-herosub">每个单词先整批过一遍，标「模糊 / 不认识」的词会自动进入下一轮，反复到当批全部「认识」才算完成；认识 +0、模糊 +1、不认识 +2 累计难度分。复习按艾宾浩斯 1/2/4/7/15/30 天穿插，进度云端同步。</div></div>';
+   +'<div class="w-herosub">每个单词先整批过一遍，采用 Anki 式调度：新词有每日上限，列表标记与卡片同源计入今日进度，达标即完成、不再发新词；标「模糊 / 不认识」(Hard/Again) 的词当天反复出现，直到「认识」(Good)才毕业；认识 +0、模糊 +1、不认识 +2 累计难度分并下调熟练度(ease)。复习按艾宾浩斯 1/2/4/7/15/30 天穿插，进度云端同步。</div></div>';
   h+='<div class="w-tabs"><div class="w-search"><input id="wSearchInput" placeholder="搜索英文单词或中文释义…" value="'+wEsc(wView.kw)+'"></div>'
    +'<button class="w-showall" id="wShowAll" type="button">'+(wView.showAll?'隐藏全部释义':'显示全部释义')+'</button></div>';
   h+='<div class="w-abc" id="wAbc"></div><div class="w-list" id="wList"></div>';
@@ -302,17 +317,18 @@ function wAddEx(i){
 
 function renderWordsStudy(app){
   const s=wSession;
-  if(!s.batch.length){ app.innerHTML='<div class="w-done"><div class="big">今天没有待学单词</div><div class="counts">到期复习与今日新词都已完成。</div><button class="w-go" onclick="wQuit()">返回词库</button></div>'; return; }
+  if(!s.batch.length){ app.innerHTML='<div class="w-done"><div class="big">今日单词已完成</div><div class="counts">今日新词 '+(s.doneToday||0)+' / '+(s.cap||wDailyN())+'（每日上限）· 无到期复习<br>在列表里标记与在卡片里学习同源计入今日进度，达标后不再安排新词。</div><button class="w-go" onclick="wQuit()">返回词库</button></div>'; return; }
   const finished=(s.pos>=s.cur.length)&&(s.nxt.length===0);
   if(finished){
     app.innerHTML='<div class="w-done"><div class="big">当批全部认识，本轮完成</div>'
-      +'<div class="counts">共 '+s.batch.length+' 个（复习 '+s.due+' · 新词 '+s.neww+'）· 共 '+s.round+' 轮<br>认识 '+s.stats[1]+' · 模糊 '+s.stats[2]+' · 不认识 '+s.stats[3]+'</div>'
+      +'<div class="counts">共 '+s.batch.length+' 个（复习 '+s.due+' · 新词 '+s.neww+'）· 共 '+s.round+' 轮<br>今日新词 '+(s.doneToday+s.newGraded)+' / '+s.cap+((s.doneToday+s.newGraded)>=s.cap?'（已达标）':'')+'<br>认识 '+s.stats[1]+' · 模糊 '+s.stats[2]+' · 不认识 '+s.stats[3]+'</div>'
       +'<div class="w-herosub" style="max-width:520px;margin:0 auto 18px">模糊、不认识的词已在多轮中反复出现直到认识；难度分高的词会在复习中优先安排。</div>'
       +'<button class="w-go" onclick="wQuit()">返回词库</button></div>'; return;
   }
   const i=s.cur[s.pos], w=WORDS[i], rare=wRare(i), r=state.words[wKey(i)];
+  const tn=(s.doneToday||0)+(s.newGraded||0), revDone=Math.max(0,(s.graded||0)-(s.newGraded||0)), revLeft=Math.max(0,(s.due||0)-revDone), newLeft=Math.max(0,(s.neww||0)-(s.newGraded||0));
   const thisLeft=s.cur.length-s.pos;
-  app.innerHTML='<div class="w-study"><div class="w-sprog">总进度 '+s.graded+' / '+s.batch.length+'　·　第 '+s.round+' 轮（本轮还剩 '+thisLeft+' 个，模糊/不认识会再出现）</div>'
+  app.innerHTML='<div class="w-study"><div class="w-sprog">总进度 '+s.graded+' / '+s.batch.length+'　·　第 '+s.round+' 轮（本轮还剩 '+thisLeft+' 个，模糊/不认识会再出现）</div>'+'<div class="w-sprog">今日新词 '+tn+' / '+s.cap+'（本批新词剩 '+newLeft+'）　·　到期复习剩 '+revLeft+'</div>'
    +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+wTag(i)+'</div><div class="cp">'+wEsc(w[1])+'</div>'
    +(s.flipped?('<div class="cm">'+wEsc(w[2])+'</div>'+(rare?'<div class="wr-rare card-rare"><b>僻</b>'+wEsc(rare.r)+(rare.s?'<span class="wr-src">　— '+wEsc(rare.s)+'</span>':'')+'</div>':'')
      +'<div class="wcard-stat">认识×'+(r?r.c1||0:0)+' 模糊×'+(r?r.c2||0:0)+' 不认识×'+(r?r.c3||0:0)+' · 难度分 '+(r?r.diff||0:0)+'</div>'):'<div class="ctip">点击卡片显示释义</div>')
@@ -333,5 +349,5 @@ function engMasteryPct(){
   return Math.round(100*(isFinite(v)?v:0));
 }
 
-Object.assign(globalThis, { WORDS, WORD_DAILY_DEF, wSession, wView, wDailyN, normWord, wKey, wRelData, wRareByKey, wRare, migrateWords, wEnsure, wBump, wStats, wDueIdxs, wNewIdxs, wGrade, wMark, mergeWords, wStart, wQuit, wFlip, wAnswer, wTag, wRvTag, wLetters, wEsc, wordEngCard, wordSidebarItem, renderWords, renderWordsAbc, wIO, wLetterGroups, fillLetter, renderWordsList, wLetterOf, locateLastWord, wBookSrcSel, wordRow, wJumpWord, wToggleRow, wQuick, wAddEx, renderWordsStudy, engMasteryPct });
-export { WORDS, WORD_DAILY_DEF, wSession, wView, wDailyN, normWord, wKey, wRelData, wRareByKey, wRare, migrateWords, wEnsure, wBump, wStats, wDueIdxs, wNewIdxs, wGrade, wMark, mergeWords, wStart, wQuit, wFlip, wAnswer, wTag, wRvTag, wLetters, wEsc, wordEngCard, wordSidebarItem, renderWords, renderWordsAbc, wIO, wLetterGroups, fillLetter, renderWordsList, wLetterOf, locateLastWord, wBookSrcSel, wordRow, wJumpWord, wToggleRow, wQuick, wAddEx, renderWordsStudy, engMasteryPct };
+Object.assign(globalThis, { WORDS, WORD_DAILY_DEF, wSession, wView, wDailyN, wTodayStr, wNewLearnedToday, wNewRemain, normWord, wKey, wRelData, wRareByKey, wRare, migrateWords, wEnsure, wBump, wStats, wDueIdxs, wNewIdxs, wGrade, wMark, mergeWords, wStart, wQuit, wFlip, wAnswer, wTag, wRvTag, wLetters, wEsc, wordEngCard, wordSidebarItem, renderWords, renderWordsAbc, wIO, wLetterGroups, fillLetter, renderWordsList, wLetterOf, locateLastWord, wBookSrcSel, wordRow, wJumpWord, wToggleRow, wQuick, wAddEx, renderWordsStudy, engMasteryPct });
+export { WORDS, WORD_DAILY_DEF, wSession, wView, wDailyN, wTodayStr, wNewLearnedToday, wNewRemain, normWord, wKey, wRelData, wRareByKey, wRare, migrateWords, wEnsure, wBump, wStats, wDueIdxs, wNewIdxs, wGrade, wMark, mergeWords, wStart, wQuit, wFlip, wAnswer, wTag, wRvTag, wLetters, wEsc, wordEngCard, wordSidebarItem, renderWords, renderWordsAbc, wIO, wLetterGroups, fillLetter, renderWordsList, wLetterOf, locateLastWord, wBookSrcSel, wordRow, wJumpWord, wToggleRow, wQuick, wAddEx, renderWordsStudy, engMasteryPct };

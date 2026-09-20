@@ -585,7 +585,7 @@ function renderPlan(){
   const ovPct=b.total?Math.round(100*b.done/b.total):0;
   const td=day?day.leaves.filter(l=>planLeafDone(l.path)).length:0;
   const tpct=day&&day.leaves.length?Math.round(100*td/day.leaves.length):0;
-  const wordDue=wDueIdxs().length, wordLeft=wNewIdxs(b.wordPerDay).length;
+  const wordDue=wDueIdxs().length, wordDone=(typeof wNewLearnedToday==='function'?wNewLearnedToday():0), wordLeft=(typeof wNewRemain==='function'?wNewIdxs(wNewRemain()).length:wNewIdxs(b.wordPerDay).length);
   const dueN=dueItems().length;
   const engPhase=(wRoundLearned()>=WORDS.length)?'reading':'words';
   let h=planSetupHTML(false);
@@ -610,7 +610,7 @@ function renderPlan(){
     +'</div>';
   h+='</div><div>';
   if(engPhase==='words'){
-    h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词（一轮前）</b><span>新词 '+wordLeft+' / 目标 '+b.wordPerDay+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>';
+    h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词（一轮前）</b><span>新词已学 '+wordDone+'/'+b.wordPerDay+(wordLeft?' · 剩 '+wordLeft:' · 已达标')+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>';
   }else{
     const rd=(b.rb&&typeof todayReading==='function')?todayReading():null;
     h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#E3F6EE;color:#0a8a5f">读</div><div class="qm"><b>今日阅读打卡</b><span>'+(rd?('应做 '+rd.n+' 篇（'+rd.label+'）'):'单词一轮已完成，去安排阅读')+'</span></div><button onclick="location.hash=\'#/reading\'">去阅读</button></div>';
