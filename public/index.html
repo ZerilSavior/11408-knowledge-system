@@ -221,6 +221,14 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .snav .smeta{font-size:11.5px;color:var(--ink-3);font-family:var(--font-mono);margin-top:1px}
 
 .snav .spct{font-family:var(--font-mono);font-size:12px;font-weight:700}
+.snav.sub{margin:2px 0;border-radius:8px;padding-left:14px}
+.sgrp{margin:4px 0 8px;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.sgrp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:800;font-size:13px;color:var(--ink,#222);user-select:none}
+.sgrp>summary::-webkit-details-marker{display:none}
+.sgrp>summary::before{content:'▾';font-size:10px;color:var(--ink-3);transition:transform .2s;display:inline-block;width:10px}
+.sgrp:not([open])>summary::before{transform:rotate(-90deg)}
+.sg-dot{width:8px;height:8px;border-radius:50%;flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--gc) 18%,transparent)}
+.sgrp-body{padding:2px 6px 7px}
 
 .sidebar .grow{flex:1}
 
@@ -1396,6 +1404,55 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .w-engmini .wgo{width:100%;padding:8px;border:1px solid var(--ink);border-radius:8px;font-size:13px;font-weight:700;background:var(--panel)}
 .w-engmini .wgo:hover{background:var(--ink);color:#fff}
 .snav .wbadge{background:var(--kc-mistake);color:#fff;border-radius:999px;font-size:11px;padding:0 7px;font-weight:700;flex:none;align-self:center}
+.w-tabs{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.w-tabs .w-search{flex:1}
+.w-showall{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.w-showall:hover{background:var(--panel-2)}
+.w-main{cursor:pointer}
+.w-row{flex-wrap:wrap}
+.w-topline{display:flex;align-items:center;flex-wrap:wrap;min-width:0}
+.w-mean-hint{color:var(--ink-3);font-size:12px;margin-top:3px}
+.w-row.open .w-main{flex:1 1 100%}
+.wr-detail{flex:1 1 100%;order:5;margin-top:6px;border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:7px}
+.wr-mean{font-size:14px;color:var(--ink);line-height:1.75}
+.wr-rare{background:#fdf3e0;border:1px solid #f0d9a8;color:#8a5a12;border-radius:9px;padding:8px 11px;font-size:13px;line-height:1.7}
+.wr-rare b{background:#e8a33d;color:#fff;border-radius:5px;padding:0 6px;font-size:11px;margin-right:6px}
+.wr-src{color:var(--ink-3);font-size:11.5px}
+.wr-rel{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink-2);background:var(--panel-2);border-radius:9px;padding:9px 11px}
+.wr-line{display:flex;gap:8px;line-height:1.75;flex-wrap:wrap}
+.wr-lab{flex:none;background:#eef2ff;color:#4f46e5;border-radius:5px;padding:0 7px;font-size:11px;font-weight:700;height:fit-content;margin-top:1px}
+.wr-line a{color:#2f6fed;cursor:pointer}
+.wr-ref{color:var(--ink-2)}
+.wr-stat{font-size:12px;color:var(--ink-3);font-family:var(--font-mono)}
+.wr-stat b{color:var(--kc-mistake)}
+.wr-ex{display:flex;flex-direction:column;gap:6px}
+.wr-exitem{font-size:13px;color:var(--ink-2);line-height:1.7;background:var(--panel-2);border-radius:8px;padding:7px 10px}
+.wr-ta{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;resize:vertical;font-family:inherit;background:var(--panel);color:var(--ink)}
+.wr-exrow{display:flex;gap:8px;align-items:center}
+.wr-sel{flex:1;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;background:var(--panel);color:var(--ink-2)}
+.wr-add{flex:none;border:1px solid var(--net);background:var(--net);color:#fff;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer}
+.wr-badge{background:#e8a33d;color:#fff;border-radius:5px;font-size:10px;font-weight:800;padding:0 5px;margin-left:7px;vertical-align:middle}
+.w-letter-h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--ink);padding:8px 6px;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line);margin-bottom:8px}
+.w-letter-h span{font-size:11px;color:var(--ink-3);font-weight:500}
+.w-letter-body{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.w-searchres{display:flex;flex-direction:column;gap:8px}
+.wflash{box-shadow:0 0 0 3px var(--kc-wait)!important;border-color:var(--kc-wait)!important}
+.wcard-stat{margin-top:14px;font-size:12px;color:var(--ink-3);font-family:var(--font-mono)}
+.card-rare{max-width:440px;margin:14px auto 0;text-align:left}
+.mm-hero{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 20px;margin-bottom:16px}
+.mm-meta{font-size:13px;color:var(--ink-2);margin-top:8px}
+.mm-meta b{color:#8e44ad}
+.mm-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;text-align:center;margin-bottom:16px}
+.mm-page{font-size:13px;color:var(--ink-3);margin-bottom:12px;font-family:var(--font-mono)}
+.mm-img{max-width:100%;border-radius:8px;border:1px solid var(--line);background:#fff}
+.mm-ctrl{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.mm-btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)}
+.mm-btn:hover:not(:disabled){border-color:#8e44ad;color:#8e44ad}
+.mm-btn:disabled{opacity:.4;cursor:not-allowed}
+.mm-next,.mm-prev{font-weight:800}
+.mm-jump{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.mm-jump input{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:14px;text-align:center}
+.mm-tip{text-align:center;font-size:12.5px;color:var(--ink-3);margin-bottom:20px}
 
 /* ===== 个性化学习计划 ===== */
 .p-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(120deg,#1B1F24,#2c333c);color:#FBFBF8;border-radius:var(--radius);padding:18px 22px;margin:4px 0 22px;box-shadow:var(--shadow);flex-wrap:wrap}
@@ -1463,6 +1520,15 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .p-tl-s{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
 .p-tl-s span{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--panel-2);color:var(--ink-2)}
 .p-tl-meta{font-size:12px;color:var(--ink-3)}
+.p-daybtn{float:right;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:8px;font-size:12px;padding:4px 10px;cursor:pointer}
+.p-daybtn:hover{background:var(--panel-3)}
+.p-dayedit{margin-left:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:6px;font-size:11px;padding:1px 8px;cursor:pointer;vertical-align:middle}
+.p-dayedit:hover{background:var(--panel-3)}
+.p-tl.custom .p-tl-d b{color:var(--kc-wait)}
+.p-custag{font-size:10px;background:var(--kc-wait);color:#fff;border-radius:4px;padding:0 4px;vertical-align:middle;font-weight:700}
+.p-leftover{font-size:12px;color:#9a6a12;background:#fdf6ec;border:1px solid #f0e0b8;border-radius:8px;padding:7px 11px;margin:5px 0 3px;line-height:1.6}
+#planDayOverlay .dlg{max-width:560px}
+#planDayOverlay .p-subset{margin:10px 0}
 .p-more{width:100%;margin-top:12px;background:none;border:1px dashed var(--line);color:var(--ink-2);border-radius:9px;padding:9px;font-size:13px;cursor:pointer}
 .p-more:hover{border-color:var(--ink-3)}
 .p-subgrp{font-size:12px;color:var(--ink-3);font-weight:700;margin:8px 0 3px;padding-left:2px}
@@ -1562,7 +1628,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
     </button>
 
-    <div class="brand">
+    <div class="brand" onclick="location.hash='#/'" style="cursor:pointer" title="返回总览">
 
       <span class="mark">
 
@@ -1574,41 +1640,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
     </div>
 
-    <nav class="topnav" id="topnav">
-
-      <button data-nav="#/">总览</button>
-
-      <button data-nav="#/tree/ds">数据结构</button>
-
-      <button data-nav="#/tree/co">组成原理</button>
-
-      <button data-nav="#/tree/os">操作系统</button>
-
-      <button data-nav="#/tree/net">计算机网络</button>
-
-      <button data-nav="#/tree/math1">高等数学</button>
-
-      <button data-nav="#/tree/math2">线性代数</button>
-
-      <button data-nav="#/tree/math3">概率论</button>
-
-      <button data-nav="#/tree/poli1">马原</button>
-
-      <button data-nav="#/tree/poli2">毛中特</button>
-
-      <button data-nav="#/tree/poli3">习新思</button>
-
-      <button data-nav="#/tree/poli4">史纲</button>
-
-      <button data-nav="#/tree/poli5">思修</button>
-
-      <button data-nav="#/tree/poli6">时政</button>
-
-      <button data-nav="#/tree/eng">英语一</button>
-
-      <button data-nav="#/notes">学习中心</button>
-
-    </nav>
+    <nav class="topnav" id="topnav"></nav>
 
     <div class="topspacer"></div>
 
@@ -1727,7 +1759,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
             <li>后续只需告诉我「延伸 XX 考点」，即可逐层向下填充知识内容；也可以在任意考点详情页添加自己的「笔记 / 导图 / 错题」并自动关联到该考点，或在顶栏「学习中心」统一管理——笔记支持 Markdown、代码块与手绘涂鸦，导图支持大纲 / 思维导图双视图，错题可标记待复习 / 已掌握，登录后云端同步。</li>
 
             <li>学习状态（未学 / 学习中 / 已掌握）与笔记自动保存在浏览器本地，支持一键导出 JSON 备份。</li>
-            <li><b>内容来源：</b>数据结构、计算机组成原理、操作系统、计算机网络四科的章节框架与考点讲解参考 <a class="src-link" href="https://www.codebrick.tech" target="_blank" rel="noopener">CodeBrick 码砖</a>（codebrick.tech）精简版整理；高等数学、线性代数、概率论、政治、英语依据官方考试大纲，全部内容仅供个人学习备考使用。</li>
+            <li><b>内容来源：</b>数据结构、计算机组成原理、操作系统、计算机网络四科章节框架与考点讲解参考 <a class="src-link" href="https://www.codebrick.tech" target="_blank" rel="noopener">CodeBrick 码砖</a>（codebrick.tech）精简版，408 考频来自历年真题小节考频表（@Yoken怀古）；<b>高等数学、线性代数、概率论与数理统计三科章节框架来自郭雨港《数一所有题型分类、通用解法详解》</b>，数学考频来自抖音@晨曦学长《25考研数学一·近15年考频分析》；政治、英语依据官方考试大纲。全部内容仅供个人学习备考使用。</li>
 
           </ul>
 
@@ -1944,6 +1976,20 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
           <button class="iconbtn" onclick="location.hash='#/words'">去背单词</button>
         </div>
         <div id="readingApp"></div>
+      </div>
+    </section>
+
+    <!-- ===== 思维导图速记（726页翻页卡） ===== -->
+    <section class="view" id="view-mindmap">
+      <div class="view-inner">
+        <div class="words-head">
+          <div>
+            <h2>思维导图速记 · 考研英语 5500 词</h2>
+            <div class="nt-sub">《思维导图速记考研英语5500词汇》726 页 · 翻页记忆卡 · 键盘 ← / → 翻页 · 页码与进度自动云端同步</div>
+          </div>
+          <button class="iconbtn" onclick="location.hash='#/words'">去背单词</button>
+        </div>
+        <div id="mindmapApp"></div>
       </div>
     </section>
 
@@ -2442,6 +2488,8 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
 
 <script src="data/words.js"></script>
+<script src="data/words-rare.js"></script>
+<script src="data/word-rel.js"></script>
 <script>
 
 /* ============================================================
@@ -7270,7 +7318,9 @@ function subStats(sub){
 
   });
 
-  return {total, mastered, studying, pct: total? Math.round((mastered + studying*0.5)/total*100):0};
+  const pct = total? Math.round((mastered + studying*0.5)/total*100):0;
+  if(sub.id==='eng'){ try{ return {total,mastered,studying,pct:engMasteryPct()}; }catch(e){} }
+  return {total, mastered, studying, pct};
 
 }
 
@@ -7343,48 +7393,123 @@ function isSectionOpen(subId, ci, si){ return openState[`${subId}/${ci}/${si}`] 
 
  * ============================================================ */
 
-/* ================= 英语大纲词汇（艾宾浩斯背单词） ================= */
+/* ================= 英语大纲词汇（艾宾浩斯 · 词形key · 三态轮播 · 难度分 · 记录） ================= */
 const WORDS=(typeof window.WORDS_DATA!=='undefined'&&Array.isArray(window.WORDS_DATA))?window.WORDS_DATA:[];
 const WORD_DAILY_DEF=80;
 let wSession=null;
-const wView={letter:'ALL',kw:''};
+const wView={letter:'ALL',kw:'',showAll:false,openKey:''};
 function wDailyN(){ return planWordPerDay(); }
-function wEnsure(i){ if(!state.words[i]) state.words[i]={m:0,rv:{stage:0,count:0,last:0,next:Date.now()+RV_DAY}}; return state.words[i]; }
+function normWord(s){ return String(s).toLowerCase().trim().replace(/\s+/g,' '); }
+function wKey(i){ return normWord(WORDS[i][0]); }
+function wRelData(){ return (typeof window.WORD_REL!=='undefined'&&window.WORD_REL)?window.WORD_REL:{}; }
+function wRareByKey(k){ const R=(typeof window.WORDS_RARE!=='undefined')?window.WORDS_RARE:null; return (R&&R[k])?R[k]:null; }
+function wRare(i){ return wRareByKey(wKey(i)); }
+/* 旧版按数字索引记录，词库重排后无法映射，检测到则作废（一次性） */
+function migrateWords(){
+  if(!state.words||typeof state.words!=='object') state.words={};
+  const keys=Object.keys(state.words);
+  if(keys.length && keys.every(k=>/^\d+$/.test(k))){ state.words={}; try{saveState();}catch(e){} }
+}
+function wEnsure(i){
+  migrateWords();
+  const k=wKey(i); let r=state.words[k];
+  if(!r){ r={m:0,c1:0,c2:0,c3:0,diff:0,rv:{stage:0,count:0,last:0,next:Date.now()+RV_DAY}}; state.words[k]=r; }
+  if(!r.rv)r.rv={stage:0,count:0,last:0,next:Date.now()+RV_DAY};
+  if(r.c1==null)r.c1=0; if(r.c2==null)r.c2=0; if(r.c3==null)r.c3=0; if(r.diff==null)r.diff=0;
+  if(!r.ex)r.ex=[];
+  return r;
+}
+/* 累加三态次数与难度分：认识+0 模糊+1 不认识+2 */
+function wBump(i,g){
+  const r=wEnsure(i);
+  if(g===1)r.c1=(r.c1||0)+1; else if(g===2)r.c2=(r.c2||0)+1; else if(g===3)r.c3=(r.c3||0)+1;
+  r.diff=(r.c2||0)+2*(r.c3||0); r.m=g; return r;
+}
 function wStats(){
+  migrateWords();
   let learned=0,done=0,due=0; const now=Date.now();
-  for(const k in state.words){ const r=state.words[k]; if(!r||!r.rv)continue; learned++; const c=reviewState(r,now).code; if(c==='done')done++; else if(c==='due')due++; }
+  for(let i=0;i<WORDS.length;i++){ const r=state.words[wKey(i)]; if(!r||!r.rv||!r.rv.last)continue; learned++; const c=reviewState(r,now).code; if(c==='done')done++; else if(c==='due')due++; }
   return {total:WORDS.length,learned,done,due};
 }
-function wDueIdxs(now){ now=now||Date.now(); const a=[]; for(const k in state.words){const r=state.words[k]; if(r&&r.rv&&reviewState(r,now).code==='due')a.push(+k);} return a.sort((x,y)=>(state.words[x].rv.next||0)-(state.words[y].rv.next||0)); }
-function wNewIdxs(n){ const a=[]; for(let i=0;i<WORDS.length&&a.length<n;i++){ if(!state.words[i])a.push(i);} return a; }
+function wDueIdxs(now){
+  now=now||Date.now(); migrateWords(); const a=[];
+  for(let i=0;i<WORDS.length;i++){ const r=state.words[wKey(i)]; if(r&&r.rv&&r.rv.last&&reviewState(r,now).code==='due')a.push(i); }
+  return a.sort((x,y)=>((state.words[wKey(x)].rv.next)||0)-((state.words[wKey(y)].rv.next)||0));
+}
+function wNewIdxs(n){
+  migrateWords(); const a=[];
+  for(let i=0;i<WORDS.length&&a.length<n;i++){ const r=state.words[wKey(i)]; if(!r||!r.rv||!r.rv.last)a.push(i); } return a;
+}
+/* 列表 / 一次性评分：三档完整艾宾浩斯 */
 function wGrade(i,g){
-  const r=wEnsure(i),now=Date.now(),rv=r.rv; r.m=g; const first=!rv.last; rv.last=now;
+  const r=wBump(i,g),now=Date.now(),rv=r.rv; const first=!rv.last; rv.last=now;
   if(g===1){
     if(first){ rv.stage=0; rv.next=now+RV_DAY*REVIEW_INTERVALS[0]; }
     else { rv.stage=Math.min(rv.stage+1,REVIEW_INTERVALS.length); rv.count=rv.stage;
            rv.next=rv.stage>=REVIEW_INTERVALS.length?null:now+RV_DAY*REVIEW_INTERVALS[rv.stage]; }
-  } else if(g===2){ rv.next=now+RV_DAY; }
+  } else if(g===2){ rv.stage=Math.max(rv.stage,0); rv.next=now+RV_DAY; }
   else { rv.stage=0; rv.count=0; rv.next=now+RV_DAY; }
-  saveState();
+  state.wordLast=wKey(i); saveState();
 }
+/* 卡片轮播中途：模糊/不认识只累加次数与难度、不入艾宾浩斯；只有认识才 wGrade(1) 推进 */
+function wMark(i,g){ if(g===1)return wGrade(i,1); wBump(i,g); state.wordLast=wKey(i); try{saveState();}catch(e){} }
 function mergeWords(local,cloud){
-  const out=Object.assign({},local||{});
-  for(const k in (cloud||{})){ const b=cloud[k]; if(!b||!b.rv)continue; const a=out[k];
-    if(!a||(b.rv.stage||0)>((a.rv&&a.rv.stage)||0)||(b.rv.last||0)>((a.rv&&a.rv.last)||0)) out[k]=b; }
+  const out={}; const keys=new Set([].concat(Object.keys(local||{}),Object.keys(cloud||{})));
+  keys.forEach(k=>{ if(/^\d+$/.test(k))return; const a=(local||{})[k],b=(cloud||{})[k];
+    if(!a&&b)out[k]=b; else if(!b)out[k]=a; else {
+      const ap=(a.rv&&a.rv.stage)||0,bp=(b.rv&&b.rv.stage)||0,al=(a.rv&&a.rv.last)||0,bl=(b.rv&&b.rv.last)||0;
+      const win=((bp>ap)||(bp===ap&&bl>al))?b:a; out[k]=win;
+      win.c1=Math.max(a.c1||0,b.c1||0); win.c2=Math.max(a.c2||0,b.c2||0); win.c3=Math.max(a.c3||0,b.c3||0);
+      win.diff=Math.max(a.diff||0,b.diff||0);
+      win.ex=(a.ex&&b.ex)?((a.ex.length>=b.ex.length)?a.ex:b.ex):(a.ex||b.ex||[]);
+    }
+  });
   return out;
 }
+/* ===== 卡片轮播：当批先全过一遍，模糊+不认识进下一轮，直到全部认识 ===== */
 function wStart(){
+  migrateWords();
   const due=wDueIdxs(), nw=wNewIdxs(wDailyN());
-  wSession={queue:due.concat(nw),pos:0,stats:{1:0,2:0,3:0},due:due.length,neww:nw.length,flipped:false};
+  const batch=due.concat(nw);
+  wSession={batch, cur:batch.slice(), nxt:[], pos:0, round:1, due:due.length, neww:nw.length, flipped:false, stats:{1:0,2:0,3:0}, graded:0};
   renderWords();
 }
 function wQuit(){ wSession=null; renderWords(); }
 function wFlip(){ if(wSession){wSession.flipped=!wSession.flipped; renderWords();} }
-function wAnswer(g){ const s=wSession; if(!s||s.pos>=s.queue.length)return; wGrade(s.queue[s.pos],g); s.stats[g]++; s.pos++; s.flipped=false; renderWords(); }
-function wTag(i){const t=WORDS[i]&&WORDS[i][3];if(!t)return '';let st='',l=t;if(t.indexOf('红宝书')===0){st='background:#eef2ff;color:#4f46e5';l='红宝书';}else if(t==='核心词组'){st='background:#fff0e2;color:#c2560a';}else if(t==='拓展词组'){st='background:#e3f6ee;color:#0a8a5f';}return '<span style="'+st+';font-size:10px;font-weight:600;padding:1px 7px;border-radius:9px;margin-left:7px;vertical-align:middle" title="'+wEsc(t)+'">'+l+'</span>';}
-function wRvTag(i){ const r=state.words[i]; if(!r||!r.rv)return ''; const c=reviewState(r).code; if(c==='done')return '<span class="w-rv done">已巩固</span>'; if(c==='due')return '<span class="w-rv due">待复习</span>'; return '<span class="w-rv up">'+reviewLabel(r)+'</span>'; }
-function wLetters(){ const m={}; WORDS.forEach((x,i)=>{const L=x[0][0].toLowerCase(); (m[L]=m[L]||[]).push(i);}); return m; }
-function wEsc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function wAnswer(g){
+  const s=wSession; if(!s||s.pos>=s.cur.length)return;
+  const i=s.cur[s.pos];
+  if(g===1){ wGrade(i,1); s.stats[1]++; s.graded++; }
+  else { wMark(i,g); s.stats[g]++; s.nxt.push(i); }
+  s.pos++; s.flipped=false;
+  if(s.pos>=s.cur.length){ if(s.nxt.length){ s.cur=s.nxt; s.nxt=[]; s.pos=0; s.round++; } }
+  renderWords();
+}
+function wTag(i){
+  const t=WORDS[i]&&WORDS[i][3]; if(!t)return '';
+  const parts=String(t).split(/[、,，\/]/).map(x=>x.trim()).filter(Boolean);
+  const main=parts[0]||''; let st='',l=main;
+  if(main.indexOf('红宝书')>=0){st='background:#eef2ff;color:#4f46e5';l='红宝书';}
+  else if(main.indexOf('大纲')>=0){st='background:#e3f6ee;color:#0a8a5f';l='大纲';}
+  else if(main.indexOf('核心词组')>=0){st='background:#fff0e2;color:#c2560a';l='词组';}
+  else if(main.indexOf('拓展词组')>=0){st='background:#fdeef0;color:#c0392b';l='词组';}
+  else {st='background:#eef1f5;color:#5a6472';}
+  const title=parts.join('、');
+  return '<span style="'+st+';font-size:10px;font-weight:600;padding:1px 7px;border-radius:9px;margin-left:7px;vertical-align:middle" title="'+wEsc(title)+'">'+wEsc(l)+(parts.length>1?(' +'+(parts.length-1)):'')+'</span>';
+}
+function wRvTag(i){
+  const r=state.words[wKey(i)]; if(!r||!r.rv||!r.rv.last)return '';
+  const c=reviewState(r).code;
+  if(c==='done')return '<span class="w-rv done">已巩固</span>';
+  if(c==='due')return '<span class="w-rv due">待复习</span>';
+  return '<span class="w-rv up">'+reviewLabel(r)+'</span>';
+}
+function wLetters(){
+  const m={};
+  WORDS.forEach((x,i)=>{ const ch=x[0][0]; const L=/[a-z]/i.test(ch)?ch.toLowerCase():'#'; (m[L]=m[L]||[]).push(i); });
+  return m;
+}
+function wEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function wordEngCard(){
   const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0;
   return '<div class="w-engmini"><div class="et"><span>大纲词汇</span><span>'+st.learned+' / '+st.total+' · 巩固 '+st.done+(st.due?' · 待复习 '+st.due:'')+'</span></div>'
@@ -7396,20 +7521,33 @@ function wordSidebarItem(){
   return '<button class="snav '+(wa?'active':'')+'" data-goto="#/words" style="'+(wa?'border-left:3px solid var(--net)':'')+'">'
    +'<span class="scol" style="background:var(--net);'+(wa?'':'opacity:.5')+'"></span>'
    +'<span class="sinfo"><span class="sname">英语词汇<span class="en">WORDS</span></span>'
-   +'<span class="smeta">'+st.learned+' / '+st.total+' 已学'+(st.done?' · 巩固 '+st.done:'')+'</span></span>'
+   +'<span class="smeta">'+st.learned+' / '+st.total+' 已背'+(st.done?' · 巩固 '+st.done:'')+'</span></span>'
    +(st.due?'<span class="wbadge">'+st.due+'</span>':'<span class="spct" style="color:var(--net)">'+(st.total?Math.round(100*st.learned/st.total):0)+'%</span>')+'</button>';
 }
-/* ================= 个性化学习计划（四大模块时间盒 · 考频优先 · 艾宾浩斯 · 手动换题） ================= */
+
+/* ================= 个性化学习计划 v3 =================
+   子科自定义每日时长（数学3科/408四科，带下限校验）
+   已学章节考点 0.5h 且与新考点新旧穿插
+   政治：有笔记即完成、时政(poli6)只在真题月排、可排到考前一天
+   单词默认 1000/天，阅读目标考研当天 */
 const PLAN_EXAM_DEF='2026-12-19';
-const PLAN_WORD_SEC=27;            // 每个新词平均秒数（含少量复习）
-const PLAN_LEAF_MINS=60;           // 408 / 数一 每个知识点约 1 小时
-const PLAN_POLI_MINS=30;           // 政治每个知识点约 0.5 小时
-const PLAN_POLI_CAP_DATE='2026-10-01'; // 10 月前政治每天 ≤1h，之后 ≤2h
-const PLAN_MOD_DEFS=[
- {key:'c408',name:'408',color:'#1a9e6e',subs:['ds','co','os','net'],mins:PLAN_LEAF_MINS,order:'freq'},
- {key:'math',name:'数一',color:'#7b53d6',subs:['math1','math2','math3'],mins:PLAN_LEAF_MINS,order:'freq',split:['math1','math2','math3']},
- {key:'poli',name:'政治',color:'#c0392b',subs:['poli1','poli2','poli3','poli4','poli5','poli6'],mins:PLAN_POLI_MINS,order:'seq'}
-];
+const PLAN_LEAF_MINS=60;            // 新考点约 1h
+const PLAN_LEARNED_MINS=30;         // 已学过章节的考点 0.5h
+const PLAN_POLI_MINS=30;            // 政治每考点 0.5h
+const PLAN_POLI_CAP_DATE='2026-10-01';  // 10月前政治≤1h，之后≤2h
+const PLAN_WORD_DEF=1000;           // 每天新词（用户口径，背得快）
+/* 已学过一遍的章节（ci 为 0-based），考点按 0.5h，排期与新考点穿插 */
+const LEARNED_CHAPTERS_DEFAULT={
+  math1:[0,1,2,3,4,5], math2:[0,1,2], math3:[0],
+  net:[0,1,2], ds:[0,1], co:[0,1], os:[0]
+};
+/* 数学 / 408 子科分组（政治单独按 cap 处理） */
+const PLAN_C408_SUBS=[['ds','hds','数据结构'],['co','hco','组成原理'],['os','hos','操作系统'],['net','hnet','计算机网络']];
+const PLAN_MATH_SUBS=[['math1','mh1','高等数学'],['math2','mh2','线性代数'],['math3','mh3','概率论']];
+const PLAN_POLI_SUBS=['poli1','poli2','poli3','poli4','poli5','poli6'];
+const PLAN_C408_DEF={hds:1.5,hco:1.5,hos:1.5,hnet:1.5};   // 和 6，co≥1
+const PLAN_MATH_DEF={mh1:4,mh2:2,mh3:2};                  // 和 8，高数≥2
+
 function planCfg(){ return state.plan||null; }
 function planTodayStr(){ const d=new Date(); return planFmt(d); }
 function planFmt(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -7418,16 +7556,40 @@ function planAddDays(s,n){ const d=planParse(s); d.setDate(d.getDate()+n); retur
 function planDiff(a,b){ return Math.round((planParse(b)-planParse(a))/86400000); }
 const PLAN_WD=['日','一','二','三','四','五','六'];
 function planWd(s){ return '周'+PLAN_WD[planParse(s).getDay()]; }
-function planTopicName(t){ return (typeof t==='string')?t:((t&&t.name)?t.name:''); }
-function planLeafTitle(sub,ci,si,ti){ const sec=sub.chapters[ci].sections[si]; return (ti===undefined||ti===null)?sec.name:planTopicName(sec.topics[ti]); }
-
-function planDefaultLearnEnd(exam){ return planAddDays(exam||PLAN_EXAM_DEF,-37); } // 真题月(36天)开始前一天
-function planDefaultWordPerDay(hEng){ return Math.max(40,Math.round((hEng||2)*3600*0.6/PLAN_WORD_SEC/10)*10); }
+function planTopicName(t){ return (typeof t==='string')?t:((t&&t.name)||''); }
+function planLeafTitle(sub,ci,si,ti){
+  const sec=sub.chapters[ci].sections[si];
+  let t=sub.name+' · '+sub.chapters[ci].name+' · '+sec.name;
+  if(ti!==undefined&&ti!==null&&sec.topics&&sec.topics[ti]) t+=' · '+planTopicName(sec.topics[ti]);
+  return t;
+}
+function planDefaultLearnEnd(exam){ return planAddDays(exam||PLAN_EXAM_DEF,-37); }  // 真题月约36天
 function wRoundLearned(){ return wStats().learned; }
-function planWordPerDay(){ const c=planCfg(); return (c&&c.wordPerDay)?c.wordPerDay:(c&&c.hEng)?planDefaultWordPerDay(c.hEng):WORD_DAILY_DEF; }
+function planWordPerDay(){ const c=planCfg(); return (c&&c.wordPerDay)||PLAN_WORD_DEF; }
+function planSubH(cfg,hf,def){ const v=cfg?cfg[hf]:null; return (v==null||v===''||isNaN(+v))?def:+v; }
 
-/* 收集某几个学科的全部叶子（带原始顺序 seq） */
-function planCollect(subs){
+function learnedChapters(){ if(!state.learnedChapters) state.learnedChapters=JSON.parse(JSON.stringify(LEARNED_CHAPTERS_DEFAULT)); return state.learnedChapters; }
+function isLearnedChapter(sub,ci){ return (learnedChapters()[sub]||[]).includes(ci); }
+function isLearnedPath(path){ const a=path.split('/'); return isLearnedChapter(a[0],+a[1]); }
+function leafMins(path,mod){ if(mod==='poli')return PLAN_POLI_MINS; return isLearnedPath(path)?PLAN_LEARNED_MINS:PLAN_LEAF_MINS; }
+function toggleLearnedChapter(sub,ci){
+  const lc=learnedChapters(); if(!lc[sub])lc[sub]=[];
+  const k=lc[sub].indexOf(ci); if(k>=0)lc[sub].splice(k,1); else lc[sub].push(ci);
+  saveState(); cloudSave();
+  try{ renderPlan(); }catch(e){} renderTree(); renderSidebar();
+  toast((k>=0?'已取消标记':'已标记')+'「'+getSubject(sub).name+'」该章节为学过（0.5h/考点）');
+}
+
+/* 政治完成判定：有该考点笔记即完成（学完整章再做题，不卡做题） */
+function planPoliNoteDone(path){ return (state.items||[]).some(it=>it.kind==='note'&&it.path===path); }
+function planLeafDone(path){
+  if(state.mastery[path]==='mastered')return true;
+  if(path.indexOf('poli')===0) return planPoliNoteDone(path);
+  return false;
+}
+function planMastered(path){ return planLeafDone(path); }
+
+function planCollect(subs,mod){
   const out=[]; let seq=0;
   subs.forEach(id=>{
     const sub=getSubject(id); if(!sub)return;
@@ -7435,265 +7597,340 @@ function planCollect(subs){
       const tps=sec.topics||[];
       const push=(ti)=>{ const path=(ti===undefined||ti===null)?(id+'/'+ci+'/'+si):(id+'/'+ci+'/'+si+'/'+ti);
         const f=freqOf(path)||{};
-        out.push({path,mod:null,sub:id,subName:sub.name,color:sub.color,title:planLeafTitle(sub,ci,si,ti),lv:f.lv||0,p:(f.p||0),w:PLAN_LEAF_MINS,seq:seq++}); };
+        out.push({path,mod:mod||null,sub:id,subName:sub.name,color:sub.color,
+          title:planLeafTitle(sub,ci,si,ti),lv:f.lv||0,p:(f.p||0),
+          w:leafMins(path,mod),fresh:mod==='poli'?!0:!isLearnedPath(path),seq:seq++}); };
       if(tps.length===0) push(null); else tps.forEach((t,ti)=>push(ti));
     }));
   });
   return out;
 }
-function planMastered(path){ return state.mastery[path]==='mastered'; }
-/* 构建各模块队列（剔除已掌握；freq=考频降序，seq=章节顺序） */
-function planQueues(){
-  const res={};
-  PLAN_MOD_DEFS.forEach(md=>{
-    let leaves=planCollect(md.subs).map(l=>{l.mod=md.key;l.w=md.mins;return l;});
-    leaves=leaves.filter(l=>!planMastered(l.path));
-    if(md.order==='freq') leaves.sort((a,b)=>(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq));
-    if(md.split){
-      res[md.key]={};
-      md.split.forEach(sid=>{ res[md.key][sid]=leaves.filter(l=>l.sub===sid); });
-    } else res[md.key]=leaves;
-  });
-  return res;
+/* 某子科：未掌握叶子按考频排序，再拆成 新/已学 两条（政治不拆） */
+function planSubQueue(sid,mod){
+  let leaves=planCollect([sid],mod).filter(l=>!planLeafDone(l.path));
+  leaves.sort((a,b)=>(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq));
+  return {f:leaves.filter(x=>x.fresh), l:leaves.filter(x=>!x.fresh), fp:0, lp:0};
 }
-/* 政治某天可用小时数：10月前≤1h，之后≤2h */
-function planPoliCapH(cfg,date){
-  let h=cfg.hPoli||1;
-  if(date<PLAN_POLI_CAP_DATE) return Math.min(h,1);
-  return Math.min(h,2);
+function planPoliQueue(splitHot){
+  const normal=planCollect(PLAN_POLI_SUBS.slice(0,5),'poli').filter(l=>!planLeafDone(l.path));
+  normal.sort((a,b)=>a.seq-b.seq);
+  let hot=[];
+  if(splitHot) hot=planCollect(['poli6'],'poli').filter(l=>!planLeafDone(l.path)).sort((a,b)=>a.seq-b.seq);
+  return {normal,hot};
 }
-/* 阅读排程（reading 模块提供 readingBuild；此处安全兜底） */
+/* 政治某天可用小时数 */
+function planPoliCapH(cfg,date){ let h=cfg.hPoli||1; if(date<PLAN_POLI_CAP_DATE)return Math.min(h,1); return Math.min(h,2); }
 function planReadingBuildSafe(){ try{ if(typeof readingBuild==='function') return readingBuild(); }catch(e){} return null; }
-function planReadingForDate(rb,date){
-  if(!rb||!rb.days)return 0;
-  const d=rb.days.find(x=>x.date===date); return d?d.n:0;
-}
+function planReadingForDate(rb,date){ if(!rb||!rb.days)return 0; const d=rb.days.find(x=>x.date===date); return d?d.n:0; }
 
 function planBuild(){
   const cfg=planCfg(); if(!cfg)return null;
-  const Q=planQueues();
-  const start=cfg.start, learnEnd=cfg.learnEnd||planDefaultLearnEnd(cfg.exam);
-  const D=planDiff(start,learnEnd)+1;
-  const h408=+(cfg.h408||6), hMath=+(cfg.hMath||8), hEng=+(cfg.hEng||2);
-  const wordPerDay=cfg.wordPerDay||planDefaultWordPerDay(hEng);
-
-  // 数学三子科队列与日型
-  const mq=Q.math||{}, m1=mq.math1?mq.math1.slice():[], m2=mq.math2?mq.math2.slice():[], m3=mq.math3?mq.math3.slice():[];
-  const M1TOT=189,M2TOT=47,M3TOT=42;
-  let taken1=0,taken2=0,taken3=0;
-  const cq=Q.c408?Q.c408.slice():[];
-  const pq=Q.poli?Q.poli.slice():[];
-  let cPtr=0,pPtr=0, wordScheduled=0;
-  const days=[];
-  const modFin={ c408:{total:279,done:279-cq.length,finish:-1},
-                 math:{total:278,done:278-(m1.length+m2.length+m3.length),finish:-1},
-                 poli:{total:108,done:108-pq.length,finish:-1} };
-  const rb=planReadingBuildSafe();
-  const wordRoundDone=wRoundLearned(); // 已学（跨设备/历史）
-  for(let idx=0;idx<Math.max(D,1);idx++){
-    const date=planAddDays(start,idx);
-    const leaves=[];
-    const mins={c408:0,math:0,poli:0};
-    // 408
-    let nC=Math.round(h408*60/PLAN_LEAF_MINS);
-    for(let k=0;k<nC&&cPtr<cq.length;k++){ const l=cq[cPtr++]; leaves.push(l); mins.c408+=l.w; }
-    if(cPtr>=cq.length&&modFin.c408.finish<0&&cq.length) modFin.c408.finish=idx;
-    // 数学日型
-    const stage2=taken1>=Math.round(m1.length*0.4);          // 线代启动：高数取走近40%（剩余队列口径）
-    const stage3=stage2&&taken3===0&&taken2>=Math.max(4,Math.round(m2.length*0.4));
-    let slots=[];
-    if(!stage2){ for(let k=0;k<hMath;k++) slots.push('math1'); }
-    else if(!stage3){ const a=Math.ceil(hMath/2); for(let k=0;k<a;k++)slots.push('math1'); for(let k=0;k<hMath-a;k++)slots.push('math2'); }
-    else { const n3=Math.ceil(hMath/2), n2=Math.ceil((hMath-n3)/2), n1=hMath-n3-n2;
-           for(let k=0;k<n1;k++)slots.push('math1'); for(let k=0;k<n2;k++)slots.push('math2'); for(let k=0;k<n3;k++)slots.push('math3'); }
-    slots.forEach(sid=>{
-      let l=null;
-      if(sid==='math1'&&taken1<m1.length)l=m1[taken1++];
-      else if(sid==='math2'&&taken2<m2.length)l=m2[taken2++];
-      else if(sid==='math3'&&taken3<m3.length)l=m3[taken3++];
-      if(!l){ // 该子科已尽，配额优先补给高数，其次线代/概统
-        if(taken1<m1.length)l=m1[taken1++];
-        else if(taken2<m2.length)l=m2[taken2++];
-        else if(taken3<m3.length)l=m3[taken3++];
+  const start=cfg.start, exam=cfg.exam||PLAN_EXAM_DEF, learnEnd=cfg.learnEnd||planDefaultLearnEnd(exam);
+  const examMonthStart=planAddDays(learnEnd,1);
+  const Dlearn=planDiff(start,learnEnd)+1;
+  const Dall=planDiff(start,planAddDays(exam,-1))+1;     // 排到考前一天
+  const hEng=+(cfg.hEng||2);
+  const wordPerDay=cfg.wordPerDay||PLAN_WORD_DEF;
+  // 队列
+  const Q={}; ['ds','co','os','net'].forEach(s=>Q[s]=planSubQueue(s,'c408'));
+  ['math1','math2','math3'].forEach(s=>Q[s]=planSubQueue(s,'math'));
+  const pq=planPoliQueue(true); let pp=0,hp=0;
+  // 总量（含已掌握）
+  const total408=planCollect(['ds','co','os','net'],'c408').length;
+  const totalMath=planCollect(['math1','math2','math3'],'math').length;
+  const totalPoli=planCollect(PLAN_POLI_SUBS,'poli').length;
+  const left408=['ds','co','os','net'].reduce((a,s)=>a+Q[s].f.length+Q[s].l.length,0);
+  const leftMath=['math1','math2','math3'].reduce((a,s)=>a+Q[s].f.length+Q[s].l.length,0);
+  const leftPoli=pq.normal.length+pq.hot.length;
+  const modFin={
+    c408:{total:total408,done:total408-left408,finish:-1},
+    math:{total:totalMath,done:totalMath-leftMath,finish:-1},
+    poli:{total:totalPoli,done:totalPoli-leftPoli,finish:-1}
+  };
+  /* 单子科按分钟预算取点（新/旧交替、按指针、不跳点），返回取到的点 */
+  function consume(sid,budgetMins){
+    const q=Q[sid]; let used=0,turn=0; const arr=[];
+    const take=(which)=>{ const arrQ=which==='f'?q.f:q.l; const p=which==='f'?q.fp:q.lp;
+      if(p<arrQ.length && used+arrQ[p].w<=budgetMins+0.01){ const l=arrQ[p]; arr.push(l);
+        if(which==='f')q.fp++; else q.lp++; used+=l.w; return true; } return false; };
+    while(used<budgetMins-0.01){
+      let took=false;
+      if(turn%2===0){ if(take('f'))took=true; else if(take('l'))took=true; }
+      else { if(take('l'))took=true; else if(take('f'))took=true; }
+      if(!took)break; turn++;
+    }
+    return arr;
+  }
+  /* 模块级：严格按【当天】各子科时长装箱；某子科耗尽时——
+     · 默认天(autoFill)：空余时间按其余未完成子科【当天时长的比例】动态分摊（不写死优先哪一科）；
+     · 手动当天长(用户自定义)：完全照用户输入，不擅自转移，空余时长原样返回给 UI 提示。 */
+  function consumeModule(group,dc,DEF,autoFill){
+    const bud={}; group.forEach(([sid,hf])=>{ bud[sid]=planSubH(dc,hf,DEF[hf])*60; });
+    const budget=group.reduce((a,[,hf])=>a+planSubH(dc,hf,DEF[hf])*60,0);
+    let arr=[],total=0;
+    group.forEach(([sid])=>{ const got=consume(sid,bud[sid]); arr=arr.concat(got); total+=got.reduce((a,l)=>a+l.w,0); });
+    let remain=budget-total;
+    const hasLeft={}; group.forEach(([sid])=>{ const q=Q[sid]; hasLeft[sid]=q.fp<q.f.length||q.lp<q.l.length; });
+    if(autoFill && remain>=PLAN_POLI_MINS-0.01){
+      const elig=group.filter(([sid])=>hasLeft[sid]&&bud[sid]>0.01).map(([sid])=>sid);
+      const wsum=elig.reduce((a,sid)=>a+bud[sid],0);
+      if(wsum>0){
+        elig.forEach(sid=>{ const got=consume(sid,remain*bud[sid]/wsum); arr=arr.concat(got); const u=got.reduce((a,l)=>a+l.w,0); total+=u; remain-=u; });
+        const order=elig.slice().sort((a,b)=>bud[b]-bud[a]); let guard=0;
+        while(remain>=PLAN_POLI_MINS-0.01 && guard<500){ let progressed=false;
+          for(const sid of order){ const q=Q[sid]; let l=null,wh=null;
+            if(q.fp<q.f.length&&q.f[q.fp].w<=remain+.01){ l=q.f[q.fp];wh='f'; }
+            else if(q.lp<q.l.length&&q.l[q.lp].w<=remain+.01){ l=q.l[q.lp];wh='l'; }
+            if(l){ arr.push(l); if(wh==='f')q.fp++; else q.lp++; total+=l.w; remain-=l.w; progressed=true; } }
+          if(!progressed)break; guard++;
+        }
       }
-      if(l){ leaves.push(l); mins.math+=l.w; }
-    });
-    if(taken1>=m1.length&&taken2>=m2.length&&taken3>=m3.length&&modFin.math.finish<0&&(m1.length+m2.length+m3.length)) modFin.math.finish=idx;
-    // 政治（顺序、当日上限）
-    const pH=planPoliCapH(cfg,date), nP=Math.round(pH*60/PLAN_POLI_MINS);
-    for(let k=0;k<nP&&pPtr<pq.length;k++){ const l=pq[pPtr++]; leaves.push(l); mins.poli+=l.w; }
-    if(pPtr>=pq.length&&modFin.poli.finish<0&&pq.length) modFin.poli.finish=idx;
-    // 英语：单词一轮前只背单词，一轮后排阅读
-    let wordNew=0, readN=0;
+    }
+    return {arr,total,leftover:Math.max(0,Math.round(remain))};
+  }
+  const rb=planReadingBuildSafe();
+  const wordRoundDone=wRoundLearned();
+  let wordScheduled=0;
+  const days=[];
+  const dayOv=()=>{ if(!state.planDay)state.planDay={}; return state.planDay; };
+  for(let idx=0;idx<Math.max(Dall,1);idx++){
+    const date=planAddDays(start,idx);
+    const leaves=[]; const mins={c408:0,math:0,poli:0}; const leftover={c408:0,math:0};
+    const ov=dayOv()[idx];                       // 当天自定义时长（可只覆盖部分字段）
+    const dc=Object.assign({},cfg,ov||{});
+    const autoFill=!ov;                          // 手动天严格照用户输入，不自动转移
+    if(idx<Dlearn){
+      const cm=consumeModule(PLAN_C408_SUBS,dc,PLAN_C408_DEF,autoFill); leaves.push(...cm.arr); mins.c408=cm.total; leftover.c408=cm.leftover;
+      const mm=consumeModule(PLAN_MATH_SUBS,dc,PLAN_MATH_DEF,autoFill); leaves.push(...mm.arr); mins.math=mm.total; leftover.math=mm.leftover;
+    }
+    // 政治：全程排，普通1-5顺序，时政只在真题月
+    const cap=planPoliCapH(cfg,date), pBudget=cap*60; let pUsed=0;
+    while(pp<pq.normal.length && pUsed+PLAN_POLI_MINS<=pBudget+0.01){ leaves.push(pq.normal[pp]); mins.poli+=PLAN_POLI_MINS; pUsed+=PLAN_POLI_MINS; pp++; }
+    if(pp>=pq.normal.length && date>=examMonthStart){
+      while(hp<pq.hot.length && pUsed+PLAN_POLI_MINS<=pBudget+0.01){ leaves.push(pq.hot[hp]); mins.poli+=PLAN_POLI_MINS; pUsed+=PLAN_POLI_MINS; hp++; }
+    }
+    if(idx===Dlearn-1){} // 记录完成在下面统一判断
+    // 英语
+    let wordNew=0,readN=0;
     const remainWords=Math.max(0,WORDS.length-wordRoundDone-wordScheduled);
     if(remainWords>0){ wordNew=Math.min(wordPerDay,remainWords); wordScheduled+=wordNew; }
-    else { readN=planReadingForDate(rb,date); }
-    days.push({idx,date,weekday:planWd(date),leaves,mins,wordNew,readN});
+    else readN=planReadingForDate(rb,date);
+    days.push({idx,date,weekday:planWd(date),leaves,mins,leftover,wordNew,readN,custom:!!ov});
   }
-  // 若队列在窗口内没排完，finish 记为 D（不可行）
-  ['c408','math','poli'].forEach(k=>{ if(modFin[k].finish<0) modFin[k].finish=D; });
-  // 应用手动换题 overrides
+  // finish 判定：找到各模块最后一个叶子被排入的日期
+  const lastIdxOf=mod=>{ let li=-1; days.forEach(d=>d.leaves.forEach(l=>{ if(l.mod===mod)li=d.idx; })); return li; };
+  modFin.c408.finish=left408? (lastIdxOf('c408')<0?Dlearn:lastIdxOf('c408')) : 0;
+  modFin.math.finish=leftMath? (lastIdxOf('math')<0?Dlearn:lastIdxOf('math')) : 0;
+  modFin.poli.finish=leftPoli? (lastIdxOf('poli')<0?Dall:lastIdxOf('poli')) : 0;
   planApplyOverrides(days);
-  // 单词一轮完成日（计划口径）
   const wordDays=Math.ceil((WORDS.length-wordRoundDone)/wordPerDay);
   const wordFinishDate=planAddDays(start,wordDays-1);
-  // 可行性
   const warnings=[];
-  const modMeta={c408:{h:h408,unit:PLAN_LEAF_MINS},math:{h:hMath,unit:PLAN_LEAF_MINS},poli:{unit:PLAN_POLI_MINS}};
-  Object.keys(modFin).forEach(k=>{ const f=modFin[k]; f.feasible=f.finish<D; if(!f.feasible) warnings.push(k); });
-  const examLeft=planDiff(planTodayStr(),cfg.exam);
-  const totalLeaves=modFin.c408.total+modFin.math.total+modFin.poli.total;
-  let done=0; Object.keys(modFin).forEach(k=>done+=modFin[k].done);
-  const allocArr=PLAN_MOD_DEFS.map(md=>{ const f=modFin[md.key]; return {name:md.name,color:md.color,total:f.total,done:f.done}; });
-  return {cfg,days,D,start,learnEnd,h408,hMath,hEng,hPoli:cfg.hPoli||1,wordPerDay,wordFinishDate,wordDays,
-          modFin,warnings,rb,examLeft,allocArr,done,total:totalLeaves,
-          finishDate:learnEnd};
+  modFin.c408.feasible=modFin.c408.finish<Dlearn; if(!modFin.c408.feasible)warnings.push('c408');
+  modFin.math.feasible=modFin.math.finish<Dlearn; if(!modFin.math.feasible)warnings.push('math');
+  modFin.poli.feasible=modFin.poli.finish<Dall; if(!modFin.poli.feasible)warnings.push('poli');
+  const examLeft=planDiff(planTodayStr(),exam);
+  const totalLeaves=total408+totalMath+totalPoli;
+  const done=modFin.c408.done+modFin.math.done+modFin.poli.done;
+  const allocArr=[
+    {name:'408',color:'#1a9e6e',total:total408,done:modFin.c408.done},
+    {name:'数一',color:'#7b53d6',total:totalMath,done:modFin.math.done},
+    {name:'政治',color:'#c0392b',total:totalPoli,done:modFin.poli.done}
+  ];
+  const h408=PLAN_C408_SUBS.reduce((a,[,hf])=>a+planSubH(cfg,hf,PLAN_C408_DEF[hf]),0);
+  const hMath=PLAN_MATH_SUBS.reduce((a,[,hf])=>a+planSubH(cfg,hf,PLAN_MATH_DEF[hf]),0);
+  return {cfg,days,D:Dlearn,Dall,start,learnEnd,examMonthStart,exam,h408,hMath,hEng,hPoli:cfg.hPoli||1,
+    wordPerDay,wordFinishDate,wordDays,modFin,warnings,rb,examLeft,allocArr,done,total:totalLeaves,finishDate:learnEnd};
 }
 function planTodayIndex(b){
   const d=planDiff(b.start,planTodayStr());
   if(d<0)return {idx:0,status:'before'};
   if(d>=b.days.length)return {idx:b.days.length-1,status:'after'};
-  return {idx:d,status:'today'};
+  return {idx:d,status:d>=b.D?'exammonth':'today'};
 }
 
-/* ---------- 手动换题（同模块 · 同级考频 · 1换1 · 过去锁定） ---------- */
+/* ---------- 手动换题（同模块 · 同时长 · 同级考频 · 1换1 · 过去锁定） ---------- */
 function planOverrides(){ if(!state.planOverrides) state.planOverrides={}; return state.planOverrides; }
 function planLeafIndex(){
   const idx={};
-  PLAN_MOD_DEFS.forEach(md=>planCollect(md.subs).forEach(l=>{ l.mod=md.key; l.w=md.mins; idx[l.path]=l; }));
+  const add=(subs,mod)=>planCollect(subs,mod).forEach(l=>{ l.mod=mod; idx[l.path]=l; });
+  add(['ds','co','os','net'],'c408'); add(['math1','math2','math3'],'math'); add(PLAN_POLI_SUBS,'poli');
   return idx;
 }
 function planApplyOverrides(days){
-  const ov=state.planOverrides||{};
-  const index=planLeafIndex();
+  const ov=state.planOverrides||{}; const index=planLeafIndex();
   const pos={}; days.forEach((d,di)=>d.leaves.forEach((l,li)=>{pos[l.path]={di,li};}));
   days.forEach(d=>{
     const list=ov[d.date]; if(!list||!list.swaps)return;
     list.swaps.forEach(sp=>{
-      const cur=pos[sp.from];
-      if(!cur||cur.di!==d.idx)return;
-      if(planMastered(sp.to)||!index[sp.to])return;
+      const cur=pos[sp.from]; if(!cur||cur.di!==d.idx)return;
+      if(planLeafDone(sp.to)||!index[sp.to])return;
       const nl=Object.assign({},index[sp.to]);
       const other=pos[sp.to];
-      if(other && other.di!==d.idx){
-        // 目标排在未来某天：与那一天的目标考点对调（1换1、时长守恒）
+      if(other&&other.di!==d.idx){
         const nf=Object.assign({},index[sp.from]);
         days[other.di].leaves[other.li]=nf; pos[sp.from]={di:other.di,li:other.li};
-      } else {
-        delete pos[sp.from]; // 目标未排入：from 移出计划
-      }
+      } else delete pos[sp.from];
       days[d.idx].leaves[cur.li]=nl; pos[sp.to]={di:d.idx,li:cur.li};
     });
   });
-  days.forEach(d=>d.leaves.sort((a,b)=>({c408:0,math:1,poli:2}[a.mod]-{c408:0,math:1,poli:2}[b.mod])||(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq)));
+  const mo={c408:0,math:1,poli:2};
+  days.forEach(d=>d.leaves.sort((a,b)=>(mo[a.mod]-mo[b.mod])||(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq)));
 }
 function planSwapCandidates(date,fromPath){
-  const b=planBuild(), index=planLeafIndex();
-  const from=index[fromPath]; if(!from)return [];
-  const today=planTodayStr();
-  const pos={}; b.days.forEach(d=>d.leaves.forEach(l=>{pos[l.path]=d.date;}));
+  const b=planBuild(),index=planLeafIndex(); const from=index[fromPath]; if(!from)return [];
+  const today=planTodayStr(); const pos={}; b.days.forEach(d=>d.leaves.forEach(l=>{pos[l.path]=d.date;}));
   const out=[];
   Object.keys(index).forEach(p=>{
-    if(p===fromPath)return;
-    const l=index[p];
+    if(p===fromPath)return; const l=index[p];
     if(l.mod!==from.mod)return;
-    if(planMastered(p))return;
-    if(l.mod!=='poli' && Math.abs((l.lv||0)-(from.lv||0))>1)return; // 考频接近，禁高频↔低频
+    if(planLeafDone(p))return;
+    if(l.w!==from.w)return;                 // 时长守恒（0.5h↔0.5h、1h↔1h）
+    if(l.mod!=='poli'&&Math.abs((l.lv||0)-(from.lv||0))>1)return;
     const pd=pos[p];
-    if(pd===date)return;          // 同一天
-    if(pd && pd<today)return;     // 已在过去，锁定
-    if(pd && pd<date)return;      // 只换今天/未来
-    l._date=pd||'';
-    out.push(l);
+    if(pd===date)return; if(pd&&pd<today)return; if(pd&&pd<date)return;
+    l._date=pd||''; out.push(l);
   });
   out.sort((a,c)=>{
-    const ra=a._date?1:0, rc=c._date?1:0;
-    if(rc!==ra)return rc-ra;                  // 已排（可对调）优先
-    if(a._date&&c._date&&a._date!==c._date)return a._date<c._date?-1:1;  // 日期近优先
+    const ra=a._date?1:0,rc=c._date?1:0; if(rc!==ra)return rc-ra;
+    if(a._date&&c._date&&a._date!==c._date)return a._date<c._date?-1:1;
     return (c.lv-a.lv)||(c.p-a.p)||(a.seq-c.seq);
   });
   return out.slice(0,30);
 }
-
 function planSwapOverlayEl(){
   let el=document.getElementById('planSwapOverlay');
   if(!el){ el=document.createElement('div'); el.id='planSwapOverlay'; el.className='overlay';
-    el.addEventListener('click',ev=>{ if(ev.target===el) planCloseSwap(); });
-    document.body.appendChild(el);
-  }
+    el.addEventListener('click',ev=>{ if(ev.target===el)planCloseSwap(); }); document.body.appendChild(el); }
   return el;
 }
 function planCloseSwap(){ const el=document.getElementById('planSwapOverlay'); if(el)el.classList.remove('open'); }
 function planShowSwap(inner){ const el=planSwapOverlayEl();
-  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>替换考点 · 同模块 / 同级考频 / 1换1</span><button class="dlg-x" onclick="planCloseSwap()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
+  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>替换考点 · 同模块 / 同时长 / 同级考频 / 1换1</span><button class="dlg-x" onclick="planCloseSwap()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
   el.classList.add('open');
 }
 function planSwap(date,fromPath,toPath){
-  const ov=planOverrides();
-  if(!ov[date])ov[date]={swaps:[]};
+  const ov=planOverrides(); if(!ov[date])ov[date]={swaps:[]};
   ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath);
   ov[date].swaps.push({from:fromPath,to:toPath});
   saveState(); cloudSave(); planCloseSwap(); renderPlan(); renderSidebar();
 }
 function planUndoSwap(date,fromPath){
-  const ov=planOverrides(); if(ov[date]&&ov[date].swaps){ ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath); }
+  const ov=planOverrides(); if(ov[date]&&ov[date].swaps)ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath);
   saveState(); cloudSave(); planCloseSwap(); renderPlan(); renderSidebar();
 }
 function planOpenSwap(date,path){
-  const index=planLeafIndex(), from=index[path], cands=planSwapCandidates(date,path);
-  const past=planDiff(planTodayStr(),date)<0;
-  if(past){ toast('过去日期的任务已锁定，不能调整'); return; }
+  const index=planLeafIndex(),from=index[path],cands=planSwapCandidates(date,path);
+  if(planDiff(planTodayStr(),date)<0){ toast('过去日期的任务已锁定，不能调整'); return; }
   let rows=cands.map(l=>'<button class="p-swopt" onclick="planSwap(\''+date+'\',\''+path+'\',\''+l.path+'\')">'
-    +freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span><span class="p-swsub">'+l.subName+(l._date?' · '+l._date.slice(5):' · 未排')+'</span></button>').join('');
-  if(!rows)rows='<div class="sub" style="padding:10px">没有符合条件的同级考点可换（同模块、考频接近、未掌握、未排入计划）。</div>';
+    +freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span><span class="p-swsub">'+l.subName+(l.w===30?' · 0.5h':' · 1h')+(l._date?' · '+l._date.slice(5):' · 未排')+'</span></button>').join('');
+  if(!rows)rows='<div class="sub" style="padding:10px">没有符合条件的同级考点可换（同模块、时长相同、考频接近、未掌握、未排入计划）。</div>';
   const ov=planOverrides()[date]; const swapped=ov&&ov.swaps?ov.swaps.find(sp=>sp.from===path):null;
-  let inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'）。只列出同学科模块、考频相差不超过一级、尚未掌握且未排入计划的考点，替换前后当天考点数量与总时长不变。</div>'
+  const inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'，'+(from.w===30?'0.5h':'1h')+'）。只列同学科模块、时长相同、考频相差不超过一级、未掌握且未排入的考点，替换前后当天数量与总时长不变。</div>'
     +(swapped?'<button class="p-btn" style="margin-bottom:10px" onclick="planUndoSwap(\''+date+'\',\''+path+'\')">撤销这次替换</button>':'')
-    +'<div class="p-swlist">'+rows+'</div>'
-    +'<button class="p-more" style="margin-top:12px" onclick="planCloseSwap()">取消</button>';
+    +'<div class="p-swlist">'+rows+'</div><button class="p-more" style="margin-top:12px" onclick="planCloseSwap()">取消</button>';
   planShowSwap(inner);
 }
+
+/* ---------- 当天子科时长自定义（任意小时 / 0.5 步进，只影响当天） ---------- */
+function planDayOverlayEl(){
+  let el=document.getElementById('planDayOverlay');
+  if(!el){ el=document.createElement('div'); el.id='planDayOverlay'; el.className='overlay';
+    el.addEventListener('click',ev=>{ if(ev.target===el)planCloseDay(); }); document.body.appendChild(el); }
+  return el;
+}
+function planCloseDay(){ const el=document.getElementById('planDayOverlay'); if(el)el.classList.remove('open'); }
+function planEditDay(idx){
+  const b=planBuild(); if(!b){ toast('请先生成学习计划'); return; }
+  const d=b.days[idx]; if(!d)return;
+  if(planDiff(planTodayStr(),d.date)<0){ toast('过去日期的任务已锁定，不能调整'); return; }
+  if(idx>=b.D){ toast('真题月以套卷为主，不再按子科排新学'); return; }
+  const ov=(state.planDay&&state.planDay[idx])||{};
+  const val=(hf,def)=>{ if(ov[hf]!=null)return +(+ov[hf]).toFixed(1); return +planSubH(b.cfg,hf,def).toFixed(1); };
+  const field=(hf,nm,def,max)=>'<label>'+nm+'<input id="pd_'+hf+'" type="number" min="0" max="'+max+'" step="0.5" value="'+val(hf,def)+'"></label>';
+  const g408='<div class="p-subset"><b>408 四子科（合计 ≥ 6h，组成原理 ≥ 1h）</b><div class="p-form">'
+    +field('hds','数据结构',PLAN_C408_DEF.hds,10)+field('hco','组成原理',PLAN_C408_DEF.hco,10)
+    +field('hos','操作系统',PLAN_C408_DEF.hos,10)+field('hnet','计算机网络',PLAN_C408_DEF.hnet,10)+'</div></div>';
+  const gm='<div class="p-subset"><b>数学三子科（合计 ≥ 8h，高数 ≥ 2h）· 可填 3.5 等任意值</b><div class="p-form">'
+    +field('mh1','高等数学',PLAN_MATH_DEF.mh1,14)+field('mh2','线性代数',PLAN_MATH_DEF.mh2,10)+field('mh3','概率论',PLAN_MATH_DEF.mh3,10)+'</div></div>';
+  const inner='<div class="sub" style="margin:0 0 10px;line-height:1.7">只改 <b>'+d.date+'（'+d.weekday+'）</b> 这一天。引擎严格按你给的各科时长分配当天任务（例如高数2 / 线代4 / 概统2），<b>不会擅自把时间转给别的科</b>；某科已学完空余出的时间会在当天任务里提示，由你决定补到哪科。其他天仍按默认模板。</div>'
+    +g408+gm
+    +'<div class="p-form"><button class="p-btn" onclick="planSaveDay('+idx+')">保存当天时长</button>'
+    +(Object.keys(ov).length?'<button class="p-more" onclick="planResetDay('+idx+')">恢复默认模板</button>':'')
+    +'<button class="p-more" onclick="planCloseDay()">取消</button></div>';
+  const el=planDayOverlayEl();
+  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>调整 '+d.date.slice(5)+' 当天各科时长</span><button class="dlg-x" onclick="planCloseDay()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
+  el.classList.add('open');
+}
+function planSaveDay(idx){
+  const get=hf=>{ const el=document.getElementById('pd_'+hf); const v=parseFloat(el?el.value:''); return isNaN(v)?0:Math.max(0,v); };
+  const hds=get('hds'),hco=get('hco'),hos=get('hos'),hnet=get('hnet'),mh1=get('mh1'),mh2=get('mh2'),mh3=get('mh3');
+  const s408=hds+hco+hos+hnet, sMath=mh1+mh2+mh3;
+  if(s408<6-1e-6){ toast('当天 408 合计需 ≥ 6h（当前 '+s408.toFixed(1)+'h）'); return; }
+  if(hco<1-1e-6){ toast('当天组成原理需 ≥ 1h'); return; }
+  if(sMath<8-1e-6){ toast('当天数学合计需 ≥ 8h（当前 '+sMath.toFixed(1)+'h）'); return; }
+  if(mh1<2-1e-6){ toast('当天高等数学需 ≥ 2h'); return; }
+  if(!state.planDay)state.planDay={};
+  state.planDay[idx]={hds:+hds.toFixed(1),hco:+hco.toFixed(1),hos:+hos.toFixed(1),hnet:+hnet.toFixed(1),mh1:+mh1.toFixed(1),mh2:+mh2.toFixed(1),mh3:+mh3.toFixed(1)};
+  saveState(); cloudSave(); planCloseDay(); renderPlan(); renderSidebar();
+  toast('当天时长已按你的分配更新');
+}
+function planResetDay(idx){ if(state.planDay){ delete state.planDay[idx]; saveState(); cloudSave(); } planCloseDay(); renderPlan(); toast('已恢复默认模板'); }
 
 /* ---------- 设置表单 ---------- */
 function planSetupHTML(forceOpen){
   const c=planCfg()||{};
   const start=c.start||planTodayStr(), exam=c.exam||PLAN_EXAM_DEF, learnEnd=c.learnEnd||planDefaultLearnEnd(exam);
-  const h408=c.h408!=null?c.h408:6, hMath=c.hMath!=null?c.hMath:8, hEng=c.hEng!=null?c.hEng:2, hPoli=c.hPoli!=null?c.hPoli:1;
-  const wpd=c.wordPerDay||planDefaultWordPerDay(hEng);
-  const rStart=(c.readStart)||'', rEnd=c.readEnd||exam;
+  const hEng=c.hEng!=null?c.hEng:2, hPoli=c.hPoli!=null?c.hPoli:1;
+  const wpd=c.wordPerDay||PLAN_WORD_DEF;
+  const rStart=c.readStart||'', rEnd=c.readEnd||exam;
+  const num=(v,d)=>((v==null||v===''||isNaN(v))?d:v);
+  const hds=num(c.hds,PLAN_C408_DEF.hds),hco=num(c.hco,PLAN_C408_DEF.hco),hos=num(c.hos,PLAN_C408_DEF.hos),hnet=num(c.hnet,PLAN_C408_DEF.hnet);
+  const mh1=num(c.mh1,PLAN_MATH_DEF.mh1),mh2=num(c.mh2,PLAN_MATH_DEF.mh2),mh3=num(c.mh3,PLAN_MATH_DEF.mh3);
   const btn=planCfg()?'更新学习计划':'生成我的学习计划';
-  return '<details class="p-set"'+(forceOpen?' open':'')+'><summary>'+(planCfg()?'调整各模块每日时长 / 日期':'① 设置四大模块的每日学习参数')+'</summary>'
+  const inp=(id,label,val,max,step)=>'<label>'+label+'<input id="'+id+'" type="number" min="0" max="'+max+'" step="'+(step||0.5)+'" value="'+val+'"></label>';
+  return '<details class="p-set"'+(forceOpen?' open':'')+'><summary>'+(planCfg()?'调整每日子科时长 / 日期':'① 设置每日学习参数')+'</summary>'
    +'<div class="p-form">'
    +'<label>开始日期<input id="pStart" type="date" value="'+start+'"></label>'
    +'<label>考研日期<input id="pExam" type="date" value="'+exam+'"></label>'
-   +'<label>新学截止日（其后进入真题月）<input id="pLearnEnd" type="date" value="'+learnEnd+'"></label>'
-   +'<label>408 每天小时（每考点1h）<input id="pH408" type="number" min="0" max="12" step="0.5" value="'+h408+'"></label>'
-   +'<label>数一 每天小时（每考点1h）<input id="pHMath" type="number" min="0" max="12" step="0.5" value="'+hMath+'"></label>'
-   +'<label>英语 每天小时<input id="pHEng" type="number" min="0" max="6" step="0.5" value="'+hEng+'"></label>'
-   +'<label>政治 每天小时（10月前≤1，其后≤2）<input id="pHPoli" type="number" min="0" max="2" step="0.5" value="'+hPoli+'"></label>'
-   +'<label>每天新词数（一轮前英语全背词）<input id="pWpd" type="number" min="20" max="600" step="10" value="'+wpd+'"></label>'
-   +'<label>阅读开始日（留空=单词一轮完成次日）<input id="pReadStart" type="date" value="'+rStart+'"></label>'
+   +'<label>新学截止日（次日进入真题月）<input id="pLearnEnd" type="date" value="'+learnEnd+'"></label>'
+   +'</div>'
+   +'<div class="p-subset"><b>408 四子科每日小时（合计 ≥ 6，组成原理 ≥ 1）</b><div class="p-form">'
+   +inp('pHds','数据结构',hds,8)+inp('pHco','组成原理',hco,8)+inp('pHos','操作系统',hos,8)+inp('pHnet','计算机网络',hnet,8)
+   +'</div></div>'
+   +'<div class="p-subset"><b>数一 三子科每日小时（合计 ≥ 8，高等数学 ≥ 2）</b><div class="p-form">'
+   +inp('pMh1','高等数学',mh1,12)+inp('pMh2','线性代数',mh2,8)+inp('pMh3','概率论',mh3,8)
+   +'</div></div>'
+   +'<div class="p-form">'
+   +inp('pHEng','英语 每天小时',hEng,6)
+   +inp('pHPoli','政治 每天小时（10月前≤1，其后≤2）',hPoli,2)
+   +inp('pWpd','每天新词数',wpd,1200,50)
+   +'<label>阅读开始日（留空=单词一轮次日）<input id="pReadStart" type="date" value="'+rStart+'"></label>'
    +'<label>阅读目标完成日<input id="pReadEnd" type="date" value="'+rEnd+'"></label>'
    +'<button class="p-btn" onclick="planSave()">'+btn+'</button>'
    +'</div>'
-   +(forceOpen?'<div class="sub" style="margin-top:12px;color:var(--ink-3);font-size:12.5px;line-height:1.7">默认时间盒：408 6h（6个考点）＋数一 8h（高数→线代→概统滚动）＋英语 2h（单词一轮前只背词，一轮后转阅读）＋政治（10月前1h、之后2h，按章节顺序）。408、数一严格按真题考频<b>高频→中频→低频</b>；政治不按考频。总天数由开始日与新学截止日自动决定，考点可在计划里用「⇄」同级替换。</div>':'')
+   +(forceOpen?'<div class="sub" style="margin-top:12px;color:var(--ink-3);font-size:12.5px;line-height:1.7">已学过章节（高数1-6、线代1-3、概统1、网络1-3、数据结构1-2、计组1-2、操作系统1）按 <b>0.5h/考点</b>，并与新考点<b>新旧穿插</b>，可在知识树章节标题切换。408/数一严格按真题考频<b>高频→中频→低频</b>；政治有<b>本章笔记</b>即算完成、时政放在真题月、可排到考前一天；英语单词一轮前只背词，一轮后转阅读。考点可用「⇄」换同时长同级题。</div>':'')
    +'</details>';
 }
 function planSave(){
-  const g=id=>document.getElementById(id);
+  const g=id=>document.getElementById(id); const numv=(id,d)=>{ const v=parseFloat(g(id).value); return isNaN(v)?d:v; };
   const start=g('pStart').value||planTodayStr();
   const exam=g('pExam').value||PLAN_EXAM_DEF;
   const learnEnd=g('pLearnEnd').value||planDefaultLearnEnd(exam);
-  const h408=Math.max(0,Math.min(12,parseFloat(g('pH408').value)||0));
-  const hMath=Math.max(0,Math.min(12,parseFloat(g('pHMath').value)||0));
-  const hEng=Math.max(0,Math.min(6,parseFloat(g('pHEng').value)||0));
-  const hPoli=Math.max(0,Math.min(2,parseFloat(g('pHPoli').value)||0));
-  const wordPerDay=Math.max(20,Math.min(600,parseInt(g('pWpd').value)||planDefaultWordPerDay(hEng)));
+  const hds=numv('pHds',PLAN_C408_DEF.hds),hco=numv('pHco',PLAN_C408_DEF.hco),hos=numv('pHos',PLAN_C408_DEF.hos),hnet=numv('pHnet',PLAN_C408_DEF.hnet);
+  const mh1=numv('pMh1',PLAN_MATH_DEF.mh1),mh2=numv('pMh2',PLAN_MATH_DEF.mh2),mh3=numv('pMh3',PLAN_MATH_DEF.mh3);
+  const hEng=Math.max(0,Math.min(6,numv('pHEng',2)));
+  const hPoli=Math.max(0,Math.min(2,numv('pHPoli',1)));
+  const s408=hds+hco+hos+hnet, sMath=mh1+mh2+mh3;
+  if(s408<6-1e-6){ toast('408 四子科每天合计需 ≥ 6 小时（当前 '+s408.toFixed(1)+'h）'); return; }
+  if(hco<1-1e-6){ toast('组成原理每天需 ≥ 1 小时'); return; }
+  if(sMath<8-1e-6){ toast('数学三子科每天合计需 ≥ 8 小时（当前 '+sMath.toFixed(1)+'h）'); return; }
+  if(mh1<2-1e-6){ toast('高等数学每天需 ≥ 2 小时'); return; }
+  const wordPerDay=Math.max(20,Math.min(1200,parseInt(g('pWpd').value)||PLAN_WORD_DEF));
   let readStart=g('pReadStart').value||'';
   const readEnd=g('pReadEnd').value||exam;
-  if(!readStart){ readStart=planAddDays(start,Math.ceil((WORDS.length-wRoundLearned())/wordPerDay)); }
-  state.plan={v:2,start,exam,learnEnd,h408,hMath,hEng,hPoli,wordPerDay,readStart,readEnd};
-  // 同步阅读模块配置
+  if(!readStart) readStart=planAddDays(start,Math.ceil((WORDS.length-wRoundLearned())/wordPerDay));
+  state.plan={v:3,start,exam,learnEnd,hds,hco,hos,hnet,mh1,mh2,mh3,hEng,hPoli,wordPerDay,readStart,readEnd};
   if(typeof ensureReading==='function'){ ensureReading(); state.reading.start=readStart; state.reading.end=readEnd; }
   saveState(); pShowAll=false; cloudSave(); renderPlan(); renderSidebar();
   toast('学习计划已更新');
@@ -7701,143 +7938,135 @@ function planSave(){
 let pShowAll=false;
 
 /* ---------- 渲染 ---------- */
-const PLAN_MOD_LABEL={c408:'408',math:'数一',poli:'政治'};
 function planLeafRow(l,date){
-  const done=planMastered(l.path);
+  const done=planLeafDone(l.path);
   const past=planDiff(planTodayStr(),date)<0;
-  const swap=(past||done)?'':'<button class="p-swap" title="同级换题" onclick="planOpenSwap(\''+date+'\',\''+l.path+'\')">⇄</button>';
+  const swap=(past||done)?'':'<button class="p-swap" title="同时长同级换题" onclick="planOpenSwap(\''+date+'\',\''+l.path+'\')">⇄</button>';
+  const half=(l.mod!=='poli'&&l.w===PLAN_LEARNED_MINS)?'<span class="p-half" title="已学章节·0.5h">½</span>':'';
+  const polinote=(l.mod==='poli'&&planPoliNoteDone(l.path)&&state.mastery[l.path]!=='mastered')?'<span class="p-half" style="background:#fdecea;color:#c0392b" title="已有本章笔记">记</span>':'';
   return '<div class="p-leaf'+(done?' done':'')+'" data-p="'+l.path+'">'
     +'<input type="checkbox" class="p-cb" '+(done?'checked':'')+' onclick="planToggleLeaf(\''+l.path+'\')">'
-    +'<span class="p-lt">'+freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span></span>'
+    +'<span class="p-lt">'+freqPill(l.path)+half+polinote+'<span class="p-ti">'+esc(l.title)+'</span></span>'
     +swap+'<button class="p-go" onclick="location.hash=\'#/tree/'+l.path+'\'">考点 ›</button></div>';
 }
 function planGroupLeaves(day){
-  let html=''; const order=['c408','math','poli'];
+  let html=''; const order=['c408','math','poli']; const names={c408:'408',math:'数一',poli:'政治'}; const colors={c408:'#1a9e6e',math:'#7b53d6',poli:'#c0392b'};
   order.forEach(mk=>{
     const ls=day.leaves.filter(l=>l.mod===mk); if(!ls.length)return;
-    const md=PLAN_MOD_DEFS.find(x=>x.key===mk);
     let last=null;
-    html+='<div class="p-grp"><span class="p-dot" style="background:'+md.color+'"></span>'+md.name+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h</div>';
+    html+='<div class="p-grp"><span class="p-dot" style="background:'+colors[mk]+'"></span>'+names[mk]+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h</div>';
+    const lo=(day.leftover&&day.leftover[mk])||0;
+    if(lo>=30&&day.custom) html+='<div class="p-leftover">⚠ 有子科已学完，空余 '+(lo/60).toFixed(1)+'h 未安排（按你今天设定的时长，引擎不擅自转给他科）；点「今日各科时长」把它补到未完成科目。</div>';
     ls.forEach(l=>{ if(l.subName!==last){ html+='<div class="p-subgrp">'+l.subName+'</div>'; last=l.subName; } html+=planLeafRow(l,day.date); });
   });
   return html;
 }
 function planToggleLeaf(path){
   if(state.mastery[path]==='mastered')delete state.mastery[path]; else state.mastery[path]='mastered';
-  saveState(); cloudSave();
-  planRefreshCounts(); renderSidebar();
+  saveState(); cloudSave(); planRefreshCounts(); renderSidebar();
 }
 function planRefreshCounts(){
-  const b=planBuild(); if(!b)return; const ti=planTodayIndex(b); const day=b.days[ti.idx];
-  if(!day)return;
-  const td=day.leaves.filter(l=>state.mastery[l.path]==='mastered').length;
+  const b=planBuild(); if(!b)return; const ti=planTodayIndex(b); const day=b.days[ti.idx]; if(!day)return;
+  const td=day.leaves.filter(l=>planLeafDone(l.path)).length;
   const tel=document.getElementById('pTodayProg'); if(tel)tel.textContent=td+' / '+day.leaves.length+' 完成';
   const tb=document.getElementById('pTodayBar'); if(tb)tb.style.width=(day.leaves.length?Math.round(100*td/day.leaves.length):0)+'%';
   const oe=document.getElementById('pOvProg'); if(oe)oe.textContent='计划完成 '+b.done+' / '+b.total;
   const ob=document.getElementById('pOvBar'); if(ob)ob.style.width=(b.total?Math.round(100*b.done/b.total):0)+'%';
 }
-function planEngLine(d){
-  if(d.wordNew>0)return '新词 '+d.wordNew;
-  if(d.readN>0)return '阅读 '+d.readN+' 篇';
-  return '复习/巩固';
-}
+function planEngLine(d){ if(d.wordNew>0)return '新词 '+d.wordNew; if(d.readN>0)return '阅读 '+d.readN+' 篇'; return '复习/巩固'; }
 function planTimelineHTML(b,startIdx){
-  const max=b.days.length-startIdx, n=pShowAll?max:Math.min(7,max); let h='';
+  const max=b.days.length-startIdx,n=pShowAll?max:Math.min(7,max); let h='';
+  const todayIdx=planTodayIndex(b).idx;
   for(let k=0;k<n;k++){ const d=b.days[startIdx+k]; if(!d)break;
-    const mods=PLAN_MOD_DEFS.filter(md=>d.leaves.some(l=>l.mod===md.key)).map(md=>md.name);
-    const dn=d.leaves.filter(l=>state.mastery[l.path]==='mastered').length;
+    const mods=['c408','math','poli'].filter(mk=>d.leaves.some(l=>l.mod===mk)).map(mk=>({c408:'408',math:'数一',poli:'政治'}[mk]));
+    const dn=d.leaves.filter(l=>planLeafDone(l.path)).length;
     const hrs=((d.mins.c408+d.mins.math+d.mins.poli)/60+b.hEng).toFixed(1);
     const now=(startIdx+k===planTodayIndex(b).idx);
-    h+='<div class="p-tl'+(now?' now':'')+'"><div class="p-tl-d"><b>'+d.date.slice(5)+'</b><span>'+d.weekday+' · 第'+(d.idx+1)+'天</span></div>'
+    const inExam=startIdx+k>=b.D;
+    const editBtn=(d.idx>=todayIdx&&d.idx<b.D)?'<button class="p-dayedit" title="自定义当天各科时长" onclick="planEditDay('+d.idx+')">时长</button>':'';
+    h+='<div class="p-tl'+(now?' now':'')+(d.custom?' custom':'')+'"><div class="p-tl-d"><b>'+d.date.slice(5)+(d.custom?' <span class="p-custag">自</span>':'')+'</b><span>'+d.weekday+(inExam?' · 真题月':' · 第'+(d.idx+1)+'天')+'</span></div>'
       +'<div class="p-tl-m"><div class="p-tl-s">'+mods.map(s=>'<span>'+s+'</span>').join('')+'<span style="background:var(--net)">英</span></div>'
-      +'<div class="p-tl-meta">'+d.leaves.length+' 考点 · 约 '+hrs+'h · 英语：'+planEngLine(d)+(dn?' · 已完成 '+dn:'')+'</div></div></div>';
+      +'<div class="p-tl-meta">'+d.leaves.length+' 考点 · 约 '+hrs+'h · 英语：'+planEngLine(d)+(dn?' · 完成 '+dn:'')+'</div>'+editBtn+'</div></div>';
   }
   return h;
 }
 function planGoWords(){ location.hash='#/words'; setTimeout(()=>{ try{ wStart(); }catch(e){} },90); }
 function planModAlerts(b){
-  const names={c408:'408',math:'数一',poli:'政治'};
-  let h='';
-  Object.keys(b.modFin).forEach(k=>{ const f=b.modFin[k]; if(!f.feasible){
-    const md=PLAN_MOD_DEFS.find(x=>x.key===k);
-    h+='<div class="p-alert bad"><b>'+names[k]+'排不完：</b>窗口内还有 '+(f.total-f.done)+' 个考点排不进新学截止日 '+b.learnEnd+'。请增加'+names[k]+'每天小时数，或把新学截止日延后（压缩真题月前的复习）。</div>';
-  }
-  });
-  if(b.rb&&b.rb.feasible===false){ h+='<div class="p-alert bad"><b>阅读排不完：</b>'+b.rb.total+' 篇每天最多 4 篇需 '+b.rb.needDays+' 天，当前开始日 '+b.rb.start+' 到目标日只有 '+b.rb.availDays+' 天。请提前阅读开始日（提高每天新词数、尽早结束单词一轮）或后移目标日。</div>'; }
-  if(!h){ const slack=planDiff(b.learnEnd,b.cfg.exam);
-    h='<div class="p-alert ok"><b>计划可行：</b>新学窗口 '+b.D+' 天（'+b.start+' → '+b.learnEnd+'），其后约 '+Math.max(0,planDiff(b.learnEnd,b.cfg.exam))+' 天真题 / 冲刺。单词一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+' 完成），随后转阅读打卡。</div>'; }
+  const names={c408:'408',math:'数一',poli:'政治'}; let h='';
+  if(!b.modFin.c408.feasible) h+='<div class="p-alert bad"><b>408排不完：</b>新学窗口内还有 '+(b.modFin.c408.total-b.modFin.c408.done)+' 个考点排不到 '+b.learnEnd+'，请增加408子科每日小时或延后新学截止日。</div>';
+  if(!b.modFin.math.feasible) h+='<div class="p-alert bad"><b>数一排不完：</b>新学窗口内还有 '+(b.modFin.math.total-b.modFin.math.done)+' 个考点排不到 '+b.learnEnd+'，请增加数学子科每日小时（高数≥2）或延后截止日。</div>';
+  if(!b.modFin.poli.feasible) h+='<div class="p-alert bad"><b>政治排不完：</b>到考前一天还有政治考点未排，请提高政治每日小时。</div>';
+  if(b.rb&&b.rb.feasible===false) h+='<div class="p-alert bad"><b>阅读排不完：</b>'+b.rb.total+' 篇每天最多4篇需 '+b.rb.needDays+' 天，当前窗口仅 '+b.rb.availDays+' 天，请提高新词数尽早结束单词一轮或后移目标日。</div>';
+  if(!h) h='<div class="p-alert ok"><b>计划可行：</b>新学窗口 '+b.D+' 天（'+b.start+' → '+b.learnEnd+'），其后约 '+planDiff(b.learnEnd,b.exam)+' 天真题月（政治时政在此阶段）。单词一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+' 完成），随后转阅读打卡，目标 '+b.cfg.readEnd+'。政治有本章笔记即完成、可排到考前一天。</div>';
   return h;
 }
 function renderPlan(){
   const app=$('#planApp'); if(!app)return;
   if(!planCfg()){ app.innerHTML=planSetupHTML(true); return; }
-  const b=planBuild(), ti=planTodayIndex(b), day=b.days[ti.idx];
+  const b=planBuild(),ti=planTodayIndex(b),day=b.days[ti.idx];
   const ovPct=b.total?Math.round(100*b.done/b.total):0;
-  const td=day?day.leaves.filter(l=>state.mastery[l.path]==='mastered').length:0;
+  const td=day?day.leaves.filter(l=>planLeafDone(l.path)).length:0;
   const tpct=day&&day.leaves.length?Math.round(100*td/day.leaves.length):0;
   const wordDue=wDueIdxs().length, wordLeft=wNewIdxs(b.wordPerDay).length;
   const dueN=dueItems().length;
   const engPhase=(wRoundLearned()>=WORDS.length)?'reading':'words';
   let h=planSetupHTML(false);
+  const phaseLabel=ti.status==='exammonth'?'真题 / 冲刺月':(ti.status==='after'?'已到考前':'新学');
   h+='<div class="p-hero">'
-    +'<div class="p-stat"><div class="n">'+Math.max(0,b.examLeft)+'<small>天</small></div><div class="l">距考研（'+b.cfg.exam.slice(5)+'）</div></div>'
-    +'<div class="p-stat"><div class="n">'+(ti.status==='before'?1:ti.idx+1)+'<small>/ '+b.D+'</small></div><div class="l">'+(ti.status==='before'?'计划未开始 · 首日 '+b.days[0].date:(ti.status==='after'?'新学已结束 · 真题/冲刺期':'今天 '+day.date+' '+day.weekday))+'</div></div>'
-    +'<div class="p-stat"><div class="n">'+(day?day.leaves.length:0)+'<small>考点</small></div><div class="l">今日新学（408/数一/政治）</div></div>'
-    +'<div class="p-stat"><div class="n">'+b.done+'<small>/ '+b.total+'</small></div><div class="l">考点已掌握</div></div>'
+    +'<div class="p-stat"><div class="n">'+Math.max(0,b.examLeft)+'<small>天</small></div><div class="l">距考研（'+b.exam.slice(5)+'）</div></div>'
+    +'<div class="p-stat"><div class="n">'+(ti.status==='before'?1:ti.idx+1)+'<small>/ '+b.days.length+'</small></div><div class="l">'+(ti.status==='before'?'计划未开始 · 首日 '+b.days[0].date:'今天 '+day.date+' '+day.weekday+' · '+phaseLabel)+'</div></div>'
+    +'<div class="p-stat"><div class="n">'+(day?day.leaves.length:0)+'<small>考点</small></div><div class="l">今日任务（408/数一/政治）</div></div>'
+    +'<div class="p-stat"><div class="n">'+b.done+'<small>/ '+b.total+'</small></div><div class="l">考点已完成</div></div>'
     +'</div>';
   h+=planModAlerts(b);
   h+='<div class="p-cols"><div>';
-  h+='<div class="p-card" id="planToday"><h3>'+(ti.status==='after'?'冲刺 / 复盘':'今日学习任务')+'</h3>'
-    +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 考点约 '+((day.mins.c408+day.mins.math+day.mins.poli)/60).toFixed(1)+'h＋英语 '+b.hEng+'h（'+planEngLine(day)+'）＋复习机动':'新学已排完')+'</div>';
-  if(day&&day.leaves.length)h+=planGroupLeaves(day); else h+='<div class="sub">考点计划已结束，今天用于真题、错题与薄弱点复盘。</div>';
+  h+='<div class="p-card" id="planToday"><h3>'+(ti.status==='exammonth'?'真题月 · 今日任务（政治/英语收尾）':'今日学习任务')+(ti.status!=='exammonth'?'<button class="p-daybtn" onclick="planEditDay('+ti.idx+')">⏱ 今日各科时长</button>':'')+'</h3>'
+    +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 考点约 '+((day.mins.c408+day.mins.math+day.mins.poli)/60).toFixed(1)+'h＋英语 '+b.hEng+'h（'+planEngLine(day)+'）＋复习机动':'计划已结束')+'</div>';
+  if(day&&day.leaves.length)h+=planGroupLeaves(day); else h+='<div class="sub">今天没有新考点，用于真题、错题与薄弱点复盘。</div>';
   h+='<div class="p-prog"><span id="pTodayProg">'+td+' / '+(day?day.leaves.length:0)+' 完成</span><div class="pbar" style="flex:1"><i id="pTodayBar" style="width:'+tpct+'%;background:var(--kc-done)"></i></div><span>'+tpct+'%</span></div>';
   h+='</div>';
-  h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.D+' 天':'从今天起 7 天（可展开全部）')+' · 408/数一高频先学，政治按章节，⇄可同级换题</div>'
+  h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.days.length+' 天':'从今天起 7 天（可展开全部）')+' · 高频先学、新旧穿插，⇄可换同时长同级题</div>'
     +'<div id="pTimeline">'+planTimelineHTML(b,ti.idx)+'</div>'
-    +(b.days.length-ti.idx>7?'<button class="p-more" onclick="planToggleAll()">'+(pShowAll?'收起，只看 7 天':'展开全部 '+b.D+' 天计划')+'</button>':'')
+    +(b.days.length-ti.idx>7?'<button class="p-more" onclick="planToggleAll()">'+(pShowAll?'收起，只看 7 天':'展开全部 '+b.days.length+' 天计划')+'</button>':'')
     +'</div>';
   h+='</div><div>';
-  // 英语卡片：一轮前单词，一轮后阅读
   if(engPhase==='words'){
     h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词（一轮前）</b><span>新词 '+wordLeft+' / 目标 '+b.wordPerDay+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>';
   }else{
-    const rd=(b.rb&&todayReading)?todayReading():null;
+    const rd=(b.rb&&typeof todayReading==='function')?todayReading():null;
     h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#E3F6EE;color:#0a8a5f">读</div><div class="qm"><b>今日阅读打卡</b><span>'+(rd?('应做 '+rd.n+' 篇（'+rd.label+'）'):'单词一轮已完成，去安排阅读')+'</span></div><button onclick="location.hash=\'#/reading\'">去阅读</button></div>';
   }
   h+='<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div></div>';
-  // 模块进度
   h+='<div class="p-card" style="margin-top:14px"><h3>各模块进度</h3>';
   h+='<div class="p-alloc">'+b.allocArr.map(a=>{const pct=a.total?Math.round(100*a.done/a.total):0;return '<div class="pa"><span class="pan">'+a.name+'</span><span class="pab"><i style="width:'+pct+'%;background:'+a.color+'"></i></span><span class="pam">'+a.done+' / '+a.total+' · '+pct+'%</span></div>';}).join('')+'</div>';
   h+='<div class="p-prog" style="margin-top:10px"><span id="pOvProg">计划完成 '+b.done+' / '+b.total+'</span></div><div class="pbar" style="margin:8px 0"><i id="pOvBar" style="width:'+ovPct+'%;background:var(--kc-done)"></i></div>';
-  h+='<div class="sub" style="margin-bottom:6px">单词 '+b.wordPerDay+'/天 · 一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+'）· 一轮后转阅读打卡（每天≤4篇）</div>';
+  h+='<div class="sub" style="margin-bottom:6px">单词 '+b.wordPerDay+'/天 · 一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+'）· 一轮后转阅读（每天≤4篇）</div>';
   h+='</div>';
   h+='</div></div>';
   app.innerHTML=h;
 }
 function planToggleAll(){ pShowAll=!pShowAll; renderPlan(); }
 function planSidebarItem(){
-  const route=currentRoute(), on=route.type==='plan';
+  const route=currentRoute(),on=route.type==='plan';
   let meta='四大模块排期';
-  const b=planCfg()?planBuild():null;
-  if(b){ const ti=planTodayIndex(b); meta='第'+(ti.idx+1)+'/'+b.D+' 天 · 考研'+Math.max(0,b.examLeft)+'天'; }
-  return '<button class="snav '+(on?'active':'')+' p-sidebtn" data-goto="#/plan" style="'+(on?'border-left:3px solid var(--ink)':'')+'">'
-    +'<span class="scol" style="background:var(--ink);'+(on?'':'opacity:.5')+'"></span>'
+  try{ const b=planBuild(); if(b){ const ti=planTodayIndex(b); const day=b.days[ti.idx];
+    const td=day?day.leaves.filter(l=>planLeafDone(l.path)).length:0;
+    meta=(day&&day.leaves.length)?('今日 '+td+'/'+day.leaves.length):(ti.status==='exammonth'?'真题月':'新学已结束'); } }catch(e){}
+  return '<button class="snav '+('')+'" data-goto="#/plan" style="'+(on?'border-left:3px solid var(--kc-wait)':'')+'">'
+    +'<span class="scol" style="background:var(--kc-wait);'+(on?'':'opacity:.35')+'"></span>'
     +'<span class="sinfo"><span class="sname">学习计划<span class="en">PLAN</span></span><span class="smeta">'+meta+'</span></span>'
-    +(b?'<span class="spct" style="color:var(--ink)">'+(b.total?Math.round(100*b.done/b.total):0)+'%</span>':'')+'</button>';
+    +'<span class="spct" style="color:var(--kc-wait)">⏱</span></button>';
 }
 function planOverviewBanner(){
-  if(!planCfg()){
-    return '<div class="p-banner"><div class="pbb-l"><b>制定个性化学习计划</b><span>按四大模块时间盒与真题考频自动排期</span></div><button onclick="location.hash=\'#/plan\'">一键生成</button></div>';
-  }
-  const b=planBuild(), ti=planTodayIndex(b), day=b.days[ti.idx];
-  const pct=b.total?Math.round(100*b.done/b.total):0;
-  return '<div class="p-banner"><div class="pbb-l">'
-    +'<b>第 '+(ti.idx+1)+' / '+b.D+' 天 · 距考研 '+Math.max(0,b.examLeft)+' 天</b>'
-    +'<span>今日 '+(day?day.leaves.length:0)+' 考点 · '+planEngLine(day||{wordNew:0,readN:0})+' · 待复习 '+dueItems().length+' · 完成 '+b.done+'/'+b.total+'</span>'
-    +'<div class="pbb-bar"><i style="width:'+pct+'%"></i></div></div>'
-    +'<button onclick="location.hash=\'#/plan\'">今日学习</button></div>';
+  try{ const b=planBuild(); if(!b)return ''; const ti=planTodayIndex(b); const day=b.days[ti.idx];
+    if(!day)return '';
+    const td=day.leaves.filter(l=>planLeafDone(l.path)).length;
+    const eng=planEngLine(day);
+    return '<div class="ov-banner" onclick="location.hash=\'#/plan\'" style="cursor:pointer">'
+      +'<b>今天 '+day.date.slice(5)+' '+day.weekday+(ti.status==='exammonth'?' · 真题月':'')+'</b><span>'
+      +day.leaves.length+' 个考点（完成 '+td+'）· 英语：'+eng+' · 点击查看排期</span></div>';
+  }catch(e){ return ''; }
 }
-
 
 /* ================= 英语阅读打卡（新东方100篇基础+100篇强化 · 单词一轮后启动） ================= */
 const READ_BASE_N=100, READ_STRONG_N=100, READ_CAP=4;
@@ -8278,62 +8507,172 @@ async function examDelete(slot,c){
 }
 
 
-function renderWords(){
+/* ================= 思维导图速记（726页翻页卡） ================= */
+const MM_TOTAL=726;
+function mmEnsure(){ if(!state.mindmap||typeof state.mindmap.pos!=='number'){ state.mindmap={pos:1,seen:{}}; } if(!state.mindmap.seen)state.mindmap.seen={}; return state.mindmap; }
+function mmImgSrc(p){ return 'data/mindmap/p'+String(p).padStart(3,'0')+'.jpg'; }
+function mmGo(p){ const m=mmEnsure(); p=parseInt(p,10); if(isNaN(p))return; p=Math.max(1,Math.min(MM_TOTAL,p)); m.pos=p; m.seen[String(p)]=1; saveState(); renderMindmap(); try{renderSidebar();}catch(e){} }
+function mmJump(){ const i=$('#mmInput'); if(i)mmGo(i.value); }
+function renderMindmap(){
+  const app=$('#mindmapApp'); if(!app)return; const m=mmEnsure(); const p=m.pos;
+  if(!m.seen[String(p)]){ m.seen[String(p)]=1; try{saveState();}catch(e){} }
+  const seen=Object.keys(m.seen).length, pct=Math.round(100*seen/MM_TOTAL);
+  app.innerHTML=
+   '<div class="mm-hero"><div>已看进度</div><div class="pbar" style="margin:8px 0 0;height:8px"><i style="width:'+pct+'%;background:#8e44ad;display:block;height:100%;border-radius:4px"></i></div>'
+   +'<div class="mm-meta">已看 <b>'+seen+'</b> / '+MM_TOTAL+' 页（'+pct+'%）　·　上次看到第 <b>'+p+'</b> 页，进度自动云端同步</div></div>'
+   +'<div class="mm-card"><div class="mm-page">第 '+p+' / '+MM_TOTAL+' 页</div>'
+   +'<img id="mmImg" class="mm-img" src="'+mmImgSrc(p)+'" alt="思维导图第'+p+'页"></div>'
+   +'<div class="mm-ctrl">'
+   +'<button class="mm-btn" onclick="mmGo(1)">首页</button>'
+   +'<button class="mm-btn mm-prev" '+(p<=1?'disabled':'')+' onclick="mmGo('+(p-1)+')">‹ 上一页</button>'
+   +'<div class="mm-jump">第 <input id="mmInput" type="number" min="1" max="'+MM_TOTAL+'" value="'+p+'"> 页 <button class="mm-btn" onclick="mmJump()">跳转</button></div>'
+   +'<button class="mm-btn mm-next" '+(p>=MM_TOTAL?'disabled':'')+' onclick="mmGo('+(p+1)+')">下一页 ›</button>'
+   +'<button class="mm-btn" onclick="mmGo('+MM_TOTAL+')">末页</button>'
+   +'</div><div class="mm-tip">可用键盘 ← / → 翻页；每页是一张思维导图，按记忆卡方式反复翻看。</div>';
+}
+if(!window._mmBound){ window._mmBound=1; document.addEventListener('keydown',function(e){ try{ if(currentRoute().type!=='mindmap')return; }catch(err){ return; } if(e.key==='ArrowLeft'){ mmGo(mmEnsure().pos-1); } else if(e.key==='ArrowRight'){ mmGo(mmEnsure().pos+1); } }); }
 
+function renderWords(){
   const app=$('#wordsApp'); if(!app)return;
   if(!WORDS.length){ app.innerHTML='<div class="w-hero">词库数据未加载（data/words.js）。部署后的网址可正常加载；若本地双击打开被浏览器拦截，请通过线上域名访问。</div>'; return; }
+  migrateWords();
   if(wSession) return renderWordsStudy(app);
   const st=wStats(), pct=st.total?Math.round(100*st.learned/st.total):0, leftNew=wNewIdxs(wDailyN()).length;
   let h='<div class="w-hero"><div class="w-herotop"><div class="w-stats">'
    +'<div class="w-stat"><div class="n r">'+st.due+'</div><div class="l">待复习</div></div>'
    +'<div class="w-stat"><div class="n">'+leftNew+'</div><div class="l">今日待学新词（目标 '+wDailyN()+'）</div></div>'
-   +'<div class="w-stat"><div class="n g">'+st.learned+'</div><div class="l">已学 / '+st.total+'</div></div>'
+   +'<div class="w-stat"><div class="n g">'+st.learned+'</div><div class="l">已背 / '+st.total+'</div></div>'
    +'<div class="w-stat"><div class="n g">'+st.done+'</div><div class="l">已巩固</div></div>'
    +'</div><button class="w-go" onclick="wStart()">开始今日学习</button></div>'
    +'<div class="pbar"><i style="width:'+pct+'%;background:var(--net);display:block;height:100%;border-radius:4px"></i></div>'
-   +'<div class="w-herosub">学习队列＝到期复习词 + 今日新词；按艾宾浩斯 1/2/4/7/15/30 天间隔安排：认识推进，模糊明天再见，不认识重置。进度随账号云端同步。</div></div>';
-  h+='<div class="w-tabs"><div class="w-search"><input id="wSearchInput" placeholder="搜索英文单词或中文释义…" value="'+wEsc(wView.kw)+'"></div></div>';
+   +'<div class="w-herosub">每个单词先整批过一遍，标「模糊 / 不认识」的词会自动进入下一轮，反复到当批全部「认识」才算完成；认识 +0、模糊 +1、不认识 +2 累计难度分。复习按艾宾浩斯 1/2/4/7/15/30 天穿插，进度云端同步。</div></div>';
+  h+='<div class="w-tabs"><div class="w-search"><input id="wSearchInput" placeholder="搜索英文单词或中文释义…" value="'+wEsc(wView.kw)+'"></div>'
+   +'<button class="w-showall" id="wShowAll" type="button">'+(wView.showAll?'隐藏全部释义':'显示全部释义')+'</button></div>';
   h+='<div class="w-abc" id="wAbc"></div><div class="w-list" id="wList"></div>';
   app.innerHTML=h;
+  wView.located=false;
   renderWordsAbc(); renderWordsList();
   const si=$('#wSearchInput');
-  si.addEventListener('input',e=>{ wView.kw=e.target.value; wView.letter='ALL'; renderWordsAbc(); renderWordsList(); const n=$('#wSearchInput'); n.focus(); const t=n.value; n.setSelectionRange(t.length,t.length); });
+  si.addEventListener('input',e=>{ wView.kw=e.target.value; wView.letter='ALL'; wView.located=true; renderWordsAbc(); renderWordsList(); const n=$('#wSearchInput'); n.focus(); const t=n.value; n.setSelectionRange(t.length,t.length); });
+  $('#wShowAll').addEventListener('click',()=>{ wView.showAll=!wView.showAll; wView.openKey=''; renderWordsList(); const b=$('#wShowAll'); if(b)b.textContent=wView.showAll?'隐藏全部释义':'显示全部释义'; });
 }
 function renderWordsAbc(){
   const el=$('#wAbc'); if(!el)return; const Lm=wLetters();
   let h='<button class="'+(wView.letter==='ALL'?'on':'')+'" data-l="ALL">全部</button>';
-  for(let c=97;c<=122;c++){ const L=String.fromCharCode(c); if(Lm[L]) h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="'+L+'">'+L.toUpperCase()+'<span class="badge">'+Lm[L].length+'</span></button>'; }
+  const keys=Object.keys(Lm).sort();
+  keys.forEach(L=>{ if(L==='#'){ h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="#">#</button>'; }
+    else h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="'+L+'">'+L.toUpperCase()+'<span class="badge">'+Lm[L].length+'</span></button>'; });
   el.innerHTML=h;
-  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{wView.letter=b.dataset.l;wView.kw='';renderWords();}));
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{wView.letter=b.dataset.l;wView.kw='';wView.openKey='';wView.located=true;renderWords();}));
+}
+let wIO=null;
+function wLetterGroups(){ return wLetters(); }
+function fillLetter(L,body){
+  const Lm=wLetters();
+  body.dataset.fill='1';
+  body.innerHTML=(Lm[L]||[]).map(wordRow).join('');
 }
 function renderWordsList(){
-  const el=$('#wList'); if(!el)return; const Lm=wLetters(); let idxs=[];
+  const el=$('#wList'); if(!el)return;
+  if(wIO){ try{wIO.disconnect();}catch(e){} wIO=null; }
+  const Lm=wLetters();
   const kw=wView.kw.trim().toLowerCase();
-  if(kw){ for(let i=0;i<WORDS.length;i++){ const w=WORDS[i]; if(w[0].toLowerCase().includes(kw)||w[2].toLowerCase().includes(kw))idxs.push(i); if(idxs.length>=200)break; } }
-  else if(wView.letter!=='ALL') idxs=(Lm[wView.letter]||[]).slice();
-  if(!kw&&wView.letter==='ALL'){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">选择上方字母浏览词库，或直接搜索单词 / 释义。</div>'; return; }
-  if(!idxs.length){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">没有匹配的单词。</div>'; return; }
-  el.innerHTML=idxs.map(i=>{const w=WORDS[i],r=state.words[i],m=r?r.m:0;
-    return '<div class="w-row s'+m+'"><div class="w-main"><div><span class="w-word">'+wEsc(w[0])+'</span>'+wTag(i)+'<span class="w-phon">'+wEsc(w[1])+'</span></div><div class="w-mean">'+wEsc(w[2])+'</div></div>'
-      +wRvTag(i)
-      +'<div class="w-marks">'
-      +'<button class="w-mk k3 '+(m===3?'on':'')+'" onclick="wQuick('+i+',3)">不认识</button>'
-      +'<button class="w-mk k2 '+(m===2?'on':'')+'" onclick="wQuick('+i+',2)">模糊</button>'
-      +'<button class="w-mk k1 '+(m===1?'on':'')+'" onclick="wQuick('+i+',1)">认识</button>'
-      +'</div></div>'; }).join('');
+  if(kw){
+    let idxs=[];
+    for(let i=0;i<WORDS.length;i++){ const w=WORDS[i]; if(w[0].toLowerCase().includes(kw)||String(w[2]).toLowerCase().includes(kw))idxs.push(i); if(idxs.length>=300)break; }
+    el.innerHTML=idxs.length?('<div class="w-searchres">'+idxs.map(wordRow).join('')+'</div>'):'<div style="color:var(--ink-3);font-size:13px;padding:10px">没有匹配的单词。</div>';
+    return;
+  }
+  const letters=(wView.letter==='ALL')?Object.keys(Lm).sort():[wView.letter];
+  el.innerHTML=letters.map(L=>'<div class="w-letter"><div class="w-letter-h">'+(L==='#'?'#':L.toUpperCase())+'<span>'+(Lm[L]?Lm[L].length:0)+'</span></div><div class="w-letter-body" data-l="'+L+'"></div></div>').join('');
+  const bodies=el.querySelectorAll('.w-letter-body');
+  if(wView.letter==='ALL'){
+    if(typeof IntersectionObserver!=='undefined'){
+      wIO=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ const b=e.target; if(b.dataset.fill!=='1')fillLetter(b.dataset.l,b); wIO.unobserve(b); locateLastWord(); } }); },{root:null,rootMargin:'300px 0px 600px 0px'});
+      bodies.forEach(b=>wIO.observe(b));
+    } else { bodies.forEach(b=>fillLetter(b.dataset.l,b)); }
+    locateLastWord();
+  } else {
+    bodies.forEach(b=>fillLetter(b.dataset.l,b));
+  }
 }
-function wQuick(i,g){ wGrade(i,g); renderWordsAbc(); renderWordsList(); }
+function locateLastWord(){
+  if(wView.located)return; const k=state.wordLast; if(!k||wView.letter!=='ALL')return;
+  const idx=WORDS.findIndex(x=>normWord(x[0])===k); if(idx<0)return;
+  const L=(/[a-z]/i.test(WORDS[idx][0][0])?WORDS[idx][0][0].toLowerCase():'#');
+  const body=document.querySelector('.w-letter-body[data-l="'+L+'"]'); if(!body)return;
+  if(body.dataset.fill!=='1')fillLetter(L,body);
+  wView.located=true;
+  setTimeout(()=>{ const row=document.getElementById('wrow'+idx); if(row){ row.scrollIntoView({block:'center'}); row.classList.add('wflash'); setTimeout(()=>row.classList.remove('wflash'),1800); } },120);
+}
+function wBookSrcSel(i){
+  let bs=[]; try{ bs=booksForSub('eng'); }catch(e){ bs=[]; }
+  return '<select id="wexsrc'+i+'" class="wr-sel"><option value="">来源（选填）</option>'+bs.map(b=>'<option value="'+wEsc(b.name)+'">'+wEsc(b.name)+'</option>').join('')+'</select>';
+}
+function wordRow(i){
+  const w=WORDS[i], k=wKey(i), r=state.words[k], m=r?r.m:0;
+  const open=wView.showAll||wView.openKey===k;
+  const rare=wRare(i), rel=wRelData()[k]||null;
+  let detail='';
+  if(open){
+    let mean='<div class="wr-mean">'+wEsc(w[2])+'</div>';
+    if(rare) mean+='<div class="wr-rare"><b>僻</b>'+wEsc(rare.r)+(rare.s?'<span class="wr-src">　— '+wEsc(rare.s)+'</span>':'')+'</div>';
+    let relh='';
+    if(rel&&((rel.der&&rel.der.length)||(rel.syn&&rel.syn.length)||(rel.phr&&rel.phr.length))){
+      relh='<div class="wr-rel">';
+      if(rel.der&&rel.der.length)relh+='<div class="wr-line"><span class="wr-lab">派生</span>'+rel.der.map(x=>'<a onclick="wJumpWord(\''+wEsc(x.replace(/'/g,''))+'\')">'+wEsc(x)+'</a>').join('、')+'</div>';
+      if(rel.syn&&rel.syn.length)relh+='<div class="wr-line"><span class="wr-lab">近义</span><span class="wr-ref">'+rel.syn.map(wEsc).join('、')+'</span></div>';
+      if(rel.phr&&rel.phr.length)relh+='<div class="wr-line"><span class="wr-lab">词组</span>'+rel.phr.map(wEsc).join('、')+'</div>';
+      relh+='</div>';
+    }
+    const stat='<div class="wr-stat">认识 ×'+(r?r.c1||0:0)+'　模糊 ×'+(r?r.c2||0:0)+'　不认识 ×'+(r?r.c3||0:0)+'　<b>难度分 '+(r?r.diff||0:0)+'</b></div>';
+    let ex='<div class="wr-ex">';
+    (r&&r.ex?r.ex:[]).forEach(e=>{ ex+='<div class="wr-exitem">“'+wEsc(e.t)+'”'+(e.s?'<span class="wr-src">　— '+wEsc(e.s)+'</span>':'')+'</div>'; });
+    ex+='<textarea id="wex'+i+'" class="wr-ta" rows="2" placeholder="添加阅读例句（原句积累，标注来源）…"></textarea>'
+      +'<div class="wr-exrow">'+wBookSrcSel(i)+'<button type="button" class="wr-add" onclick="wAddEx('+i+')">＋例句</button></div></div>';
+    detail='<div class="wr-detail">'+mean+relh+stat+ex+'</div>';
+  }
+  return '<div class="w-row s'+m+(open?' open':'')+'" id="wrow'+i+'" data-wkey="'+wEsc(k)+'">'
+   +'<div class="w-main" onclick="wToggleRow('+i+')"><div class="w-topline"><span class="w-word">'+wEsc(w[0])+'</span>'+wTag(i)
+   +(rare?'<span class="wr-badge" title="熟词僻义">僻</span>':'')
+   +'<span class="w-phon">'+wEsc(w[1])+'</span></div>'
+   +(open?'':'<div class="w-mean-hint">点击显示释义'+((r&&r.diff)?'　·　难度分 '+r.diff:'')+'</div>')+'</div>'
+   +detail
+   +wRvTag(i)
+   +'<div class="w-marks" onclick="event.stopPropagation()">'
+   +'<button class="w-mk k3 '+(m===3?'on':'')+'" onclick="wQuick('+i+',3)">不认识</button>'
+   +'<button class="w-mk k2 '+(m===2?'on':'')+'" onclick="wQuick('+i+',2)">模糊</button>'
+   +'<button class="w-mk k1 '+(m===1?'on':'')+'" onclick="wQuick('+i+',1)">认识</button>'
+   +'</div></div>';
+}
+function wJumpWord(wd){
+  const k=normWord(wd); const idx=WORDS.findIndex(x=>normWord(x[0])===k); if(idx<0)return toast('词库中没有「'+wd+'」');
+  wView.openKey=k; wView.kw=''; wView.letter='ALL'; wView.located=false; renderWords();
+}
+function wToggleRow(i){ wView.openKey=(wView.openKey===wKey(i))?'':wKey(i); renderWordsList(); }
+function wQuick(i,g){ wGrade(i,g); renderWordsAbc(); renderWordsList(); try{renderSidebar();}catch(e){} try{renderPlan();}catch(e){} }
+function wAddEx(i){
+  const ta=$('#wex'+i); if(!ta)return; const t=ta.value.trim(); if(!t){ toast('请先填写例句内容'); return; }
+  const sel=$('#wexsrc'+i); const s=sel?sel.value:'';
+  const r=wEnsure(i); r.ex=r.ex||[]; r.ex.push({t,s:s.trim()}); saveState(); toast('例句已保存'); renderWordsList();
+}
 function renderWordsStudy(app){
   const s=wSession;
-  if(!s.queue.length){ app.innerHTML='<div class="w-done"><div class="big">今天没有待学单词</div><div class="counts">到期复习与今日新词都已完成。</div><button class="w-go" onclick="wQuit()">返回词库</button></div>'; return; }
-  if(s.pos>=s.queue.length){
-    app.innerHTML='<div class="w-done"><div class="big">本轮学习完成</div>'
-      +'<div class="counts">共 '+s.queue.length+' 个（复习 '+s.due+' · 新词 '+s.neww+'）<br>认识 '+s.stats[1]+' · 模糊 '+s.stats[2]+' · 不认识 '+s.stats[3]+'</div>'
+  if(!s.batch.length){ app.innerHTML='<div class="w-done"><div class="big">今天没有待学单词</div><div class="counts">到期复习与今日新词都已完成。</div><button class="w-go" onclick="wQuit()">返回词库</button></div>'; return; }
+  const finished=(s.pos>=s.cur.length)&&(s.nxt.length===0);
+  if(finished){
+    app.innerHTML='<div class="w-done"><div class="big">当批全部认识，本轮完成</div>'
+      +'<div class="counts">共 '+s.batch.length+' 个（复习 '+s.due+' · 新词 '+s.neww+'）· 共 '+s.round+' 轮<br>认识 '+s.stats[1]+' · 模糊 '+s.stats[2]+' · 不认识 '+s.stats[3]+'</div>'
+      +'<div class="w-herosub" style="max-width:520px;margin:0 auto 18px">模糊、不认识的词已在多轮中反复出现直到认识；难度分高的词会在复习中优先安排。</div>'
       +'<button class="w-go" onclick="wQuit()">返回词库</button></div>'; return;
   }
-  const i=s.queue[s.pos], w=WORDS[i];
-  app.innerHTML='<div class="w-study"><div class="w-sprog">第 '+(s.pos+1)+' / '+s.queue.length+' 个 · 复习 '+s.due+' · 新词 '+s.neww+'</div>'
-   +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+wTag(i)+'</div><div class="cp">'+wEsc(w[1])+'</div><div class="cm">'+wEsc(w[2])+'</div><div class="ctip">点击卡片显示释义</div></div>'
+  const i=s.cur[s.pos], w=WORDS[i], rare=wRare(i), r=state.words[wKey(i)];
+  const thisLeft=s.cur.length-s.pos;
+  app.innerHTML='<div class="w-study"><div class="w-sprog">总进度 '+s.graded+' / '+s.batch.length+'　·　第 '+s.round+' 轮（本轮还剩 '+thisLeft+' 个，模糊/不认识会再出现）</div>'
+   +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+wTag(i)+'</div><div class="cp">'+wEsc(w[1])+'</div>'
+   +(s.flipped?('<div class="cm">'+wEsc(w[2])+'</div>'+(rare?'<div class="wr-rare card-rare"><b>僻</b>'+wEsc(rare.r)+(rare.s?'<span class="wr-src">　— '+wEsc(rare.s)+'</span>':'')+'</div>':'')
+     +'<div class="wcard-stat">认识×'+(r?r.c1||0:0)+' 模糊×'+(r?r.c2||0:0)+' 不认识×'+(r?r.c3||0:0)+' · 难度分 '+(r?r.diff||0:0)+'</div>'):'<div class="ctip">点击卡片显示释义</div>')
+   +'</div>'
    +'<div class="w-actions"><button class="w-act a3" onclick="wAnswer(3)">不认识</button><button class="w-act a2" onclick="wAnswer(2)">模糊</button><button class="w-act a1" onclick="wAnswer(1)">认识</button></div>'
    +'<button class="w-quit" onclick="wQuit()">退出本轮</button></div>';
 }
@@ -8422,52 +8761,61 @@ function renderOverview(){
 
  * ============================================================ */
 
-function renderSidebar(){
-
-  const route = currentRoute();
-
-  $('#sideNav').innerHTML = SYLLABUS.map(s=>{
-
-    const st = subStats(s);
-
-    const active = route.type==='tree' && route.path.split('/')[0]===s.id;
-
-    return `<button class="snav ${active?'active':''}" data-goto="#/tree/${s.id}" style="${active?`border-left:3px solid ${s.color}`:''}">
-
-      <span class="scol" style="background:${s.color};${active?'':'opacity:.35'}"></span>
-
-      <span class="sinfo">
-
-        <span class="sname">${s.name}<span class="en">${s.code}</span></span>
-
-        <span class="smeta">${st.total} 考点 · ${st.mastered} 已掌握</span>
-
-      </span>
-
-      <span class="spct" style="color:${s.color}">${st.pct}%</span>
-
-    </button>`;
-
-  }).join('') + `<button class="snav ${['notes','maps','map'].includes(route.type)?'active':''}" data-goto="#/notes" style="${['notes','maps','map'].includes(route.type)?'border-left:3px solid var(--kc-note)':''}">
-    <span class="scol" style="background:var(--kc-note);${['notes','maps','map'].includes(route.type)?'':'opacity:.35'}"></span>
-    <span class="sinfo">
-      <span class="sname">学习中心<span class="en">JOURNAL</span></span>
-      <span class="smeta">${state.items.length} 条 · ${dueItems().length?("待复习 "+dueItems().length):"笔记 / 导图 / 错题"}</span>
-    </span>
-    <span class="spct" style="color:${dueItems().length?"var(--kc-wait)":"var(--kc-note)"}">${dueItems().length?dueItems().length:state.items.length}</span>
-  </button>`;
-  $('#sideNav').insertAdjacentHTML('afterbegin', planSidebarItem());
-  const _planEl=$('#sideNav').firstElementChild; if(_planEl) _planEl.insertAdjacentHTML('afterend', examSidebarItem());
-
-  $('#sideNav').insertAdjacentHTML('beforeend', wordSidebarItem());
-  $('#sideNav').insertAdjacentHTML('beforeend', readingSidebarItem());
-
-  $('#overallPct').textContent = overallStats().pct + '%';
-
-  $('#overallBar').style.width = overallStats().pct + '%';
-
+function engMasteryPct(){
+  let wPart=0; try{ const ws=wStats(); wPart=WORDS.length?ws.learned/WORDS.length:0; }catch(e){}
+  let readPart=0; try{ const rb=readingBuild(); readPart=rb.total?(rb.doneN||0)/rb.total:0; }catch(e){}
+  let examN=0; try{
+    const rec=(state.exams&&state.exams.records)||{};
+    examN=Object.keys(rec).filter(k=>k.indexOf('eng_')===0&&rec[k]&&rec[k].doneTs).length;
+  }catch(e){}
+  const examPart=Math.min(1,examN/10);
+  const v=0.6*wPart+0.25*readPart+0.15*examPart;
+  return Math.round(100*(isFinite(v)?v:0));
 }
-
+function readingSideMeta(){ try{ return readingBuild().doneN+' / 200 篇'; }catch(e){ return '200 篇'; } }
+function mindmapSideMeta(){ try{ const m=state.mindmap; const n=m?Object.keys(m.seen||m.done||{}).length:0; return n?('已看 '+n+' / 726'):'726 页导图'; }catch(e){ return '726 页导图'; } }
+function renderSidebar(){
+  const route=currentRoute(); const hash=location.hash||'';
+  const subBtn=(id)=>{
+    const s=getSubject(id); const st=subStats(s);
+    const active=route.type==='tree'&&route.path.split('/')[0]===id;
+    const isEng=id==='eng';
+    const meta=isEng?'考纲浏览 · 综合掌握':(st.total+' 考点 · '+st.mastered+' 已掌握');
+    const pct=isEng?engMasteryPct():st.pct;
+    return '<button class="snav sub '+(active?'active':'')+'" data-goto="#/tree/'+id+'" style="'+(active?'border-left:3px solid '+s.color:'')+'">'
+      +'<span class="scol" style="background:'+s.color+';'+(active?'':'opacity:.35')+'"></span>'
+      +'<span class="sinfo"><span class="sname">'+s.name+'<span class="en">'+s.code+'</span></span><span class="smeta">'+meta+'</span></span>'
+      +'<span class="spct" style="color:'+s.color+'">'+pct+'%</span></button>';
+  };
+  const toolBtn=(h0,label,en,color,meta,pct)=>{ const active=hash.indexOf(h0)===0;
+    return '<button class="snav sub '+(active?'active':'')+'" data-goto="'+h0+'" style="'+(active?'border-left:3px solid '+color:'')+'">'
+      +'<span class="scol" style="background:'+color+';'+(active?'':'opacity:.35')+'"></span>'
+      +'<span class="sinfo"><span class="sname">'+label+'<span class="en">'+en+'</span></span><span class="smeta">'+(meta||'')+'</span></span>'
+      +'<span class="spct" style="color:'+color+'">'+(pct!=null?pct+'%':'')+'</span></button>';
+  };
+  const group=(title,color,inner)=>'<details class="sgrp" open><summary style="--gc:'+color+'"><span class="sg-dot" style="background:'+color+'"></span>'+title+'</summary><div class="sgrp-body">'+inner+'</div></details>';
+  const ws=wStats();
+  const notesActive=['notes','maps','map'].includes(route.type);
+  const dueN=dueItems().length;
+  const notesBtn='<button class="snav sub '+(notesActive?'active':'')+'" data-goto="#/notes" style="'+(notesActive?'border-left:3px solid var(--kc-note)':'')+'">'
+    +'<span class="scol" style="background:var(--kc-note);'+(notesActive?'':'opacity:.35')+'"></span>'
+    +'<span class="sinfo"><span class="sname">学习中心<span class="en">JOURNAL</span></span><span class="smeta">'+state.items.length+' 条 · '+(dueN?('待复习 '+dueN):'笔记 / 导图 / 错题')+'</span></span>'
+    +'<span class="spct" style="color:'+(dueN?'var(--kc-wait)':'var(--kc-note)')+'">'+(dueN?dueN:state.items.length)+'</span></button>';
+  const examBtn=examSidebarItem().replace('class="snav ','class="snav sub ');
+  let html=planSidebarItem();
+  html+=group('数学一 · 150 分','#7b53d6',['math1','math2','math3'].map(subBtn).join(''));
+  html+=group('408 计算机 · 150 分','#1a9e6e',['ds','co','os','net'].map(subBtn).join(''));
+  html+=group('英语一 · 100 分','#2f7fd6',
+     subBtn('eng')
+     +toolBtn('#/words','英语词汇','WORDS','#2f7fd6',ws.learned+' / '+WORDS.length+' 已背',Math.round(100*ws.learned/WORDS.length))
+     +toolBtn('#/reading','阅读打卡','READ','#0a8a5f',readingSideMeta(),null)
+     +toolBtn('#/mindmap','导图速记','MIND','#8e44ad',mindmapSideMeta(),null));
+  html+=group('政治 · 100 分','#c0392b',['poli1','poli2','poli3','poli4','poli5','poli6'].map(subBtn).join(''));
+  html+=group('学习工具','#5b6b7e',examBtn+notesBtn);
+  $('#sideNav').innerHTML=html;
+  $('#overallPct').textContent=overallStats().pct+'%';
+  $('#overallBar').style.width=overallStats().pct+'%';
+}
 
 
 /* ============================================================
@@ -8518,6 +8866,12 @@ function currentRoute(){
 
   }
 
+  if(h.indexOf('#/mindmap')===0){
+
+    return {type:'mindmap'};
+
+  }
+
   if(h.indexOf('#/words')===0){
 
     return {type:'words', path:''};
@@ -8556,6 +8910,8 @@ function render(){
   $('#view-plan').classList.toggle('active', route.type==='plan');
   $('#view-reading').classList.toggle('active', route.type==='reading');
 
+  $('#view-mindmap').classList.toggle('active', route.type==='mindmap');
+
   $('#view-exams').classList.toggle('active', route.type==='exams');
 
   const curSub = route.type==='tree' ? route.path.split('/')[0] : '';
@@ -8593,6 +8949,8 @@ function render(){
 
   else if(route.type==='plan') renderPlan();
   else if(route.type==='reading') renderReading();
+
+  else if(route.type==='mindmap') renderMindmap();
 
   else if(route.type==='exams') renderExams();
 
@@ -8718,8 +9076,8 @@ function freqOf(p){ return FREQ[p]||null; }
 const FREQ_LB=['低频','中频','高频'];
 function freqPill(p){
   const f=freqOf(p); if(!f) return '';
-  const lb = f.t==='408' ? f.tag : FREQ_LB[f.lv-1];
-  return `<span class="freq lv${f.lv}" title="${esc(f.tip)}">${esc(lb)}</span>`;
+  const lb = f.tag || FREQ_LB[f.lv-1];
+  return `<span class="freq lv${f.lv}" title="${esc(f.tip||f.tag||'')}">${esc(lb)}</span>`;
 }
 function sectionMaxFreq(subId,ci,si,sec){
   let best=null;
@@ -8730,7 +9088,7 @@ function sectionMaxFreq(subId,ci,si,sec){
 }
 function sectionAggPill(subId,ci,si,sec){
   const f=sectionMaxFreq(subId,ci,si,sec); if(!f) return '';
-  const lb=f.t==='408'?f.tag:FREQ_LB[f.lv-1];
+  const lb=f.tag||FREQ_LB[f.lv-1];
   return `<span class="freq lv${f.lv}" title="本小节高频考点：${esc(f.tip)}">${esc(lb)}</span>`;
 }
 function isFreqSort(){ try{return localStorage.getItem('k408-freqsort')==='1';}catch(e){return false;} }
@@ -9155,23 +9513,20 @@ function renderDetail(){
 
 
 
+    const leafSubId=path.split('/')[0]; const engBrowse=leafSubId==='eng';
+    if(engBrowse){
+      html += '<div class="mc-card" style="margin:16px 0;background:var(--panel-2);border:1px dashed var(--line);padding:13px 16px;color:var(--ink-2);font-size:13.5px;line-height:1.8"><b>【英语 · 考纲浏览】</b>英语一考纲仅供浏览，不按单个考点判定掌握。英语综合掌握度 ＝ 单词 60% ＋ 新东方阅读 25% ＋ 历年真题 15%，请在左侧「英语词汇」「阅读打卡」中打卡；做完 200 篇阅读、所有单词标认识、做完历年真题即为 100%。</div>';
+    } else {
     html += `<div class="study-row">
-
       <span class="sl">学习状态</span>
-
       <div class="seg" data-mastery="${path}">
-
         ${[['','未学'],['studying','学习中'],['mastered','已掌握']].map(([v,l])=>
-
           `<button data-v="${v}" class="${m===v?'on '+v:''}">${l}</button>`).join('')}
-
       </div>
-
       ${m?`<span class="study-note">当前：<b>${MASTERY[m]}</b>${m==='mastered'?'，四项条件满足后自动判定':''}</span>`:''}
-
     </div>`;
-
     html += masteryPanelHtml(path);
+    }
 
 
 
