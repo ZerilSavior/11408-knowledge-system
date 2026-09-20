@@ -622,3 +622,76 @@ git push origin main
 1. **新学截止**：现按「新学到 11-12（exam-37）、随后 36 天真题月、复习靠艾宾浩斯穿插」实现。用户口述过「学完后额外 30 天纯复习 + 再 30/36 天真题 → 新学考前约 60 天结束（≈10-14）」；但 665 个考点即便每天 18h，新学窗口只剩约 24 天也排不完（408 单模块就需约 47 天），系统会大面积 infeasible。交付时需让用户在「计划可行（学到 11-12）」与「提前 60 天截止（看缺口预警）」之间确认。
 2. **阅读窗口**：单词一轮结束日决定阅读开始日。160 词/天一轮到 11-09，阅读 11-13 起只剩 37 天 < 需 50 天，会报 infeasible；要排满 200 篇需 `readStart ≤ 2026-10-31`（约 200 词/天、41 天一轮到 10-30），或允许单词后期与阅读重叠（用户目前规定一轮前不阅读）。
 3. 数学日型 40% 解锁阈值、每日新词换算系数均为助手拟定默认值，待验收调整。
+
+
+---
+
+## 7. 批 9 更新（2026-09-20，最新，接手先读）
+
+> 本节是批 8（第 6 节）之后的全部增量。批 9 一次性落地：排期引擎升级到 **v3（含"当天各科时长自定义 + 动态装箱"）**、四大门类侧栏导航、数学考频具体次数、英语去考点化、**单词模块整体重构（词形 key / 多轮轮播 / 三态次数与难度分 / 字母分组懒加载 / 点行显释义 / 熟词僻义 / 派生近义词组 / 阅读例句）**、新增 **思维导图速记 726 页翻页卡**。测试 `test_plan.js` 扩到 **59 项断言全过**。
+
+### 7.1 排期引擎 v3（真源是工作目录 `plan_v3.js`，已整体取代批 8 的 plan_new.js）
+
+* 注入器 `inject_plan_v3.py` **可重入**：区间 [v3 头注释 `/* ================= 个性化学习计划 v3 =================`（找不到则退回批 8 marker）, 英语阅读块注释）整体替换。改排期只改 `plan_v3.js` 再重跑注入。
+* 时间口径（用户已拍板 Q1/Q2/Q3）：考研 `PLAN_EXAM_DEF='2026-12-19'`；今天 2026-09-20；新学到 **11-12（exam-37）截止，Dlearn=54 个新学日**；其后约 **36 天真题月（11-13→12-18，18 个两天周期）**；**取消"额外 30 天纯复习"**，复习完全靠艾宾浩斯每天穿插。
+* 每考点时长：默认新点 60min（`PLAN_LEAF_MINS`）；**已学章节 30min**（`PLAN_LEARNED_MINS`）；**政治恒 30min**（`PLAN_POLI_MINS`）。已学章节 `LEARNED_CHAPTERS_DEFAULT`：math1 第0-5章、math2 0-2、math3 0、net 0-2、ds 0-1、co 0-1、os 0（ci 为 0-based）；推荐时新旧队列交替取，缓解压力。
+* 政治：学完整章才能做题，未完成整章**不算任务失败**；该章只要有 `state.items` 里 `kind:'note'` 同 path 笔记即算完成（`planLeafDone` 对 poli 开头特判）；poli1-5 正常排、**poli6 形式与政策只在真题月排**；政治可排到全程，12-18 全过一遍即可，不要求真题月前学完。
+* 单词：`PLAN_WORD_DEF=1000`（用户要求一天 1000，wordDays=9，约 9-28 完成一轮，clamp 20..1200）。阅读目标日=考研当天，单词一轮后开始、每天≤4 篇。
+* 子科表：`PLAN_C408_SUBS=[ds/hds,co/hco,os/hos,net/hnet]`、`PLAN_MATH_SUBS=[math1/mh1,math2/mh2,math3/mh3]`；默认配额 c408 各 1.5（和 6）、数学 {mh1:4,mh2:2,mh3:2}（和 8）。模块可行性：c408 279 点约 day41、math 278 点约 day24、poli 108 点约 day56 完成。
+* `planBuild` 返回 90 天 `days`（Dall，9-20→12-18；c408/math 只在前 D=54 天，政治/英语全程）、D、Dall、modFin、wordDays、wordFinishDate、每天 `leftover:{c408,math}` 与 `custom` 标记。
+
+### 7.2 ★当天各科时长自定义 + 动态装箱（用户本轮最强调，逻辑绝不能写死）
+
+* 存储 `state.planDay = { [dayIdx]: {hds,hco,hos,hnet,mh1,mh2,mh3} }`，单位小时，**支持任意 0.5 步进值（如 2/4/2、3.5）**；没有默认天数/默认总时长，由用户当天自己规定。
+* 核心 `consumeModule(group, dc, DEF, autoFill)`：
+  1. **第一轮严格按用户当天给每科填的小时数**（×60 分钟）作为该科预算去取考点；
+  2. 某科未学考点已耗尽，用不完的分钟进"剩余池"；
+  3. **仅 `autoFill=true`（默认天）** 才把剩余池按"还有考点且当天预算>0"各科**当天预算权重比例**兜底分摊，直到凑满模块总时长或全模块学完；
+  4. **`autoFill=false`（该天在 state.planDay 里被手动改过）完全不跨科转移**，用不满就如实留 `leftover`，UI 黄条提示用户自己补，绝不擅自改用户输入。
+* 约束（保存时校验）：408 四科总和 **≥6h 且计组 hco≥1h**；数学三科总和 **≥8h 且高数 mh1≥2h**。凑的是**模块总和**，不是每科固定坐满；线代/概统排完后高数自动学满 8h。
+* UI：今日卡片「⏱今日各科时长」按钮（`.p-daybtn`，`planEditDay(0)`）；时间线每天「时长」按钮（`.p-dayedit`，`planEditDay(idx)`），弹窗 `#planDayOverlay` 7 个 step=0.5 数字输入 + 保存 `planSaveDay` / 重置 `planResetDay`；过去天与真题月（idx≥D）锁定；自定义天标「自」（`.p-custag`），空余≥30min 显示 `.p-leftover` 黄条。
+* 粒度零头：考点按 60/30min 装箱，手动天非整点可能剩 30min 用不满，**如实计入 leftover，不跨科凑假满**（测试断言据此）。
+
+### 7.3 导航 / 总览 / 考频 / 英语去考点
+
+* 左上 brand「考研知识体系」改为可点回 `#/`（cursor pointer）；**顶部横向科目导航 `nav.topnav` 整段清空为空壳**（搜索/进度保留）。
+* `renderSidebar` 重写为四大门类 `<details class="sgrp">` 折叠组：数学一·150分（math1/2/3）、408计算机·150分（ds/co/os/net）、英语一·100分（eng 考纲 + #/words + #/reading + #/mindmap）、政治·100分（poli1-6），另有学习工具组。
+* 总览"内容来源"署名：408 内容参考 CodeBrick 码砖(codebrick.tech)、408 考频 @Yoken怀古；**加粗"高等数学/线性代数/概率论与数理统计三科章节框架来自郭雨港《数一所有题型分类、通用解法详解》"**；数学考频抖音 @晨曦学长《25考研数学一·近15年考频分析》；政治英语依据官方大纲。署名必须保留。
+* 数学考频徽标 `freqPill/sectionAggPill` 统一显示 `f.tag||FREQ_LB[...]`，即**"近15年N次"具体次数**并按频率红/黄/灰着色（"选填偶考"保留）。
+* **英语去考点化**：eng 25 个叶子不是考点、无法判定掌握；详情页对 eng 跳过"学习状态"与 `masteryPanelHtml`，改显示【英语·考纲浏览】提示卡。英语综合掌握度 `engMasteryPct()` = 单词 0.60 + 阅读 0.25 + 真题 0.15（真题只计 `eng_` 前缀且有 doneTs 的记录，cap 10 套）；"做完新东方200篇 + 全部单词标认识 + 做完历年真题"=100%。
+* **修过真实 NaN bug**：旧 `engMasteryPct` 对 `state.exams.records`（是 `slotKey_year` 为键的对象、无数组 length）取 .length 得 undefined → NaN，污染侧栏/总览。已改健壮版（try 包裹 + Object.keys 过滤 + isFinite 兜底）。改英语进度相关务必回归此项。
+
+### 7.4 ★单词模块整体重构（核心块真源 `words_core.js`、渲染块真源 `words_render.js`，注入器 `inject_words.py` 两区间替换，幂等）
+
+* **数据模型改为词形 key（免疫重排）**：`normWord(s)=小写.trim().压缩空格`，`wKey(i)=normWord(WORDS[i][0])`；`state.words[key]={m,c1,c2,c3,diff,rv,ex:[]}`，c1 认识/c2 模糊/c3 不认识次数，`diff=c2+2*c3`（认识+0、模糊+1、不认识+2），`ex` 阅读例句数组 `{t,s}`。
+* `migrateWords()`：检测到旧"纯数字索引"数据一次性清空（旧约 692 词/9% 进度作废，1000/天约 1 天补回——**交付时已向用户说明此取舍**）。`mergeWords` 云同步只收词形 key，同 key 取 stage/last 更优、次数取 max、例句取较长。
+* **多轮轮播** `wSession={batch,cur,nxt,pos,round,due,neww,flipped,stats,graded}`：`wStart` 队列=到期复习+今日新词；`wAnswer(1)` 走完整艾宾浩斯 `wGrade`，`wAnswer(2/3)` 只 `wMark` 累加次数（不动 rv）并把词 push 进 nxt；本轮 cur 走完后若 nxt 非空则 cur=nxt、round++，**直到当批全部认识才完成**。复习同理。
+* **列表改造（renderWords/renderWordsList/wordRow）**：默认进"全部"，A-Z + `#` 字母分组（`wLetters`），每组用 **IntersectionObserver 懒加载**（rootMargin 300/600px，防 8044 条卡顿）；**释义默认隐藏，点词框 `.w-main`（wToggleRow 设 wView.openKey）才展开**；工具栏「显示全部释义」开关 `wView.showAll`；进页面自动定位 `state.wordLast`（locateLastWord，填充所在字母 + scrollIntoView + .wflash 高亮，仅一次）；搜索≤300 条。
+* 展开详情含：释义、**熟词僻义橙色块**（`.wr-rare`，列表有僻义的词带"僻"徽标）、派生/近义/词组（`.wr-rel`，派生词可点 wJumpWord 跳转）、三态次数+难度分、阅读例句 textarea + 来源下拉（复用 `booksForSub('eng')`，wAddEx）。列表内三态标记 `wQuick` 与卡片同效并刷新侧栏/计划。
+* `wView={letter:'ALL',kw:'',showAll:false,openKey:'',located}`。
+* **数据文件（均 `<script src>` 引入，file:// 不能 fetch）**：
+  * `public/data/words.js` = `window.WORDS_DATA`，**全局字母序 8044 条**四元组 `[词,音标,释义,tag]`，tag 多源顿号连接（大纲/红宝书/核心词组/拓展词组，词组排在字母前符合"穿插"）；重排前备份在工作目录 `words-pre-sort.js`，重建脚本 `rebuild_words.js`（勿重跑）。
+  * `public/data/words-rare.js` = `window.WORDS_RARE={word:{r:僻义,s:出处}}`，361 条（357 命中词库；check/circulation/navigate/promotion 4 条未命中保留但不显示），脚本 parse_rare.py/build_rare.py。
+  * `public/data/word-rel.js` = `window.WORD_REL={key:{der:[],syn:[],phr:[]}}`，5167 词有关联（派生1291/近义4806/词组957），375KB，生成器 `gen_wordrel.js`（可重跑：前后缀派生双向、中文核心义项倒排近义[保守、弱匹配可能有噪声、当前只读]、词组拆 token 挂词）。
+
+### 7.5 思维导图速记（新模块 #/mindmap）
+
+* 素材《思维导图速记考研英语5500词汇》726 页纯扫描图（0 文本层，不 OCR），fitz 按页宽≈1000px 转 JPEG q72：`public/data/mindmap/p001.jpg…p726.jpg`，共 46.8MB（约 64KB/张），导出脚本 export_mindmap.py。
+* 路由 `#/mindmap`（currentRoute）、视图 `#view-mindmap`、render 分发 `renderMindmap()`；侧栏英语组入口早已指向它（mindmapSideMeta 读 `state.mindmap.seen`，兼容旧 done）。
+* `state.mindmap={pos,seen:{页:1}}`，随 state 自动云同步；MM_TOTAL=726；mmGo/mmJump/mmImgSrc；上一张/下一张/首页/末页/页码跳转，**键盘 ←/→ 翻页**（全局 _mmBound 监听，仅在 mindmap 路由生效）；进入即把当前页计入 seen，进度 seen/726。
+
+### 7.6 测试 / 截图 / 部署 / 回滚
+
+* `test_plan.js` **59 项全过**：含默认天比例兜底凑满、手动天严格照输入不转移（leftover）、3.5h、2/4/2 配额、清除 planDay 恢复自动、政治笔记判定、单词词形 key mock（window.WORDS_DATA 必须是真实数组）。改完任何排期/单词逻辑必须重跑 `node test_plan.js`。
+* CDP 自检图（工作目录，自写 websocket 脚本，独立 --user-data-dir）：nav1-4（导航/计划/英语/数学考频）、words1_list（字母分组懒加载+词组穿插+释义隐藏）、words2_open（absorb 僻义/近义/例句）、words3-5（卡片正反面/轮播）、mm1-2（导图翻页）。注意 headless 端口/profile 冲突就换端口。
+* 部署：项目根 `npx wrangler deploy`（assets=./public，**首次上传 726 张导图约 47MB，耗时较长**）；每个新 PowerShell 都要重设 `$env:CLOUDFLARE_API_TOKEN`（cfut_ 开头，敏感，禁入库/打印/提交）。线上校验 `https://zeril.cn/?cb=时间戳`（带浏览器 UA，裸 urllib 被 1010 挡，脚本 verify_live.py），注意边缘缓存。
+* git push 走代理 `$env:HTTPS_PROXY="http://127.0.0.1:7890"`，需梯子全局/TUN；push 失败不阻塞上线。
+* 回滚：计划块 `inject_plan_v3.py` 重注入；单词块 `inject_words.py` 用 words_core.js/words_render.js 重注入；导图/导航/署名/考频/英语各 patch_*.py 可在 `git checkout` 回批 8 后按序重放（顺序：inject_plan_v3→patch_nav→patch_sidebar→patch_source→patch_daycss→patch_freq→patch_eng→patch_engnan→inject_words→patch_wordcss→patch_wordscripts→patch_mindmap→patch_mmseen）。**补丁脚本里禁止写 emoji/代理对**（曾导致 utf-8 写盘抛错并截断 index.html，靠 git checkout 恢复）。
+
+### 7.7 待用户验收 / 已做的拟定取舍（不阻塞）
+
+1. 旧数字索引单词进度（约 692 词）已 migrate 作废（见 7.4）。
+2. 近义词为中文释义弱匹配（4806 词），可能有噪声，当前只读不可编辑（例句才可编辑）；若噪声大可调紧 gen_wordrel.js 的组大小/字数阈值或改为可增删。
+3. 手动天因 60/30min 粒度用不满非整点时长会留 30min 零头，如实 leftover 提示、未跨科凑整；若用户要零头自动凑整再改 consumeModule。
+4. 导图卡片是否纳入艾宾浩斯调度未定，当前只做翻页+页码进度。
+5. 英语掌握率三项权重 0.60/0.25/0.15 为拟定，可按用户反馈调。
