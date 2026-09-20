@@ -6715,12 +6715,47 @@ const BOOK_GROUPS = [
 ];
 const DEFAULT_BOOKS = {
   c408: ['王道考研·数据结构复习指导','王道考研·计算机组成原理复习指导','王道考研·操作系统复习指导','王道考研·计算机网络复习指导','王道考研·408历年真题','天勤·408高分笔记'],
-  math: ['李永乐·数学复习全书（数学一）','李永乐·数学基础过关660题','张宇·基础30讲','张宇·题源探析1000题','汤家凤·接力题典1800','数学一历年真题'],
+  math: ['郭雨港·数一所有题型分类、通用解法详解','郭雨港·名师习题册','李永乐·数学复习全书（数学一）','李永乐·数学基础过关660题','张宇·基础30讲','张宇·题源探析1000题','汤家凤·接力题典1800','数学一历年真题'],
   eng:  ['张剑黄皮书·英语一历年真题','考研真相·英语一','唐迟·阅读的逻辑','王江涛·高分写作'],
   poli: ['肖秀荣·知识点精讲精练','肖秀荣·1000题','徐涛·核心考案','肖四','肖八']
 };
 const DEFAULT_REASONS = ['概念/定义不清','公式或定理记错','定理适用条件忽略','解题方法不会','计算失误','审题错误','跳步导致出错','时间不够没做完','粗心笔误','知识点遗忘'];
 function genBookId(){ return 'bk'+Date.now()+Math.random().toString(36).slice(2,6); }
+function defBookId(k,i){ return 'bkdef_'+k+'_'+i; }
+/* 书源归一化：按书名去重（云同步曾因随机 id 造成同名重复），补齐默认书，重映射做题/错题记录的 bookId */
+function normalizeBooks(){
+  if(!state.books) return false;
+  let changed=false; const remap={};
+  BOOK_GROUPS.forEach(g=>{
+    const k=g.key; const old=Array.isArray(state.books[k])?state.books[k].slice():[];
+    const byName={}; const out=[]; const ids={};
+    old.forEach(b=>{
+      if(!b||!b.name) return;
+      const nm=String(b.name).trim();
+      if(Object.prototype.hasOwnProperty.call(byName,nm)){ if(b.id) remap[b.id]=out[byName[nm]].id; return; }
+      let bid=b.id;
+      if(!bid||ids[bid]) bid=genBookId();
+      ids[bid]=1; byName[nm]=out.length; out.push({id:bid,name:nm});
+    });
+    (DEFAULT_BOOKS[k]||[]).forEach((n,i)=>{
+      const nm=String(n).trim();
+      if(!Object.prototype.hasOwnProperty.call(byName,nm)){
+        let bid=defBookId(k,i);
+        if(ids[bid]){ let j=0; while(ids[bid+'_d'+j]) j++; bid=bid+'_d'+j; }
+        ids[bid]=1; byName[nm]=out.length; out.push({id:bid,name:nm});
+      }
+    });
+    if(old.length!==out.length || old.some((b,i)=>!b||b.id!==out[i].id||b.name!==out[i].name)) changed=true;
+    state.books[k]=out;
+  });
+  if(Object.keys(remap).length){
+    Object.keys(state.practices||{}).forEach(pt=>{
+      (state.practices[pt]||[]).forEach(it=>{ if(it&&it.bookId&&remap[it.bookId]){ it.bookId=remap[it.bookId]; changed=true; } });
+    });
+    (state.items||[]).forEach(it=>{ if(it&&it.bookId&&remap[it.bookId]){ it.bookId=remap[it.bookId]; changed=true; } });
+  }
+  return changed;
+}
 function bookGroupOf(subId){ const g=BOOK_GROUPS.find(g=>g.subs.includes(subId)); return g?g.key:null; }
 function ensureLearningData(){
   let changed=false;
@@ -6729,9 +6764,10 @@ function ensureLearningData(){
   if(!state.masteryManual){ state.masteryManual={}; changed=true; }
   if(!state.books){
     state.books={c408:[],math:[],eng:[],poli:[]};
-    Object.keys(DEFAULT_BOOKS).forEach(k=>{ state.books[k]=DEFAULT_BOOKS[k].map(n=>({id:genBookId(),name:n})); });
+    Object.keys(DEFAULT_BOOKS).forEach(k=>{ state.books[k]=DEFAULT_BOOKS[k].map((n,i)=>({id:defBookId(k,i),name:n})); });
     changed=true;
   } else { BOOK_GROUPS.forEach(g=>{ if(!Array.isArray(state.books[g.key])){ state.books[g.key]=[]; changed=true; } }); }
+  if(normalizeBooks()) changed=true;
   if(!Array.isArray(state.reasons)){ state.reasons=DEFAULT_REASONS.slice(); changed=true; }
   ensureExams();
   ensureReading();
@@ -6754,8 +6790,14 @@ function mergePathArrays(local, cloud){
 function mergeBooks(local, cloud){
   const out={ c408:[],math:[],eng:[],poli:[] };
   BOOK_GROUPS.forEach(g=>{
-    const k=g.key, seen={}; const arr=[];
-    (local&&local[k]||[]).concat(cloud&&cloud[k]||[]).forEach(b=>{ if(b&&b.id&&!seen[b.id]&&b.name){ seen[b.id]=1; arr.push(b); } });
+    const k=g.key, seenId={}, seenName={}; const arr=[];
+    ((local&&local[k])||[]).concat((cloud&&cloud[k])||[]).forEach(b=>{
+      if(!b||!b.name) return;
+      const nm=String(b.name).trim();
+      if(b.id&&seenId[b.id]) return;
+      if(seenName[nm]){ if(b.id) seenId[b.id]=1; return; }
+      if(b.id) seenId[b.id]=1; seenName[nm]=1; arr.push({id:b.id||genBookId(),name:nm});
+    });
     out[k]=arr;
   });
   return out;
