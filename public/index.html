@@ -7350,6 +7350,7 @@ function wStart(){
 function wQuit(){ wSession=null; renderWords(); }
 function wFlip(){ if(wSession){wSession.flipped=!wSession.flipped; renderWords();} }
 function wAnswer(g){ const s=wSession; if(!s||s.pos>=s.queue.length)return; wGrade(s.queue[s.pos],g); s.stats[g]++; s.pos++; s.flipped=false; renderWords(); }
+function wTag(i){const t=WORDS[i]&&WORDS[i][3];if(!t)return '';let st='',l=t;if(t.indexOf('红宝书')===0){st='background:#eef2ff;color:#4f46e5';l='红宝书';}else if(t==='核心词组'){st='background:#fff0e2;color:#c2560a';}else if(t==='拓展词组'){st='background:#e3f6ee;color:#0a8a5f';}return '<span style="'+st+';font-size:10px;font-weight:600;padding:1px 7px;border-radius:9px;margin-left:7px;vertical-align:middle" title="'+wEsc(t)+'">'+l+'</span>';}
 function wRvTag(i){ const r=state.words[i]; if(!r||!r.rv)return ''; const c=reviewState(r).code; if(c==='done')return '<span class="w-rv done">已巩固</span>'; if(c==='due')return '<span class="w-rv due">待复习</span>'; return '<span class="w-rv up">'+reviewLabel(r)+'</span>'; }
 function wLetters(){ const m={}; WORDS.forEach((x,i)=>{const L=x[0][0].toLowerCase(); (m[L]=m[L]||[]).push(i);}); return m; }
 function wEsc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
@@ -7941,7 +7942,7 @@ function renderWordsList(){
   if(!kw&&wView.letter==='ALL'){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">选择上方字母浏览词库，或直接搜索单词 / 释义。</div>'; return; }
   if(!idxs.length){ el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:10px">没有匹配的单词。</div>'; return; }
   el.innerHTML=idxs.map(i=>{const w=WORDS[i],r=state.words[i],m=r?r.m:0;
-    return '<div class="w-row s'+m+'"><div class="w-main"><div><span class="w-word">'+wEsc(w[0])+'</span><span class="w-phon">'+wEsc(w[1])+'</span></div><div class="w-mean">'+wEsc(w[2])+'</div></div>'
+    return '<div class="w-row s'+m+'"><div class="w-main"><div><span class="w-word">'+wEsc(w[0])+'</span>'+wTag(i)+'<span class="w-phon">'+wEsc(w[1])+'</span></div><div class="w-mean">'+wEsc(w[2])+'</div></div>'
       +wRvTag(i)
       +'<div class="w-marks">'
       +'<button class="w-mk k3 '+(m===3?'on':'')+'" onclick="wQuick('+i+',3)">不认识</button>'
@@ -7960,7 +7961,7 @@ function renderWordsStudy(app){
   }
   const i=s.queue[s.pos], w=WORDS[i];
   app.innerHTML='<div class="w-study"><div class="w-sprog">第 '+(s.pos+1)+' / '+s.queue.length+' 个 · 复习 '+s.due+' · 新词 '+s.neww+'</div>'
-   +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+'</div><div class="cp">'+wEsc(w[1])+'</div><div class="cm">'+wEsc(w[2])+'</div><div class="ctip">点击卡片显示释义</div></div>'
+   +'<div class="w-card'+(s.flipped?' flipped':'')+'" onclick="wFlip()"><div class="cw">'+wEsc(w[0])+wTag(i)+'</div><div class="cp">'+wEsc(w[1])+'</div><div class="cm">'+wEsc(w[2])+'</div><div class="ctip">点击卡片显示释义</div></div>'
    +'<div class="w-actions"><button class="w-act a3" onclick="wAnswer(3)">不认识</button><button class="w-act a2" onclick="wAnswer(2)">模糊</button><button class="w-act a1" onclick="wAnswer(1)">认识</button></div>'
    +'<button class="w-quit" onclick="wQuit()">退出本轮</button></div>';
 }
