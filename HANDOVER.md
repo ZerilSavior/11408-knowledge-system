@@ -23,6 +23,8 @@
 
 * 已完成：14 学科 690 个考点叶子的知识树；每考点四维内容（核心概念 / 重难点 / 常考题型 / 关联考点，Markdown+KaTeX）；408 与数学真题考频（高频先学）；英语大纲 5489 词背单词模块；笔记 / 思维导图 / 错题统一库 + 艾宾浩斯复习；多用户登录云同步；个性化学习计划页（自定义天数 / 每天时长，自动排期）；**批 4 学习闭环（知识定位、核心精华笔记、做题记录、掌握四条件自动判定、按科组共享的书源库、全站统一错因库，均已接云同步），2026-09-20 上线（Version 368b0ca0）**。
 
+* **批 6–批 8（2026-09-20 上线，Version 6a52e374，详见文末「批 6–批 8 更新」一节）**：①真题模考 36 天 / 18 周期日程 + Cloudflare R2 试卷照片上传；②词库由 5489 扩充到 **8044**（大纲+红宝书+核心/拓展词组，带来源标签）；③数学 33 个高频题型按近 15 年真题次数**精确映射到章节**（框架来自郭雨港《数一所有题型分类、通用解法详解》，考频数据来自抖音 @晨曦学长）；④个性化排期引擎 **v2**（18h 四大模块时间盒、408/数一高频优先、政治按章节顺序与时间上限、模块/单词/阅读可行性预警、同级考点手动换题且时长守恒）；⑤英语**阅读打卡**（新东方基础 100+强化 100 共 200 篇，单词一轮后启动、每天≤4 篇）。
+
 * 主改造文件只有一个：`public/index.html`（约 1.06 万行、1.6 MB）。绝大多数需求都改这一个文件。
 
 
@@ -531,3 +533,92 @@ git push origin main
 * [ ] 拿到 Cloudflare API token 后能 `wrangler deploy` 并在 [zeril.cn](https://zeril.cn) 强刷验证。
 
 * [ ] 遵守第 9 节避坑（尤其 `$` 带 `#`、叶子标题兼容对象、改前备份、KaTeX）。
+
+***
+
+## 6. 批 6–批 8 更新（2026-09-20，最新，接手先读）
+
+> 本节是批 4 之后的全部增量。线上当前 Version **6a52e374-5252-4885-a8d4-7c69f8d79d5c**。提交：593e642 / 3fabda1（批6 R2+真题）、f30cd61（词库）、c11e0c1（排期v2+阅读+数学考频）。
+
+### 6.1 批 6：真题模考 + R2 试卷照片
+
+* `state.exams = { examDate, enabled, records }`，已接云同步。
+* 常量 `EXAM_FIRST_YEAR=2009 / LAST_YEAR=2026 / CYCLES=18`；真题月约 **36 天、18 个两天周期**。
+  `examCycleDay1(c) = planAddDays(examDate, -2*(19-c))`：c1 的 Day1 = 11-13，c18 的 Day1 = 12-17、Day2 = 12-18（examDate=12-19）。
+  每个周期 **Day1 上午政治、下午英语；Day2 上午数学、下午 408**；时段严格 8:30–11:30 / 14:30–17:30；做完 30 分钟内提醒上传试卷照片并自批录分，记录成绩趋势。
+* 后端 `_worker.js` 新增 R2 三接口：`POST /api/photo/upload`（multipart）、`GET /api/photo/:key`、`DELETE /api/photo/:key`，**按登录用户目录隔离、防越权**。
+  R2 bucket 名 `k408-exam-photos`，binding **`PHOTOS`**；`wrangler.jsonc` 同时声明 D1(`DB`) 与 R2(`PHOTOS`)。照片不进 D1。
+* 真题日程依赖计划工具函数 `planAddDays / planParse`，改动计划日期工具时勿破坏。
+
+### 6.2 词库扩充到 8044（`public/data/words.js`）
+
+* 总数 **8044 = 大纲 5489（无 tag，索引 0–5488 不变）+ 红宝书新增 1246（必考 60 / 基础 137 / 超纲 1049）+ 核心词组 571 + 拓展词组 738**。
+* 每条由三元组扩为**四元组 `[词, 音标, 释义, tag]`**；旧三元组仍兼容（`w[3]===undefined`）。tag 取值：`红宝书·必考词 | 红宝书·基础词 | 红宝书·超纲词 | 核心词组 | 拓展词组`。
+* 前端 `wTag(i)` 渲染来源徽标（红宝书蓝 / 核心词组橙 / 拓展词组绿）。
+* 数据源：红宝书 2027 xlsx、571 核心词组 pdf、738 拓展词组 pdf；合并脚本在会话工作目录（`build_words.py / extract_dry2.py / supplements.json / patch_words_tag.py`），**重做合并前必须先还原 `_backup/words-pre-merge-20260920-130930.js`**。
+
+### 6.3 批 7：数学 33 题型考频精确映射
+
+* 旧数学 FREQ 是「整章同一相对热度 h」的粗粒度。现改为在 `function freqOf(p)` **之前注入一个 IIFE 覆盖层**：
+  1. 先把所有 `math1/math2/math3` 的 key 重置为兜底 `{lv:1, p:1.5, t:'math', tag:'选填偶考'}`；
+  2. 4 个选填基础章节（math2/0、math3/0、math3/1、math3/5）设 lv2；
+  3. 用一张 **G 表（33 个高频题型）** 按「小节前缀或精确叶子 path」覆盖：`n`=近 15 年出现次数，`n>=8 → lv3`、`4–7 → lv2`、`<=3 → lv1`，`p=n`，`tag='近15年N次'`，`tip` 含题型名+次数+双署名。
+* **署名要求（用户明确）**：数学框架来自**郭雨港《数一所有题型分类、通用解法详解》**，考频数据来自**抖音 @晨曦学长**；408 考频源是 **@Yoken怀古**。tip 内已带，改动时保留。
+* 高中基础 / 空间解析 / 物理应用 / 大数定律 / 假设检验等章保留兜底 lv1。脚本 `patch_math_freq.py`、对照 `math_dump2.txt`。
+
+### 6.4 排期引擎 v2（本轮核心）
+
+* `state.plan` 升级为 **v:2**：
+  `{ v:2, start, exam, learnEnd, h408, hMath, hEng, hPoli, wordPerDay, readStart, readEnd }`。
+  **没有默认天数 / 总时长**：由「开始日 start + 新学截止日 learnEnd」自动算天数 `D`；各模块每天小时数默认预填 408=6、数一=8、英语=2、政治=1，可改。
+* 时间口径（已实现，待用户最终确认，见 6.8）：`learnEnd = exam-37`（2026-11-12），其后 36 天为真题/冲刺月；**取消独立的「额外 30 天纯复习」**，复习由艾宾浩斯日常穿插。
+* `PLAN_MOD_DEFS` 三个排期模块：
+  * **c408**：每考点 60min；子科 ds/co/os/net；**全局按考频 `lv desc, p desc` 排序**（跨四科高频优先）。
+  * **math**：每考点 60min；math1/2/3 各自按考频排序，再按「日型」配额切片。
+  * **poli**：每考点 **30min**；poli1..6 **严格章节顺序（seq），不按考频**。
+  * **英语不进考点树**（无考点打卡），只排新词 / 阅读。
+* 参与排期叶子共 **665**：408 = 279（ds80 co66 os76 net57）、数学 = 278（189/47/42）、政治 = 108（23/23/25/13/18/6）。
+* `planCollect()` 收集叶子并带 `seq`；`planQueues()` 剔除已掌握；`planBuild()` 返回
+  `days[]{ idx,date,weekday,leaves[],mins{c408,math,poli},wordNew,readN }`、`modFin{每模块 total/done/finish/feasible}`、`warnings[]`、`wordDays / wordFinishDate / allocArr / D`。
+* **数学日型**（按已学累计占比解锁子科）：
+  * stage1：全天 8h 高数；高数完成约 40%（`taken1>=round(m1.length*0.4)`，约第 10 天）解锁线代进入 stage2；
+  * stage2：高数 4 + 线代 4；线代完成约 40%（`taken2>=max(4,round(m2.length*0.4))`，约第 15 天）解锁概统进入 stage3；
+  * stage3：概统 4、线代 2、高数 2；某子科队列耗尽时配额优先补高数。
+  * 注意阈值用**初始队列长度的固定比例**，不要写成随已学数增长的自举式（曾有 `m2.length+taken2` 的 TDZ/永不可达 bug）。
+* **政治时间上限 `planPoliCapH(cfg,date)`**：`date<2026-10-01` 取 `min(hPoli,1)`，否则 `min(hPoli,2)`；当天政治点数 = `round(cap*60/30)`（hPoli=1 时全年每天 2 个，108 个刚好约 54 天）。
+* **英语**：剩余新词>0 时当天 `wordNew=wordPerDay`，否则给阅读 `readN`；单词一轮完成判定 `wRoundLearned() = wStats().learned >= WORDS.length`。每日新词数按 hEng=2h、每词约 27 秒、留约 60% 余量估算（约 160–200，可在设置改）。
+* 对外函数名保持兼容：`planCfg/planBuild/planTodayIndex/planSetupHTML/planSave/planSidebarItem/planOverviewBanner/planGoWords/planWordPerDay/renderPlan/planAddDays/planFmt/planParse/planDiff/planWd/planLeafTitle` 等（真题块依赖）。
+
+### 6.5 手动换题约束（planOverrides）
+
+* `state.planOverrides = { [date]: { swaps:[{from,to}] } }`，已接云同步（浅合并）。
+* `planSwapCandidates(date, fromPath)`：**同模块**、未掌握；政治不卡考频（顺序模块），其余要求 **考频差 `|Δlv|≤1`（禁高频↔低频）**；候选必须未掌握、不在今天、其所在日期不能是过去；已排在未来的同级点优先（可对调）、日期近优先、同级考频高优先，截 30 个。
+* `planApplyOverrides(days)`：目标 `to` 未排入则把 `from` 移出；`to` 排在未来另一天则**两天对调**（天然 1 换 1、同模块时长守恒）；过去日期与已掌握点锁定。
+* 弹窗是**动态创建的 `#planSwapOverlay`**（class `overlay`+`.dlg/.dlg-t/.dlg-b`）。**项目没有通用 `openOverlay/closeOverlay`**：静态弹窗靠 `classList.add/remove('open')`，这个换题弹窗是运行时 `createElement`，勿套用不存在的 helper。未来考点行有 `⇄` 按钮（`.p-swap`），过去/已掌握不显示，可撤销。
+
+### 6.6 英语阅读打卡（新模块 #/reading）
+
+* `state.reading = { start, end, baseN:100, strongN:100, done:{idx:ts} }`，`ensureReading()` 兜底（**该函数在脚本早期被 `ensureLearningData` 调用，默认值必须写字面量 100，不能引用后文 const，否则 TDZ**）。
+* 共 **200 篇**：idx 0–99 基础篇（绿）、100–199 强化篇（橙），先基础后强化；每天 **≤4 篇**。
+* `readingBuild()`：`R=diff(start,end)+1`、`needDays=ceil(200/4)=50`、`feasible=(R>=50)`、`perDay=feasible?min(4,ceil(200/R)):4`，按天切片排满 200。
+* 函数：`todayReading / readingToggle / readingDoToday / readingSave / renderReading / readingSidebarItem / rDefaultStart`（默认开始日 = 今天 + 单词按 planWordPerDay 一轮所需天数）。
+* 设置里阅读开始/目标日；目标日默认考研当天。逐篇格子 `.r-grid` 点击打卡，今日范围描边；单词未一轮时给黄色提示。**小三门（完形/新题型/翻译）与作文本批仅占位说明，未做打卡**。
+* 云同步新增 `reading`（`mergeReading`）与 `planOverrides` 两个 key；`ensureLearningData` 里加 `ensureReading()` 与 planOverrides 初始化。路由 `#/reading`、视图 `#view-reading`、侧栏入口在「英语词汇」之后（新入口只加侧栏，**不加拥挤的顶部导航**）。
+
+### 6.7 测试 / 截图 / 部署
+
+* 会话工作目录 `…/new-chat-4/`（不在仓库内）：
+  * `verify_all.js`：加载 index.html 主 `<script>`，校验 **690 个叶子四维内容 100% 齐全**（改内容后必跑）。
+  * `test_plan.js`：排期 v2 / 阅读 / 换题 **36 项断言**（模块总量、日型配额、高频优先、政治顺序与 cap、阅读可行性与排满、对调守恒、render 不报错）。
+  * `shot_plan.py`：CDP 无头 Chrome 注入示例计划后截计划页 / 设置 / 换题弹窗 / 阅读页。
+  * Node 测试要点：主 script 用 `html.indexOf('<script>',50000)+8` 切出（words.js 是 `<script src>` 不会误中）；`new Function(...args, code+';return {...}')` + 万能 Proxy mock；**`window.WORDS_DATA` 必须是真实数组**（若给 Proxy，`Array.isArray` 判 false 会让 `WORDS=[]`）。
+  * 独立 JS 片段先 `node --check` 再注入；大改用 Python「唯一锚点 + assert count==1」补丁最稳；文件是 LF，Python 写回用 `io.open(..., newline='')`；PowerShell 内联 `python -c` 会被 JS 的 `&&` 炸掉，一律写独立 `.py`。
+* 部署：项目根 `npx wrangler deploy`；**每个新 PowerShell 进程都要重设 `$env:CLOUDFLARE_API_TOKEN`**（cfut_ 开头，敏感，不入库、不打印）。线上校验用带浏览器 UA 的 `https://zeril.cn/?cb=时间戳`（裸 urllib 会被 Cloudflare 1010 挡），脚本 `verify_live.py`。
+* git push 走代理 `$env:HTTPS_PROXY="http://127.0.0.1:7890"`，需梯子全局/TUN；**push 失败不阻塞上线**（wrangler deploy 可直连或同样依赖网络）。
+* 回滚：排期重构前干净备份 `_backup/index-pre-planengine-20260920-133714.html`；批6前 `index-pre-batch6-20260920-102937.html`；词库合并前 `words-pre-merge-20260920-130930.js`。
+
+### 6.8 待用户拍板的口径（不要擅自改）
+
+1. **新学截止**：现按「新学到 11-12（exam-37）、随后 36 天真题月、复习靠艾宾浩斯穿插」实现。用户口述过「学完后额外 30 天纯复习 + 再 30/36 天真题 → 新学考前约 60 天结束（≈10-14）」；但 665 个考点即便每天 18h，新学窗口只剩约 24 天也排不完（408 单模块就需约 47 天），系统会大面积 infeasible。交付时需让用户在「计划可行（学到 11-12）」与「提前 60 天截止（看缺口预警）」之间确认。
+2. **阅读窗口**：单词一轮结束日决定阅读开始日。160 词/天一轮到 11-09，阅读 11-13 起只剩 37 天 < 需 50 天，会报 infeasible；要排满 200 篇需 `readStart ≤ 2026-10-31`（约 200 词/天、41 天一轮到 10-30），或允许单词后期与阅读重叠（用户目前规定一轮前不阅读）。
+3. 数学日型 40% 解锁阈值、每日新词换算系数均为助手拟定默认值，待验收调整。
