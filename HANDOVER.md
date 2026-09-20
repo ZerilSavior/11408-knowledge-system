@@ -874,3 +874,16 @@ git push origin main
 * 版本 / 提交：线上 Version **5511f92d-a4d8-4d11-8d1b-a8d62638b65e**（仅上传 /js/features/words.js、/js/features/plan.js 两个变更资产）；commit 见 git log（本批提交）。
 * 改动文件：`public/js/features/words.js`（新增 wTodayStr/wNewLearnedToday/wNewRemain，wEnsure/wBump 加 ease，wGrade 写 nd，wStart 配额+newSet，wAnswer 计 newGraded，renderWordsStudy 进度两行/完成页，renderWords hero，mergeWords 合并 nd/ease，两处注册表加 3 符号）、`public/js/features/plan.js`（今日新词 wordDone/wordLeft 与文案）。
 * 工作目录（未入库）新增：`patch_words_anki.py`、`test_words_anki.js`、`verify_words_anki.py`、截图 words_card/words_home_done/words_alldone/words_list_1000_done.png。
+
+## 20. 批 20：408 考频改为 2009-2026（18年）出题次数（2026-09-21）
+
+> 诉求：408 树页/详情页考频标签原是「近6考N年 / 18年N年」（按考查年数、近6+18 双窗口），用户要求改成统计 2009-2026（18 年）「考了几次」（出题次数），直观看哪个考点重要；先提「近15年」后明确改为「直接统计 09-26」。
+
+* 数据源：`C:\Users\20350\Desktop\干翻11408\408历年真题小节考频——madeby@Yoken怀古.xlsx`（@Yoken怀古）。单 sheet「408考频表-Yoken怀古」，第 3 行小节名、第 4 行起年份倒序（行4=2026 … 共 18 行=2009），单元格为 `选N` / `综N` / `选N、综M`；对「选」「综」字符计数即出题道次（一道选择题=1、一道综合大题=1）。
+* 口径：`n = 18 年「选」数 + 「综」数`（出题总次数，即「考几次」）；`t`=18 年命中年数；`r`=近 6 年（2021-2026）命中年数（保留进 tip）。小节→考点 path 的映射、blocks/cc/RULES 与归属权重（一个 path 命中多个 xlsx 小节时取权重最大者）完全复用工作目录 `build_408_freq.py`，故归属与旧版一致、键集合不变（234 个 t:"408" 键，新旧集合相等校验通过）。
+* 分级（lv，计划「高频→中频→低频」依赖它）：n>=15 高频 lv3、8<=n<=14 中频 lv2、n<8 低频 lv1；结果 高 63 / 中 93 / 低 78（Cache co/2/4=26、虚页 os/2/5=29、定点数/程序中断=24、TCP 连接 net/4/2=16、时间复杂度 ds/0/1=22 等顶配点落高频）。`p` 字段由旧一位小数权重改为整数 n，使同级按题次排序。features/plan.js 排序键 (lv desc)→(p desc)→(seq) 与手动换题跨级约束（只用 lv 的 1/2/3，|Δlv|<=1）天然兼容，plan.js 未改。
+* 标签文案：tag = "18年"+n+"次"（如「18年26次」「18年1次」）；tip = "2009-2026（18年）共考查 N 次：选择 X 题·综合 Y 题，命中 T/18年｜近6年考查 R 年"。freqPill / sectionAggPill（core/ui-shell.js）直接读 f.tag 渲染，渲染函数未动。数学 t:"math" 共 278 条完全未改。
+* 改动文件：仅 `public/js/data/syllabus.js`（第 4 行 const FREQ 单行紧凑 JSON，文件为 CRLF；程序化重写 234 个 t:"408" 条目的 lv/p/tag/tip，FREQ 总条目 512 不变；json.loads/json.dumps(separators=(',',':'),ensure_ascii=False) 整行重建，其余行不动）。
+* 验证：check_modules.py BAD=0；test_plan 59、test_books 15、test_today_lock 13、test_words_anki 19 全绿（含「408 首点高频 lv3」「换题候选 lv 差≤1」未回归）；CDP verify_freq_408.py 数据层 234 条 tag 全匹配 ^18年\d+次$、tip 全含「2009-2026」、旧文案 0 条、分级 78/93/63、零 Runtime/console 异常；截图 freq_co/ds/os/net.png（co「18年24次」红、ds「18年13次」黄、net「18年2次」灰）。
+* 版本 / 提交：线上 Version **deba9c83-a02e-4ec0-924e-f6c449071c89**（仅上传 /js/data/syllabus.js 一个变更资产）；commit 见 git log（本批提交）。
+* 工作目录（未入库）新增：stat_408_18.py、patch_freq_408_18.py、verify_freq_408.py、syllabus.js.bak-batch20、截图 freq_co/ds/os/net.png。
