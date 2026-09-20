@@ -4,8 +4,6 @@ const $ = (sel, root)=> (root||document).querySelector(sel);
 
 const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-
-
 function getSubject(id){ return SYLLABUS.find(s=>s.id===id); }
 
 
@@ -205,5 +203,35 @@ function isSectionOpen(subId, ci, si){ return openState[`${subId}/${ci}/${si}`] 
 
 /* ================= 英语大纲词汇（艾宾浩斯 · 词形key · 三态轮播 · 难度分 · 记录） ================= */
 
-Object.assign(globalThis, { $, esc, getSubject, getNode, isLeafNode, leafPath, nodeLabel, eachLeaf, subStats, chapterStats, overallStats, openState, isChapterOpen, isSectionOpen });
-export { $, esc, getSubject, getNode, isLeafNode, leafPath, nodeLabel, eachLeaf, subStats, chapterStats, overallStats, openState, isChapterOpen, isSectionOpen };
+function subColor(id){
+
+  const s = getSubject(id);
+
+  return s ? s.color : '#8A929C';
+
+}
+
+function subName(id){
+
+  const s = getSubject(id);
+
+  return s ? s.name : '其他 / 综合';
+
+}
+
+function fmtTime(ts){
+
+  const d = new Date(ts);
+
+  const p = n=>String(n).padStart(2,'0');
+
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+
+}
+
+
+
+/* ---------- 学习条目统一库：类型配置 / 考点路径 / CRUD / 学习中心 ---------- */
+
+Object.assign(globalThis, { $, esc, getSubject, getNode, isLeafNode, leafPath, nodeLabel, eachLeaf, subStats, chapterStats, overallStats, openState, isChapterOpen, isSectionOpen, subColor, subName, fmtTime });
+export { $, esc, getSubject, getNode, isLeafNode, leafPath, nodeLabel, eachLeaf, subStats, chapterStats, overallStats, openState, isChapterOpen, isSectionOpen, subColor, subName, fmtTime };

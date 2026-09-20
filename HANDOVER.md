@@ -744,3 +744,51 @@ git push origin main
 * 回滚点：重构前 commit **0f72679**（单文件前端 + 单文件 `_worker.js`）。`git checkout 0f72679 -- public worker _worker.js wrangler.jsonc` 可整体回退（注意重构后新增了 public/js、public/styles、worker 目录，回退后需删除这些目录并恢复 index.html / data 词库 / _worker.js）。
 * **拆分器 `split_frontend.py`（会话工作目录，未入库）幂等可重跑**：它从 0f72679 的单文件机械切出全部前端模块（含 14.3/14.4 的全部修复）。想重新生成时先 `git checkout 0f72679 -- public/index.html public/data/words.js public/data/words-rare.js public/data/word-rel.js` 恢复单文件基线，再跑 split_frontend.py + check_modules.py；`js/`、`styles/` 是生成物会被覆盖。**日常迭代不要重跑拆分器**（会覆盖手工修改），直接改对应 `public/js/**` 模块即可。
 * 改功能定位：考纲 / 考点内容 → `js/data/`；学习状态 / 云同步 → `js/core/store.js`、`cloud.js`；侧栏 / 树 / 详情布局 → `js/core/ui-shell.js`；计划 / 打卡 / 掌握判定 / 书源 → `js/features/study-loop.js`；词汇 → `features/words.js`；真题 / 照片 → `features/exams.js` + `worker/photos.js`；登录 / 数据 API → `worker/auth.js`、`data.js`。改完按 14.7 跑回归，再 commit / deploy / push。
+
+## 15. 批 11：模块内聚归位（修正批 10 机械拆分的职责错位，2026-09-20 上线）
+
+> 动因：批 10 按 banner 物理位置机械切段，功能完整但存在「假模块化」错位（最典型：整套排期引擎在单词文件里、单词列表渲染在导图文件里、搜索 / Markdown 渲染在笔记文件里）。本次**只做归位、零业务逻辑改动、零功能变化**，零构建与 Workers 直接部署方式不变。归位前基线 commit **d7a4c77**，线上 Version **d378b460**。
+
+### 15.1 归位清单
+
+第一批（功能域归位）：
+
+* **新增 `features/plan.js`**：个性化排期引擎全部符号（`PLAN_*` 常量、`planBuild` 及其体内嵌套 `consumeModule`、`planSwap*` 手动换题、`planDay*` / `planEditDay` / `planSaveDay` 当天时长、`renderPlan` / `planSidebarItem` / `planOverviewBanner` 等 72 个顶层符号），原错置于 `features/words.js`。
+* `features/words.js`：收回词库状态 / 三态轮播 / 艾宾浩斯，以及字母列表与学习卡渲染（`renderWords` / `renderWordsList` / `wordRow` / `wJumpWord` / `wLetterOf` / `locateLastWord` 等）和英语综合掌握度 `engMasteryPct`；这些渲染原错置于 `mindmap.js`。
+* `features/mindmap.js` 纯化：只剩 726 页导图速记（`MM_TOTAL` / `mmEnsure` / `mmImgSrc` / `mmGo` / `mmJump` / `renderMindmap` + 键盘绑定 + `mindmapSideMeta`）。
+* `renderOverview`（总览）归 `core/ui-shell.js`；`readingSideMeta` 归 `features/reading.js`。
+
+第二批（基础设施归 core）：
+
+* Markdown 业务渲染 `mdRenderer` / `mdRenderMath` / `mdRender` / `normalizeSoft` / `mdBlocks` / `conceptMd` / `inlineMd`（连同顶层 `if(window.marked) marked.use(...)` 配置语句）从 `notes.js` 归 `core/md-render.js`。
+* 全局搜索 `searchIndex`（构建期 IIFE）/ `openSearch` / `closeSearch` / `runSearch` / `highlight` 归 `core/ui-shell.js`。
+* 通用工具 `subColor` / `subName` / `fmtTime` 归 `core/util.js`。
+* `notes.js` 只保留学习条目统一库：`ITEM_KINDS`、考点路径 `pathInfo*`、条目 CRUD、学习中心 / 复习面板、笔记与错题编辑器、`newMap`。
+
+### 15.2 最终模块职责（以此为准；取代 14.2 中「排期在 study-loop」的过时描述）
+
+`main.js` 求值顺序更新为：词库 ×3 → `data/*` ×3 → `core/{store, cloud, util, md-render, ui-shell}` → `features/{study-loop, words, plan(新增, 在 words 后), reading, exams, mindmap, notes, drawings, maps}` → `core/{bootstrap, app-init}`。
+
+* **core/util**：`$`、`esc`、`getNode` / `getSubject` / `leafPath` / `eachLeaf`、`subStats` / `overallStats`、`subColor` / `subName` / `fmtTime` 等纯工具。
+* **core/md-render**：marked / hljs / KaTeX 配置、`conceptToHtml` / `renderMath` / `updatePreview` / `setMdMode` / `mdTool` / 涂鸦 `drawState`，以及考点与笔记正文渲染 `mdBlocks` / `conceptMd` / `inlineMd` / `mdRender*`。
+* **core/ui-shell**：`renderSidebar` / `render` 主分发 / `renderTree` / 考频排序 / `renderDetail` / `renderOverview` / 全局搜索。
+* **features/study-loop**：书源 `BOOK_GROUPS`、错因库、`ensureLearningData`、掌握判定 `masteryChecklist` / `applyAutoMastery`、艾宾浩斯复习 `dueItems` / `ensureAllReviews`。
+* **features/plan**：排期引擎（唯一真源）。**features/words**：英语词汇全部（含英语综合掌握度）。**mindmap** 仅导图；`reading` / `exams` / `notes` / `drawings` / `maps` 各司其职。
+
+### 15.3 归位脚本与新增拆分坑（再做归位必读）
+
+* 脚本在会话工作目录 `…/new-chat-4/`（未入库）：`reorganize1.py`（第一批）、`reorganize2.py`（第二批）、`restore_baseline.py`（用 `git show HEAD:<path>` 导出干净基线，规避偶发的 `git checkout` 卡顿 / 锁）、`patch_main.py`（向 main.js 注册 plan.js，幂等）。方法：按「列 0 顶层声明」切块（吸收紧邻前导注释），按符号名重新分配文件，并重写每个文件末尾的 Object.assign / export，最后做**块文本多重集字符守恒校验**（Counter），守恒不过不写文件。
+* ★新坑（补充 14.4）：IIFE 收尾的列 0 `})();` **绝不能**识别为独立语句锚点，否则 `const x=(()=>{ ... })();` 被拦腰截断——主体被搬进新文件、闭合 `})();` 残留在原文件，两边语法俱毁（node --check 报孤立 `})();`，harness 报 `emptyBox is not defined` 一类连带错误）。独立顶层语句锚点只认列 0 的 `if(` / `for(` / `while(`（如 mindmap 的 `if(!window._mmBound){...}` 键盘绑定）。
+* 函数体内缩进的嵌套函数（如 `planBuild` 体内的 `function consumeModule`）不是顶层符号、不进导出清单，随父函数整块迁移。
+* 移动一个符号后必须同步四处：源文件末尾 Object.assign / export 删名、目标文件末尾加名、`main.js` 的 import 与 `__NAMESPACES`、测试 `bundle_harness.js` 的 `MAIN_ORDER`（plan 位于 words 之后）。
+
+### 15.4 验证（全绿）
+
+* `node --check`：30 个 JS 模块 `bad=0`（含新增 plan.js）。
+* 单测：`test_plan.js` 59 项、`test_books.js` 15 项全绿。
+* CDP 全路由（`rt_full.py` / `rt_full2.py`，本地起 http.server + 无头 Chrome）：首屏非空、归位关键全局符号无缺失、首屏与全部 hash 路由 `Runtime.exceptionThrown=0`；9 学科详情 KaTeX 正常（`co/2/5/1`=46、math1/2/3=13/12/12）；搜索必中词均有结果（进程 14 / 线性 21 / 极限 21 / 二叉树 12 / Cache 6，「缓存」0 结果仅因该词不在考纲名）；配置后计划渲染（planToday / 时间线 / 模块进度 / 今日时长弹层）正常；笔记与错题编辑器正常。
+* 线上 `online_verify.py`：https://zeril.cn 首屏 2170 字符、符号齐全、`/js/features/plan.js` 返回 200 且含 `planBuild` / `renderPlan`、各路由零异常。
+
+### 15.5 回滚
+
+归位前基线 commit **d7a4c77**（批 10 机械拆分版，功能完整但内聚错位）：`git checkout d7a4c77 -- public/js` 后**需手动删除新增的 `public/js/features/plan.js`**。再往前的单文件基线为 0f72679（见 14.8）。

@@ -194,6 +194,133 @@ let drawState = { tool:'pen', color:'#1B1F24', size:4, strokes:[] };
 
 let drawPointer = null;
 
+/* ============================================================
+ * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
+ * ============================================================ */
+const mdRenderer = {
 
-Object.assign(globalThis, { conceptToHtml, renderMath, mdMode, mdTimer, updatePreview, setMdMode, mdTool, drawState, drawPointer });
-export { conceptToHtml, renderMath, mdMode, mdTimer, updatePreview, setMdMode, mdTool, drawState, drawPointer };
+  html(html){ return esc(html); },
+
+  image(href, title, text){
+
+    let src = href;
+
+    if(href && href.startsWith('drawing://')){
+
+      src = state.drawings[href.slice(10)] || '';
+
+    }
+
+    if(!src) return '';
+
+    const t = title ? ` title="${esc(title)}"` : '';
+
+    const alt = text ? esc(text) : '涂鸦';
+
+    return `<img src="${esc(src)}" alt="${alt}"${t} loading="lazy">`;
+
+  },
+
+  link(href, title, text){
+
+    const t = title ? ` title="${esc(title)}"` : '';
+
+    return `<a href="${esc(href)}"${t} target="_blank" rel="noopener noreferrer">${text}</a>`;
+
+  },
+
+  code(code, infostring){
+
+    const lang = (infostring||'').trim().split(/\s+/)[0];
+
+    let html;
+
+    if(lang && window.hljs && hljs.getLanguage(lang)){
+
+      try{ html = hljs.highlight(code, {language:lang, ignoreIllegals:true}).value; }
+
+      catch(e){ html = esc(code); }
+
+    }else{
+
+      html = esc(code);
+
+    }
+
+    return `<pre><code class="hljs${lang?' language-'+esc(lang):''}">${html}</code></pre>`;
+
+  }
+
+};
+
+if(window.marked) marked.use({gfm:true, breaks:true, renderer:mdRenderer});
+
+/* 数学公式保护：先抽出 $$...$$ / $...$ 占位，避免 marked 破坏公式内的 _ ^ { }，解析后还原，再交给 KaTeX */
+
+/* 数学公式保护：先抽出 $$...$$ / $...$ 占位，避免 marked 破坏公式内的 _ ^ { }，解析后还原，再交给 KaTeX */
+function mdRenderMath(text){
+  if(!text) return '';
+  try{
+    const store=[];
+    const prot = text.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{
+      store.push(m); return '@@MATH'+(store.length-1)+'@@';
+    });
+    let html = window.marked ? marked.parse(prot) : esc(prot);
+    html = html.replace(/@@MATH(\d+)@@/g, (mm,i)=> store[+i]!=null ? store[+i] : mm);
+    return html;
+  }catch(e){ return mdRender(text); }
+}
+
+function mdRender(text){
+
+  if(!text) return '';
+
+  try{ return window.marked ? marked.parse(text) : esc(text); }
+
+  catch(e){ return esc(text); }
+
+}
+
+/* 考点 concept / 列表项：marked(gfm：表格·代码块·列表) + 数学保护 + 兼容旧 pandoc 上标 ^x^ */
+
+/* 考点 concept / 列表项：marked(gfm：表格·代码块·列表) + 数学保护 + 兼容旧 pandoc 上标 ^x^ */
+function normalizeSoft(s){
+  const lines=s.split('\n'), out=[];
+  const isStruct=(ln)=>/^\s*([-*+]\s|\d+[.、)]\s|[①-⑳]|[·•]\s*|#{1,6}\s|>|\||```|\$\$|@@)/.test(ln);
+  for(const r0 of lines){
+    const ln=r0.replace(/\s+$/,'');
+    if(/@@FENCE\d+@@/.test(ln)){ out.push(ln); continue; }
+    if(ln.trim()==='' || isStruct(ln) || out.length===0 || out[out.length-1].trim()===''){ out.push(ln); }
+    else { out[out.length-1]=out[out.length-1].replace(/\s+$/,'')+' '+ln.trim(); }
+  }
+  return out.join('\n');
+}
+
+function mdBlocks(text, inline){
+  const math=[];
+  let s=String(text);
+  s=s.replace(/«MATH»/g,'$$').replace(/«\/MATH»/g,'$$');
+  s=s.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{ math.push(m); return '@@MATH'+(math.length-1)+'@@'; });
+  const fences=[];
+  s=s.replace(/```[\s\S]*?```/g, m=>{ fences.push(m); return '@@FENCE'+(fences.length-1)+'@@'; });
+  const sup=[];
+  s=s.replace(/([0-9A-Za-z)])\^([^\s^]+)\^/g, (m,pre,x)=>{ sup.push(x); return pre+'@@SUP'+(sup.length-1)+'@@'; });
+  s=normalizeSoft(s);
+  s=s.replace(/@@FENCE(\d+)@@/g, (m,i)=> fences[+i]!=null?fences[+i]:m);
+  let html = window.marked ? (inline ? marked.parseInline(s) : marked.parse(s)) : esc(s);
+  html=html.replace(/@@SUP(\d+)@@/g, (mm,i)=> sup[+i]!=null ? '<sup>'+esc(sup[+i])+'</sup>' : mm);
+  html=html.replace(/@@MATH(\d+)@@/g, (mm,i)=> math[+i]!=null ? math[+i] : mm);
+  return html;
+}
+
+function conceptMd(text){ if(!text) return ''; try{ return mdBlocks(text,false); }catch(e){ try{return conceptToHtml(text);}catch(_){ return esc(text); } } }
+
+function inlineMd(text){ if(!text) return ''; try{ return mdBlocks(text,true); }catch(e){ return esc(text); } }
+
+
+
+
+/* ===== 用户自定义框架图（localStorage） ===== */
+
+Object.assign(globalThis, { conceptToHtml, renderMath, mdMode, mdTimer, updatePreview, setMdMode, mdTool, drawState, drawPointer, mdRenderer, mdRenderMath, mdRender, normalizeSoft, mdBlocks, conceptMd, inlineMd });
+export { conceptToHtml, renderMath, mdMode, mdTimer, updatePreview, setMdMode, mdTool, drawState, drawPointer, mdRenderer, mdRenderMath, mdRender, normalizeSoft, mdBlocks, conceptMd, inlineMd };

@@ -299,12 +299,15 @@ function renderTree(){
 })();
 
 function freqOf(p){ return FREQ[p]||null; }
+
 const FREQ_LB=['低频','中频','高频'];
+
 function freqPill(p){
   const f=freqOf(p); if(!f) return '';
   const lb = f.tag || FREQ_LB[f.lv-1];
   return `<span class="freq lv${f.lv}" title="${esc(f.tip||f.tag||'')}">${esc(lb)}</span>`;
 }
+
 function sectionMaxFreq(subId,ci,si,sec){
   let best=null;
   const consider=p=>{const f=freqOf(p); if(f&&(!best||f.p>best.p))best=f;};
@@ -312,28 +315,34 @@ function sectionMaxFreq(subId,ci,si,sec){
   else consider(`${subId}/${ci}/${si}`);
   return best;
 }
+
 function sectionAggPill(subId,ci,si,sec){
   const f=sectionMaxFreq(subId,ci,si,sec); if(!f) return '';
   const lb=f.tag||FREQ_LB[f.lv-1];
   return `<span class="freq lv${f.lv}" title="本小节高频考点：${esc(f.tip)}">${esc(lb)}</span>`;
 }
+
 function isFreqSort(){ try{return localStorage.getItem('k408-freqsort')==='1';}catch(e){return false;} }
+
 function orderedSectionIdxs(sub,ch,ci){
   const idx=ch.sections.map((s,si)=>si);
   if(!isFreqSort())return idx;
   const sc=si=>{const f=sectionMaxFreq(sub.id,ci,si,ch.sections[si]);return f?f.p:-1;};
   return idx.sort((a,b)=>sc(b)-sc(a));
 }
+
 function orderedTopicIdxs(subId,ci,si,sec){
   const idx=sec.topics.map((t,ti)=>ti);
   if(!isFreqSort())return idx;
   const sc=ti=>{const f=freqOf(`${subId}/${ci}/${si}/${ti}`);return f?f.p:-1;};
   return idx.sort((a,b)=>sc(b)-sc(a));
 }
+
 function toggleFreqSort(){
   try{ localStorage.setItem('k408-freqsort', isFreqSort()?'0':'1'); }catch(e){}
   renderTree();
 }
+
 function syncFreqSortBtn(){
   const b=document.getElementById('freqSortBtn');
   if(!b)return;
@@ -474,8 +483,6 @@ function caretSvg(){
   return `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>`;
 
 }
-
-
 
 function attachTreeEvents(body, sub){
 
@@ -942,8 +949,215 @@ function renderDetail(){
 
 }
 
+function renderOverview(){
+
+  const heroChips = $('#heroChips');
+
+  heroChips.innerHTML = SYLLABUS.map(s=>`<span class="chip"><i style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block"></i>${s.name}<b>${s.weight}</b></span>`).join('');
+
+  $('#heroDots').innerHTML = SYLLABUS.map(s=>`<i style="background:${s.color}"></i>`).join('');
 
 
 
-Object.assign(globalThis, { renderSidebar, currentRoute, render, selectedPath, renderTree, freqOf, FREQ_LB, freqPill, sectionMaxFreq, sectionAggPill, isFreqSort, orderedSectionIdxs, orderedTopicIdxs, toggleFreqSort, syncFreqSortBtn, buildTreeRows, caretSvg, attachTreeEvents, scrollDetailIntoView, toggleRow, renderDetail });
-export { renderSidebar, currentRoute, render, selectedPath, renderTree, freqOf, FREQ_LB, freqPill, sectionMaxFreq, sectionAggPill, isFreqSort, orderedSectionIdxs, orderedTopicIdxs, toggleFreqSort, syncFreqSortBtn, buildTreeRows, caretSvg, attachTreeEvents, scrollDetailIntoView, toggleRow, renderDetail };
+  const ov = overallStats();
+
+  $('#statRow').innerHTML = [
+
+    {n:SYLLABUS.length, l:'学科', sub:''},
+
+    {n:ov.total, l:'考纲考点总数', sub:''},
+
+    {n:ov.mastered, l:'已掌握', sub:` / ${ov.studying} 学习中`},
+
+    {n:ov.pct+'%', l:'整体掌握进度', sub:'按考研分值加权'}
+
+  ].map(x=>`<div class="stat-card"><div class="num">${x.n}<small>${x.sub}</small></div><div class="lbl">${x.l}</div></div>`).join('');
+
+
+
+  $('#subGrid').innerHTML = SYLLABUS.map(s=>{
+
+    const st = subStats(s);
+
+    const chCount = s.chapters.length;
+
+    return `<div class="sub-card">
+
+      <div class="sc-head" style="--sc:${s.color}">
+
+        <div>
+
+          <div class="sc-title">
+
+            <h3>${s.name}</h3>
+
+            <span class="code" style="color:${s.color};background:${s.soft}">${s.code}</span>
+
+          </div>
+
+          <div class="sc-en">${s.en}</div>
+
+        </div>
+
+      </div>
+
+      <div class="sc-body">
+
+        <div class="kv"><span class="k">章节 / 考点</span><span class="v" style="color:${s.color}">${chCount} 章 · ${st.total} 个</span></div>
+
+        <div class="kv"><span class="k">学习进度</span><span class="v">${st.mastered} 掌握 · ${st.studying} 学习中</span></div>
+
+        <div class="pbar-row"><div class="pbar" style="flex:1"><i style="width:${st.pct}%;background:${s.color}"></i></div><span class="pct" style="color:${s.color}">${st.pct}%</span></div>
+
+        <button class="iconbtn enter" style="--selc:${s.color}" onclick="location.hash='#/tree/${s.id}'">进入知识树
+
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+
+        </button>
+
+        ${s.id==='eng'?wordEngCard():''}
+
+      </div>
+
+    </div>`;
+
+  }).join('');
+
+}
+
+
+
+/* ============================================================
+
+ * 渲染：侧栏 + 顶栏
+
+ * ============================================================ */
+
+const searchIndex = (()=>{
+
+  const list = [];
+
+  SYLLABUS.forEach(sub=>{
+
+    sub.chapters.forEach((ch,ci)=>{
+
+      list.push({path:`${sub.id}/${ci}`, name:ch.name, sub:sub, level:'章节', parents:[sub.name]});
+
+      ch.sections.forEach((sec,si)=>{
+
+        list.push({path:`${sub.id}/${ci}/${si}`, name:sec.name, sub:sub, level:sec.topics.length?'小节':'考点', parents:[sub.name, ch.name]});
+
+        sec.topics.forEach((tp,ti)=>{
+
+          list.push({path:`${sub.id}/${ci}/${si}/${ti}`, name:tp.name, sub:sub, level:'考点', parents:[sub.name, ch.name, sec.name]});
+
+        });
+
+      });
+
+    });
+
+  });
+
+  return list;
+
+})();
+
+function openSearch(){
+
+  $('#overlay').classList.add('open');
+
+  const inp = $('#searchInput');
+
+  inp.value = '';
+
+  $('#searchResults').innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`;
+
+  inp.focus();
+
+}
+
+function closeSearch(){ $('#overlay').classList.remove('open'); }
+
+function runSearch(q){
+
+  const results = $('#searchResults');
+
+  const kw = q.trim().toLowerCase();
+
+  if(!kw){ results.innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`; return; }
+
+  const hits = searchIndex.filter(it=> it.name.toLowerCase().includes(kw) || it.parents.join(' ').toLowerCase().includes(kw));
+
+  let html = '';
+
+  const grouped = {};
+
+  hits.forEach(h=>{ (grouped[h.sub.id]=grouped[h.sub.id]||[]).push(h); });
+
+  SYLLABUS.forEach(s=>{
+
+    if(!grouped[s.id]) return;
+
+    html += `<div class="sr-group"><span class="gdot" style="background:${s.color}"></span>${s.name}</div>`;
+
+    grouped[s.id].slice(0,12).forEach(h=>{
+
+      html += `<div class="sr-row" data-goto="#/tree/${h.path}">
+
+        <span style="color:${s.color};font-size:11px;font-family:var(--font-mono);font-weight:700">${h.level}</span>
+
+        <span class="sr-name">${highlight(h.name, kw)}</span>
+
+        <span class="sr-path">${esc(h.parents.join(' / '))}</span>
+
+      </div>`;
+
+    });
+
+  });
+
+  const itemHits = state.items.filter(x=> itemSearchText(x).toLowerCase().includes(kw));
+  if(itemHits.length){
+    html += `<div class="sr-group"><span class="gdot" style="background:#2E63A8"></span>我的学习记录</div>`;
+    itemHits.slice(0,8).forEach(x=>{
+      const k=ITEM_KINDS[x.kind]||ITEM_KINDS.note;
+      const where = (x.path && pathInfo(x.path)) ? esc(pathInfo(x.path).sub.name+' · '+pathBreadcrumb(x.path)) : '未分类';
+      html += `<div class="sr-row" data-item="${esc(x.id)}">
+        <span style="color:${k.color};font-size:11px;font-family:var(--font-mono);font-weight:700">${k.label}</span>
+        <span class="sr-name">${highlight(itemTitle(x), kw)}</span>
+        <span class="sr-path">${where}</span>
+      </div>`;
+    });
+  }
+  if(!hits.length && !itemHits.length){ results.innerHTML = `<div class="sr-empty">未找到与「${esc(q)}」相关的考点或学习记录</div>`; return; }
+  results.innerHTML = html;
+  results.querySelectorAll('.sr-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      if(row.dataset.item){ const it=getItem(row.dataset.item); closeSearch(); if(it){ if(it.kind==='map') location.hash='#/map/'+it.id; else openItemById(it.id); } return; }
+      closeSearch();
+      location.hash = row.dataset.goto;
+    });
+  });
+}
+
+function highlight(text, kw){
+
+  const idx = text.toLowerCase().indexOf(kw);
+
+  if(idx<0) return esc(text);
+
+  return esc(text.slice(0,idx)) + '<mark>' + esc(text.slice(idx, idx+kw.length)) + '</mark>' + esc(text.slice(idx+kw.length));
+
+}
+
+
+
+/* ============================================================
+
+ * 我的笔记：自由添加 / 编辑 / 删除，localStorage 持久化
+
+ * ============================================================ */
+
+Object.assign(globalThis, { renderSidebar, currentRoute, render, selectedPath, renderTree, freqOf, FREQ_LB, freqPill, sectionMaxFreq, sectionAggPill, isFreqSort, orderedSectionIdxs, orderedTopicIdxs, toggleFreqSort, syncFreqSortBtn, buildTreeRows, caretSvg, attachTreeEvents, scrollDetailIntoView, toggleRow, renderDetail, renderOverview, searchIndex, openSearch, closeSearch, runSearch, highlight });
+export { renderSidebar, currentRoute, render, selectedPath, renderTree, freqOf, FREQ_LB, freqPill, sectionMaxFreq, sectionAggPill, isFreqSort, orderedSectionIdxs, orderedTopicIdxs, toggleFreqSort, syncFreqSortBtn, buildTreeRows, caretSvg, attachTreeEvents, scrollDetailIntoView, toggleRow, renderDetail, renderOverview, searchIndex, openSearch, closeSearch, runSearch, highlight };

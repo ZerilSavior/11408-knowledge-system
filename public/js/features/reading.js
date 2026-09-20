@@ -1,6 +1,7 @@
 // 模块: reading（由单文件重构拆分；顶层符号经 main.js 聚合为全局，保持零构建原生 ESM）
 
 const READ_BASE_N=100, READ_STRONG_N=100, READ_CAP=4;
+
 function ensureReading(){
   if(!state.reading||typeof state.reading!=='object'){ state.reading={start:'',end:'',done:{}}; }
   const r=state.reading;
@@ -9,6 +10,7 @@ function ensureReading(){
   if(!r.done||typeof r.done!=='object')r.done={};
   return r;
 }
+
 function mergeReading(local,cloud){
   const l=local||{start:'',end:'',done:{}};
   const out={start:l.start||(cloud&&cloud.start)||'',end:l.end||(cloud&&cloud.end)||'',baseN:l.baseN||READ_BASE_N,strongN:l.strongN||READ_STRONG_N,done:{}};
@@ -16,15 +18,19 @@ function mergeReading(local,cloud){
   keys.forEach(k=>{ const a=(l.done||{})[k], b=(cloud&&cloud.done||{})[k]; out.done[k]=b?b:a; });
   return out;
 }
+
 function rTotal(){ const r=ensureReading(); return (r.baseN||READ_BASE_N)+(r.strongN||READ_STRONG_N); }
+
 function rLabel(idx){ const r=ensureReading(); const bn=r.baseN||READ_BASE_N;
   return idx<bn?('基础 Text '+(idx+1)):('强化 Text '+(idx-bn)); }
+
 function rDefaultStart(){
   const learned=wRoundLearned();
   let wpd=WORD_DAILY_DEF; try{ wpd=planWordPerDay(); }catch(e){}
   const need=Math.ceil(Math.max(0,WORDS.length-learned)/wpd);
   return planAddDays(planTodayStr(),need);
 }
+
 function readingBuild(){
   const r=ensureReading();
   const total=rTotal();
@@ -45,18 +51,22 @@ function readingBuild(){
   let doneN=0; Object.keys(r.done).forEach(k=>{ if(+k>=0&&+k<total&&r.done[k])doneN++; });
   return {start,end,R,needDays,feasible,perDay,total,days,doneN,baseN:r.baseN||READ_BASE_N,strongN:r.strongN||READ_STRONG_N};
 }
+
 function todayReading(){ const b=readingBuild(); return b.days.find(x=>x.date===planTodayStr()&&x.n>0)||null; }
+
 function readingToggle(idx){
   const r=ensureReading();
   if(r.done[idx]){ delete r.done[idx]; } else { r.done[idx]=Date.now(); }
   saveState(); cloudSave(); renderReading(); renderSidebar();
 }
+
 function readingDoToday(){
   const b=readingBuild(), t=todayReading(); if(!t){ toast('今天没有安排阅读'); return; }
   const r=ensureReading();
   for(let i=t.startIdx;i<=t.endIdx;i++){ if(!r.done[i])r.done[i]=Date.now(); }
   saveState(); cloudSave(); renderReading(); renderSidebar(); toast('今日阅读已打卡 '+t.n+' 篇');
 }
+
 function readingSave(){
   const r=ensureReading();
   const s=document.getElementById('rStart').value||rDefaultStart();
@@ -65,6 +75,7 @@ function readingSave(){
   if(planCfg()){ state.plan.readStart=s; state.plan.readEnd=e; }
   saveState(); cloudSave(); renderReading(); renderSidebar(); toast('阅读计划已保存');
 }
+
 function readingSetupHTML(b){
   return '<details class="p-set"><summary>调整阅读开始 / 目标日期</summary><div class="p-form">'
    +'<label>阅读开始日（建议单词一轮完成后）<input id="rStart" type="date" value="'+b.start+'"></label>'
@@ -73,6 +84,7 @@ function readingSetupHTML(b){
    +'<div class="sub" style="margin-top:10px;font-size:12.5px;line-height:1.7">共 '+b.total+' 篇（基础 '+b.baseN+'＋强化 '+b.strongN+'），先基础后强化，每天最多 '+READ_CAP+' 篇，至少需要 '+b.needDays+' 天。当前可用 '+b.R+' 天，每天约 '+b.perDay+' 篇。</div>'
    +'</div></details>';
 }
+
 function readingGrid(b){
   const r=ensureReading(), t=todayReading();
   const todaySet={}; if(t){ for(let i=t.startIdx;i<=t.endIdx;i++)todaySet[i]=1; }
@@ -87,6 +99,7 @@ function readingGrid(b){
   }
   return '<div class="r-grid">'+cells+'</div>';
 }
+
 function renderReading(){
   const app=$('#readingApp'); if(!app)return;
   ensureReading();
@@ -120,6 +133,7 @@ function renderReading(){
   h+='<div class="p-card"><h3>英语其他板块</h3><div class="sub" style="line-height:1.9">单词一轮完成后，除阅读理解外，每天的英语时间可穿插<b>小三门</b>（完形填空、新题型、翻译）与<b>作文</b>；这两类打卡将在后续版本加入，当前先用阅读打卡把 200 篇阅读训练排满。背单词与复习仍走「英语词汇」。</div></div>';
   app.innerHTML=h;
 }
+
 function readingSidebarItem(){
   const route=currentRoute(), on=route.type==='reading';
   let meta='新东方100篇×2';
@@ -132,5 +146,7 @@ function readingSidebarItem(){
 
 /* ================= 真题模考（两天一周期 · R2 试卷照片 · 成绩趋势） ================= */
 
-Object.assign(globalThis, { READ_BASE_N, ensureReading, mergeReading, rTotal, rLabel, rDefaultStart, readingBuild, todayReading, readingToggle, readingDoToday, readingSave, readingSetupHTML, readingGrid, renderReading, readingSidebarItem });
-export { READ_BASE_N, ensureReading, mergeReading, rTotal, rLabel, rDefaultStart, readingBuild, todayReading, readingToggle, readingDoToday, readingSave, readingSetupHTML, readingGrid, renderReading, readingSidebarItem };
+function readingSideMeta(){ try{ return readingBuild().doneN+' / 200 篇'; }catch(e){ return '200 篇'; } }
+
+Object.assign(globalThis, { READ_BASE_N, ensureReading, mergeReading, rTotal, rLabel, rDefaultStart, readingBuild, todayReading, readingToggle, readingDoToday, readingSave, readingSetupHTML, readingGrid, renderReading, readingSidebarItem, readingSideMeta });
+export { READ_BASE_N, ensureReading, mergeReading, rTotal, rLabel, rDefaultStart, readingBuild, todayReading, readingToggle, readingDoToday, readingSave, readingSetupHTML, readingGrid, renderReading, readingSidebarItem, readingSideMeta };

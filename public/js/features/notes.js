@@ -34,183 +34,32 @@ function emptyDetail(){
 
  * ============================================================ */
 
-const searchIndex = (()=>{
-
-  const list = [];
-
-  SYLLABUS.forEach(sub=>{
-
-    sub.chapters.forEach((ch,ci)=>{
-
-      list.push({path:`${sub.id}/${ci}`, name:ch.name, sub:sub, level:'章节', parents:[sub.name]});
-
-      ch.sections.forEach((sec,si)=>{
-
-        list.push({path:`${sub.id}/${ci}/${si}`, name:sec.name, sub:sub, level:sec.topics.length?'小节':'考点', parents:[sub.name, ch.name]});
-
-        sec.topics.forEach((tp,ti)=>{
-
-          list.push({path:`${sub.id}/${ci}/${si}/${ti}`, name:tp.name, sub:sub, level:'考点', parents:[sub.name, ch.name, sec.name]});
-
-        });
-
-      });
-
-    });
-
-  });
-
-  return list;
-
-})();
-
-
-
-function openSearch(){
-
-  $('#overlay').classList.add('open');
-
-  const inp = $('#searchInput');
-
-  inp.value = '';
-
-  $('#searchResults').innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`;
-
-  inp.focus();
-
-}
-
-function closeSearch(){ $('#overlay').classList.remove('open'); }
-
-
-
-function runSearch(q){
-
-  const results = $('#searchResults');
-
-  const kw = q.trim().toLowerCase();
-
-  if(!kw){ results.innerHTML = `<div class="sr-empty">输入关键词，检索全部学科考点与学习记录</div>`; return; }
-
-  const hits = searchIndex.filter(it=> it.name.toLowerCase().includes(kw) || it.parents.join(' ').toLowerCase().includes(kw));
-
-  let html = '';
-
-  const grouped = {};
-
-  hits.forEach(h=>{ (grouped[h.sub.id]=grouped[h.sub.id]||[]).push(h); });
-
-  SYLLABUS.forEach(s=>{
-
-    if(!grouped[s.id]) return;
-
-    html += `<div class="sr-group"><span class="gdot" style="background:${s.color}"></span>${s.name}</div>`;
-
-    grouped[s.id].slice(0,12).forEach(h=>{
-
-      html += `<div class="sr-row" data-goto="#/tree/${h.path}">
-
-        <span style="color:${s.color};font-size:11px;font-family:var(--font-mono);font-weight:700">${h.level}</span>
-
-        <span class="sr-name">${highlight(h.name, kw)}</span>
-
-        <span class="sr-path">${esc(h.parents.join(' / '))}</span>
-
-      </div>`;
-
-    });
-
-  });
-
-  const itemHits = state.items.filter(x=> itemSearchText(x).toLowerCase().includes(kw));
-  if(itemHits.length){
-    html += `<div class="sr-group"><span class="gdot" style="background:#2E63A8"></span>我的学习记录</div>`;
-    itemHits.slice(0,8).forEach(x=>{
-      const k=ITEM_KINDS[x.kind]||ITEM_KINDS.note;
-      const where = (x.path && pathInfo(x.path)) ? esc(pathInfo(x.path).sub.name+' · '+pathBreadcrumb(x.path)) : '未分类';
-      html += `<div class="sr-row" data-item="${esc(x.id)}">
-        <span style="color:${k.color};font-size:11px;font-family:var(--font-mono);font-weight:700">${k.label}</span>
-        <span class="sr-name">${highlight(itemTitle(x), kw)}</span>
-        <span class="sr-path">${where}</span>
-      </div>`;
-    });
-  }
-  if(!hits.length && !itemHits.length){ results.innerHTML = `<div class="sr-empty">未找到与「${esc(q)}」相关的考点或学习记录</div>`; return; }
-  results.innerHTML = html;
-  results.querySelectorAll('.sr-row').forEach(row=>{
-    row.addEventListener('click', ()=>{
-      if(row.dataset.item){ const it=getItem(row.dataset.item); closeSearch(); if(it){ if(it.kind==='map') location.hash='#/map/'+it.id; else openItemById(it.id); } return; }
-      closeSearch();
-      location.hash = row.dataset.goto;
-    });
-  });
-}
-function highlight(text, kw){
-
-  const idx = text.toLowerCase().indexOf(kw);
-
-  if(idx<0) return esc(text);
-
-  return esc(text.slice(0,idx)) + '<mark>' + esc(text.slice(idx, idx+kw.length)) + '</mark>' + esc(text.slice(idx+kw.length));
-
-}
-
-
-
-/* ============================================================
-
- * 我的笔记：自由添加 / 编辑 / 删除，localStorage 持久化
-
- * ============================================================ */
-
-function subColor(id){
-
-  const s = getSubject(id);
-
-  return s ? s.color : '#8A929C';
-
-}
-
-function subName(id){
-
-  const s = getSubject(id);
-
-  return s ? s.name : '其他 / 综合';
-
-}
-
-function fmtTime(ts){
-
-  const d = new Date(ts);
-
-  const p = n=>String(n).padStart(2,'0');
-
-  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-
-}
-
-
-
 /* ---------- 学习条目统一库：类型配置 / 考点路径 / CRUD / 学习中心 ---------- */
 const ITEM_KINDS = {
   note:    { label:'笔记', color:'var(--kc-note)' },
   map:     { label:'导图', color:'var(--kc-map)' },
   mistake: { label:'错题', color:'var(--kc-mistake)' }
 };
+
 let kindFilter='all', subjFilter='all', mistakeFilter='all', notesQuery='';
+
 let editingId=null, mistakeEditingId=null;
 
 const pathInfoMap = (()=>{ const m={}; searchIndex.forEach(x=>m[x.path]=x); return m; })();
+
 function pathInfo(p){ return p ? (pathInfoMap[p]||null) : null; }
+
 function itemSubject(it){
   if(it.path){ const info=pathInfoMap[it.path]; if(info) return info.sub.id; }
   return it.subject || 'other';
 }
+
 function pathBreadcrumb(p){
   const info=pathInfoMap[p];
   if(!info) return '';
   return info.parents.slice(1).concat([info.name]).join(' / ');
 }
+
 function pathOptionsHtml(){
   let h='<option value="">未分类（综合 / 不绑定考点）</option>';
   SYLLABUS.forEach(sub=>{
@@ -229,6 +78,7 @@ function pathOptionsHtml(){
   });
   return h;
 }
+
 function fillPathSelects(){
   const html=pathOptionsHtml();
   const a=$('#notePath'), b=$('#mistakePath'), c=$('#practicePath');
@@ -243,37 +93,49 @@ function fillPathSelects(){
     s.innerHTML=oh; s.dataset.filled='1';
   }
 }
+
 function genItemId(p){ return 'it'+Date.now()+Math.random().toString(36).slice(2,7)+(p||''); }
+
 function getItem(id){ return state.items.find(x=>x.id===id)||null; }
+
 function itemsOf(path){ return state.items.filter(x=>x.path===path).sort((a,b)=>(b.updated||0)-(a.updated||0)); }
+
 function countItems(kind){ return kind ? state.items.filter(x=>x.kind===kind).length : state.items.length; }
+
 function stripMd(s){
   return (s||'').replace(/```[\s\S]*?```/g,' ').replace(/\$[^$]*\$/g,' ')
     .replace(/[#>*_`~!\[\]()]/g,' ').replace(/https?:\S+/g,' ').replace(/drawing:\/\/\S+/g,' ')
     .replace(/\s+/g,' ').trim();
 }
+
 function itemTitle(it){
   if(it.title && it.title.trim()) return it.title.trim();
   if(it.kind==='mistake') return stripMd(it.question).slice(0,24) || '未命名错题';
   if(it.kind==='map') return it.title || '未命名导图';
   return stripMd(it.content).slice(0,24) || '未命名笔记';
 }
+
 function mapNodeText(n){ let s=n.text||''; (n.children||[]).forEach(c=>{ s+=' '+mapNodeText(c); }); return s; }
+
 function itemSearchText(it){
   if(it.kind==='note') return (it.title||'')+' '+(it.content||'');
   if(it.kind==='mistake') return [it.title,it.question,it.wrong,it.analysis].join(' ');
   if(it.kind==='map') return (it.title||'')+' '+(it.root?mapNodeText(it.root):'');
   return it.title||'';
 }
+
 function itemDigestHtml(it){
   if(it.kind==='map') return esc((it.root?mapNodeCount(it.root):0)+' 个主题 · 大纲 / 思维导图双视图');
   return mdRenderMath((it.kind==='mistake' ? (it.question||'') : (it.content||''))||'');
 }
+
 function journalDigest(it){
   if(it.kind==='map') return (it.root?mapNodeCount(it.root):0)+' 个主题 · 大纲 / 思维导图';
   return stripMd(it.kind==='mistake' ? (it.question||'') : (it.content||'')).slice(0,80);
 }
+
 function setItemSubject(it){ it.subject=itemSubject(it); }
+
 function deleteItem(id){
   const it=getItem(id); if(!it) return;
   const text=[it.content,it.question,it.wrong,it.analysis].join(' ');
@@ -281,6 +143,7 @@ function deleteItem(id){
   state.items = state.items.filter(x=>x.id!==id);
   saveState();
 }
+
 function bindDelConfirm(btn, fn){
   if(!btn.classList.contains('confirming')){
     btn.classList.add('confirming'); const old=btn.textContent; btn.textContent='确认';
@@ -289,6 +152,7 @@ function bindDelConfirm(btn, fn){
   }
   fn();
 }
+
 function afterItemChange(){
   saveState();
   const rt=currentRoute();
@@ -296,6 +160,7 @@ function afterItemChange(){
   else if(rt.type==='tree' && typeof renderDetail==='function') renderDetail();
   renderSidebar();
 }
+
 function filteredItems(){
   let list=state.items.slice().sort((a,b)=>(b.updated||0)-(a.updated||0));
   if(kindFilter!=='all') list=list.filter(x=>x.kind===kindFilter);
@@ -304,6 +169,7 @@ function filteredItems(){
   if(notesQuery){ const q=notesQuery.toLowerCase(); list=list.filter(x=>itemSearchText(x).toLowerCase().includes(q)); }
   return list;
 }
+
 function reviewTagHtml(it){
   const r=reviewState(it);
   if(r.code==='done') return '<span class="rv-tag rv-done">已巩固 '+r.total+'/'+r.total+'</span>';
@@ -313,6 +179,7 @@ function reviewTagHtml(it){
     : '<span class="rv-tag rv-due">今日复习 · '+round+'</span>';
   return '<span class="rv-tag rv-up">'+r.daysLeft+'天后 · '+round+'</span>';
 }
+
 function renderReviewPanel(){
   const el=$('#reviewPanel'); if(!el) return;
   if(!state.items.length){ el.innerHTML=''; el.style.display='none'; return; }
@@ -344,6 +211,7 @@ function renderReviewPanel(){
       +'<span class="rv-sub">'+(up?('下一条「'+esc(itemTitle(up))+'」'+reviewState(up,now).daysLeft+' 天后到期（'+fmtTime(up.rv.next)+'）'):('全部 '+doneN+' 条记录均已完成巩固轮次'))+'</span></div></div>';
   }
 }
+
 function itemCard(it){
   const k=ITEM_KINDS[it.kind]||ITEM_KINDS.note;
   const info=pathInfo(it.path);
@@ -364,6 +232,7 @@ function itemCard(it){
     +'<span class="ncard-act">'+(reviewState(it).code==='due'?'<button class="rv-go" data-review="'+it.id+'">复习</button>':'')+'<button class="iconbtn mini primary" '+openAttr+'>'+openLabel+'</button>'
     +'<button class="iconbtn mini danger-btn" data-del-item="'+it.id+'">删除</button></span></div></div>';
 }
+
 function journalRow(it){
   const k=ITEM_KINDS[it.kind]||ITEM_KINDS.note;
   const rv=reviewState(it);
@@ -385,6 +254,7 @@ function journalRow(it){
     +'<div class="sj-rv'+(rv.code==='due'?' over':'')+'">'+esc(rvTxt)+'</div></div>'
     +'<div class="sj-ops">'+ops+'</div></div>';
 }
+
 function bindItemCardEvents(scope){
   scope.querySelectorAll('[data-edit-item]').forEach(b=>b.addEventListener('click',()=>openItemById(b.dataset.editItem)));
   scope.querySelectorAll('[data-open-map]').forEach(b=>b.addEventListener('click',()=>{ location.hash='#/map/'+b.dataset.openMap; }));
@@ -400,6 +270,7 @@ function bindItemCardEvents(scope){
     bindDelConfirm(b,()=>{ deleteItem(b.dataset.delItem); afterItemChange(); toast('已删除'); });
   }));
 }
+
 function renderNotes(){
   fillPathSelects();
   renderReviewPanel();
@@ -425,6 +296,8 @@ function renderNotes(){
   if(r.id && (r.type==='notes')){ const deep=r.id; setTimeout(()=>openItemById(deep),0); }
 }
 /* ---- 笔记编辑器（关联考点） ---- */
+
+/* ---- 笔记编辑器（关联考点） ---- */
 function openNoteEditor(id, presetPath){
   fillPathSelects();
   editingId=id||null;
@@ -438,10 +311,12 @@ function openNoteEditor(id, presetPath){
   setMdMode('split'); updatePreview();
   $('#noteTitle').focus();
 }
+
 function closeNoteEditor(){
   $('#noteOverlay').classList.remove('open'); editingId=null;
   if(location.hash.indexOf('#/notes/')===0) location.hash='#/notes';
 }
+
 function saveNote(){
   const title=$('#noteTitle').value.trim();
   const path=$('#notePath').value||'';
@@ -455,6 +330,8 @@ function saveNote(){
     setItemSubject(it); state.items.push(it); }
   saveState(); closeNoteEditor(); afterItemChange(); recheckMastery(path); toast('笔记已保存');
 }
+/* ---- 错题编辑器（关联考点） ---- */
+
 /* ---- 错题编辑器（关联考点） ---- */
 function openMistakeEditor(id, presetPath){
   fillPathSelects();
@@ -475,10 +352,12 @@ function openMistakeEditor(id, presetPath){
   $('#mistakeOverlay').classList.add('open');
   $('#mistakeQuestion').focus();
 }
+
 function closeMistakeEditor(){
   $('#mistakeOverlay').classList.remove('open'); mistakeEditingId=null;
   if(location.hash.indexOf('#/notes/')===0) location.hash='#/notes';
 }
+
 function saveMistake(){
   const path=$('#mistakePath').value||'';
   const question=$('#mistakeQuestion').value.trim();
@@ -496,12 +375,15 @@ function saveMistake(){
     setItemSubject(m); state.items.push(m); }
   saveState(); closeMistakeEditor(); afterItemChange(); recheckMastery(path); toast('错题已保存');
 }
+
 function openItemById(id){
   const it=getItem(id); if(!it) return;
   if(it.kind==='map'){ location.hash='#/map/'+it.id; }
   else if(it.kind==='mistake'){ openMistakeEditor(id); }
   else { openNoteEditor(id); }
 }
+/* ---- 新建导图（关联考点） ---- */
+
 /* ---- 新建导图（关联考点） ---- */
 function newMap(presetPath){
   const n=countItems('map')+1;
@@ -516,123 +398,6 @@ function newMap(presetPath){
 /* ============================================================
  * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
  * ============================================================ */
-const mdRenderer = {
 
-  html(html){ return esc(html); },
-
-  image(href, title, text){
-
-    let src = href;
-
-    if(href && href.startsWith('drawing://')){
-
-      src = state.drawings[href.slice(10)] || '';
-
-    }
-
-    if(!src) return '';
-
-    const t = title ? ` title="${esc(title)}"` : '';
-
-    const alt = text ? esc(text) : '涂鸦';
-
-    return `<img src="${esc(src)}" alt="${alt}"${t} loading="lazy">`;
-
-  },
-
-  link(href, title, text){
-
-    const t = title ? ` title="${esc(title)}"` : '';
-
-    return `<a href="${esc(href)}"${t} target="_blank" rel="noopener noreferrer">${text}</a>`;
-
-  },
-
-  code(code, infostring){
-
-    const lang = (infostring||'').trim().split(/\s+/)[0];
-
-    let html;
-
-    if(lang && window.hljs && hljs.getLanguage(lang)){
-
-      try{ html = hljs.highlight(code, {language:lang, ignoreIllegals:true}).value; }
-
-      catch(e){ html = esc(code); }
-
-    }else{
-
-      html = esc(code);
-
-    }
-
-    return `<pre><code class="hljs${lang?' language-'+esc(lang):''}">${html}</code></pre>`;
-
-  }
-
-};
-
-if(window.marked) marked.use({gfm:true, breaks:true, renderer:mdRenderer});
-
-/* 数学公式保护：先抽出 $$...$$ / $...$ 占位，避免 marked 破坏公式内的 _ ^ { }，解析后还原，再交给 KaTeX */
-function mdRenderMath(text){
-  if(!text) return '';
-  try{
-    const store=[];
-    const prot = text.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{
-      store.push(m); return '@@MATH'+(store.length-1)+'@@';
-    });
-    let html = window.marked ? marked.parse(prot) : esc(prot);
-    html = html.replace(/@@MATH(\d+)@@/g, (mm,i)=> store[+i]!=null ? store[+i] : mm);
-    return html;
-  }catch(e){ return mdRender(text); }
-}
-function mdRender(text){
-
-  if(!text) return '';
-
-  try{ return window.marked ? marked.parse(text) : esc(text); }
-
-  catch(e){ return esc(text); }
-
-}
-
-/* 考点 concept / 列表项：marked(gfm：表格·代码块·列表) + 数学保护 + 兼容旧 pandoc 上标 ^x^ */
-function normalizeSoft(s){
-  const lines=s.split('\n'), out=[];
-  const isStruct=(ln)=>/^\s*([-*+]\s|\d+[.、)]\s|[①-⑳]|[·•]\s*|#{1,6}\s|>|\||```|\$\$|@@)/.test(ln);
-  for(const r0 of lines){
-    const ln=r0.replace(/\s+$/,'');
-    if(/@@FENCE\d+@@/.test(ln)){ out.push(ln); continue; }
-    if(ln.trim()==='' || isStruct(ln) || out.length===0 || out[out.length-1].trim()===''){ out.push(ln); }
-    else { out[out.length-1]=out[out.length-1].replace(/\s+$/,'')+' '+ln.trim(); }
-  }
-  return out.join('\n');
-}
-function mdBlocks(text, inline){
-  const math=[];
-  let s=String(text);
-  s=s.replace(/«MATH»/g,'$$').replace(/«\/MATH»/g,'$$');
-  s=s.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{ math.push(m); return '@@MATH'+(math.length-1)+'@@'; });
-  const fences=[];
-  s=s.replace(/```[\s\S]*?```/g, m=>{ fences.push(m); return '@@FENCE'+(fences.length-1)+'@@'; });
-  const sup=[];
-  s=s.replace(/([0-9A-Za-z)])\^([^\s^]+)\^/g, (m,pre,x)=>{ sup.push(x); return pre+'@@SUP'+(sup.length-1)+'@@'; });
-  s=normalizeSoft(s);
-  s=s.replace(/@@FENCE(\d+)@@/g, (m,i)=> fences[+i]!=null?fences[+i]:m);
-  let html = window.marked ? (inline ? marked.parseInline(s) : marked.parse(s)) : esc(s);
-  html=html.replace(/@@SUP(\d+)@@/g, (mm,i)=> sup[+i]!=null ? '<sup>'+esc(sup[+i])+'</sup>' : mm);
-  html=html.replace(/@@MATH(\d+)@@/g, (mm,i)=> math[+i]!=null ? math[+i] : mm);
-  return html;
-}
-function conceptMd(text){ if(!text) return ''; try{ return mdBlocks(text,false); }catch(e){ try{return conceptToHtml(text);}catch(_){ return esc(text); } } }
-function inlineMd(text){ if(!text) return ''; try{ return mdBlocks(text,true); }catch(e){ return esc(text); } }
-
-
-
-
-/* ===== 用户自定义框架图（localStorage） ===== */
-
-
-Object.assign(globalThis, { emptyBox, emptyDetail, searchIndex, openSearch, closeSearch, runSearch, highlight, subColor, subName, fmtTime, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap, mdRenderer, mdRenderMath, mdRender, normalizeSoft, mdBlocks, conceptMd, inlineMd });
-export { emptyBox, emptyDetail, searchIndex, openSearch, closeSearch, runSearch, highlight, subColor, subName, fmtTime, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap, mdRenderer, mdRenderMath, mdRender, normalizeSoft, mdBlocks, conceptMd, inlineMd };
+Object.assign(globalThis, { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap });
+export { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap };
