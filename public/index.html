@@ -1465,6 +1465,17 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .p-tl-meta{font-size:12px;color:var(--ink-3)}
 .p-more{width:100%;margin-top:12px;background:none;border:1px dashed var(--line);color:var(--ink-2);border-radius:9px;padding:9px;font-size:13px;cursor:pointer}
 .p-more:hover{border-color:var(--ink-3)}
+.p-subgrp{font-size:12px;color:var(--ink-3);font-weight:700;margin:8px 0 3px;padding-left:2px}
+.p-swap{border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:7px;width:28px;height:26px;font-size:13px;cursor:pointer;flex:none;padding:0}
+.p-swap:hover{border-color:var(--ink-3);color:var(--ink)}
+.p-swlist{display:flex;flex-direction:column;gap:7px;max-height:46vh;overflow:auto;margin-top:6px}
+.p-swopt{display:flex;align-items:center;gap:9px;text-align:left;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);cursor:pointer;width:100%}
+.p-swopt:hover{border-color:var(--ink-3)}
+.p-swopt .p-ti{flex:1;font-size:13.5px;color:var(--ink);min-width:0}
+.p-swopt .p-swsub{font-size:11px;color:var(--ink-3);flex:none}
+.r-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:6px}
+.r-cell{height:32px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer}
+.r-cell:hover{opacity:.82}
 .p-sidebtn{position:relative}
 
 /* ===== 批4 学习闭环：掌握清单 / 知识定位 / 做题 / 书源错因 ===== */
@@ -1922,6 +1933,20 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
       </div>
 
     </section>
+    <!-- ===== 英语阅读打卡 ===== -->
+    <section class="view" id="view-reading">
+      <div class="view-inner">
+        <div class="words-head">
+          <div>
+            <h2>英语阅读打卡</h2>
+            <div class="nt-sub">新东方《考研英语阅读提分训练100篇》基础＋强化 · 单词一轮后启动 · 每天≤4篇</div>
+          </div>
+          <button class="iconbtn" onclick="location.hash='#/words'">去背单词</button>
+        </div>
+        <div id="readingApp"></div>
+      </div>
+    </section>
+
 
     <style id="examStyle">
     .ex-set{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--panel,#fff);border:1px solid var(--line,#e5e7eb);border-radius:var(--radius,14px);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow,0 1px 3px rgba(0,0,0,.06))}
@@ -6661,6 +6686,8 @@ function ensureLearningData(){
   } else { BOOK_GROUPS.forEach(g=>{ if(!Array.isArray(state.books[g.key])){ state.books[g.key]=[]; changed=true; } }); }
   if(!Array.isArray(state.reasons)){ state.reasons=DEFAULT_REASONS.slice(); changed=true; }
   ensureExams();
+  ensureReading();
+  if(!state.planOverrides){ state.planOverrides={}; changed=true; }
   if(changed){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} }
 }
 function booksForSub(subId){ const k=bookGroupOf(subId); return k ? (state.books[k]||[]) : []; }
@@ -6939,6 +6966,8 @@ function cloudSave(immediate){
     api('/api/data', 'POST', { key: 'reasons', value: state.reasons }).catch(()=>{});
     api('/api/data', 'POST', { key: 'masteryManual', value: state.masteryManual }).catch(()=>{});
     api('/api/data', 'POST', { key: 'exams', value: state.exams }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'reading', value: state.reading }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'planOverrides', value: state.planOverrides }).catch(()=>{});
 
     api('/api/data', 'POST', { key: 'drawings', value: state.drawings }).catch(()=>{});
 
@@ -6987,6 +7016,8 @@ async function cloudLoad(){
       if(r.data.books) state.books = mergeBooks(state.books, r.data.books);
       if(Array.isArray(r.data.reasons)) state.reasons = Array.from(new Set([...(state.reasons||[]),...r.data.reasons]));
       if(r.data.exams) state.exams = mergeExams(state.exams, r.data.exams);
+      if(r.data.reading) state.reading = mergeReading(state.reading, r.data.reading);
+      if(r.data.planOverrides) state.planOverrides = Object.assign({}, state.planOverrides||{}, r.data.planOverrides);
       ensureLearningData();
 
       if(r.data.drawings) state.drawings = Object.assign({}, state.drawings, r.data.drawings);
@@ -7368,11 +7399,17 @@ function wordSidebarItem(){
    +'<span class="smeta">'+st.learned+' / '+st.total+' 已学'+(st.done?' · 巩固 '+st.done:'')+'</span></span>'
    +(st.due?'<span class="wbadge">'+st.due+'</span>':'<span class="spct" style="color:var(--net)">'+(st.total?Math.round(100*st.learned/st.total):0)+'%</span>')+'</button>';
 }
-/* ================= 个性化学习计划（考频优先 + 容量排期 + 艾宾浩斯） ================= */
-const PLAN_DEFAULT_DAYS=60, PLAN_DEFAULT_HOURS=12, PLAN_EXAM_DEF='2026-12-19';
-const PLAN_SUB_ORDER=['math1','math2','math3','ds','co','os','net','poli1','poli2','poli3','poli4','poli5','poli6','eng'];
-const PLAN_LEAF_MIN={ds:30,co:32,os:28,net:25,math1:30,math2:28,math3:28,poli1:12,poli2:12,poli3:12,poli4:12,poli5:12,poli6:10,eng:18};
-const PLAN_REVIEW_MIN=30, PLAN_WORD_SEC=27;
+/* ================= 个性化学习计划（四大模块时间盒 · 考频优先 · 艾宾浩斯 · 手动换题） ================= */
+const PLAN_EXAM_DEF='2026-12-19';
+const PLAN_WORD_SEC=27;            // 每个新词平均秒数（含少量复习）
+const PLAN_LEAF_MINS=60;           // 408 / 数一 每个知识点约 1 小时
+const PLAN_POLI_MINS=30;           // 政治每个知识点约 0.5 小时
+const PLAN_POLI_CAP_DATE='2026-10-01'; // 10 月前政治每天 ≤1h，之后 ≤2h
+const PLAN_MOD_DEFS=[
+ {key:'c408',name:'408',color:'#1a9e6e',subs:['ds','co','os','net'],mins:PLAN_LEAF_MINS,order:'freq'},
+ {key:'math',name:'数一',color:'#7b53d6',subs:['math1','math2','math3'],mins:PLAN_LEAF_MINS,order:'freq',split:['math1','math2','math3']},
+ {key:'poli',name:'政治',color:'#c0392b',subs:['poli1','poli2','poli3','poli4','poli5','poli6'],mins:PLAN_POLI_MINS,order:'seq'}
+];
 function planCfg(){ return state.plan||null; }
 function planTodayStr(){ const d=new Date(); return planFmt(d); }
 function planFmt(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -7383,117 +7420,311 @@ const PLAN_WD=['日','一','二','三','四','五','六'];
 function planWd(s){ return '周'+PLAN_WD[planParse(s).getDay()]; }
 function planTopicName(t){ return (typeof t==='string')?t:((t&&t.name)?t.name:''); }
 function planLeafTitle(sub,ci,si,ti){ const sec=sub.chapters[ci].sections[si]; return (ti===undefined||ti===null)?sec.name:planTopicName(sec.topics[ti]); }
-function planLeafQueue(){
-  const q=[];
-  PLAN_SUB_ORDER.forEach(id=>{
+
+function planDefaultLearnEnd(exam){ return planAddDays(exam||PLAN_EXAM_DEF,-37); } // 真题月(36天)开始前一天
+function planDefaultWordPerDay(hEng){ return Math.max(40,Math.round((hEng||2)*3600*0.6/PLAN_WORD_SEC/10)*10); }
+function wRoundLearned(){ return wStats().learned; }
+function planWordPerDay(){ const c=planCfg(); return (c&&c.wordPerDay)?c.wordPerDay:(c&&c.hEng)?planDefaultWordPerDay(c.hEng):WORD_DAILY_DEF; }
+
+/* 收集某几个学科的全部叶子（带原始顺序 seq） */
+function planCollect(subs){
+  const out=[]; let seq=0;
+  subs.forEach(id=>{
     const sub=getSubject(id); if(!sub)return;
-    sub.chapters.forEach((ch,ci)=>{
-      const siOrder=ch.sections.map((s,si)=>si).sort((a,b)=>{
-        const fa=sectionMaxFreq(id,ci,a,ch.sections[a]), fb=sectionMaxFreq(id,ci,b,ch.sections[b]);
-        return (fb?fb.p:-1)-(fa?fa.p:-1);
-      });
-      siOrder.forEach(si=>{
-        const sec=ch.sections[si];
-        if(sec.topics.length){
-          const tiOrder=sec.topics.map((t,ti)=>ti).sort((a,b)=>{
-            const fa=freqOf(id+'/'+ci+'/'+si+'/'+a), fb=freqOf(id+'/'+ci+'/'+si+'/'+b);
-            return (fb?fb.p:-1)-(fa?fa.p:-1);
-          });
-          tiOrder.forEach(ti=>{ const path=id+'/'+ci+'/'+si+'/'+ti;
-            q.push({path,sub:id,subName:sub.name,color:sub.color,title:planLeafTitle(sub,ci,si,ti),lv:(freqOf(path)||{}).lv||0,w:PLAN_LEAF_MIN[id]||25}); });
-        }else{
-          const path=id+'/'+ci+'/'+si;
-          q.push({path,sub:id,subName:sub.name,color:sub.color,title:sec.name,lv:(freqOf(path)||{}).lv||0,w:PLAN_LEAF_MIN[id]||25});
-        }
-      });
-    });
+    sub.chapters.forEach((ch,ci)=>ch.sections.forEach((sec,si)=>{
+      const tps=sec.topics||[];
+      const push=(ti)=>{ const path=(ti===undefined||ti===null)?(id+'/'+ci+'/'+si):(id+'/'+ci+'/'+si+'/'+ti);
+        const f=freqOf(path)||{};
+        out.push({path,mod:null,sub:id,subName:sub.name,color:sub.color,title:planLeafTitle(sub,ci,si,ti),lv:f.lv||0,p:(f.p||0),w:PLAN_LEAF_MINS,seq:seq++}); };
+      if(tps.length===0) push(null); else tps.forEach((t,ti)=>push(ti));
+    }));
   });
-  return q;
+  return out;
 }
-function planWordPerDay(){ const c=planCfg(); return (c&&c.days)?Math.max(10,Math.ceil(WORDS.length/c.days)):(state.wordDaily||WORD_DAILY_DEF); }
+function planMastered(path){ return state.mastery[path]==='mastered'; }
+/* 构建各模块队列（剔除已掌握；freq=考频降序，seq=章节顺序） */
+function planQueues(){
+  const res={};
+  PLAN_MOD_DEFS.forEach(md=>{
+    let leaves=planCollect(md.subs).map(l=>{l.mod=md.key;l.w=md.mins;return l;});
+    leaves=leaves.filter(l=>!planMastered(l.path));
+    if(md.order==='freq') leaves.sort((a,b)=>(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq));
+    if(md.split){
+      res[md.key]={};
+      md.split.forEach(sid=>{ res[md.key][sid]=leaves.filter(l=>l.sub===sid); });
+    } else res[md.key]=leaves;
+  });
+  return res;
+}
+/* 政治某天可用小时数：10月前≤1h，之后≤2h */
+function planPoliCapH(cfg,date){
+  let h=cfg.hPoli||1;
+  if(date<PLAN_POLI_CAP_DATE) return Math.min(h,1);
+  return Math.min(h,2);
+}
+/* 阅读排程（reading 模块提供 readingBuild；此处安全兜底） */
+function planReadingBuildSafe(){ try{ if(typeof readingBuild==='function') return readingBuild(); }catch(e){} return null; }
+function planReadingForDate(rb,date){
+  if(!rb||!rb.days)return 0;
+  const d=rb.days.find(x=>x.date===date); return d?d.n:0;
+}
+
 function planBuild(){
   const cfg=planCfg(); if(!cfg)return null;
-  const q=planLeafQueue();
-  const wordPerDay=Math.max(10,Math.ceil(WORDS.length/cfg.days));
-  const wordMin=wordPerDay*PLAN_WORD_SEC/60;
-  const budget=Math.max(40,cfg.hours*60-wordMin-PLAN_REVIEW_MIN);
-  const totalMin0=q.reduce((a,l)=>a+l.w,0);
-  // spread=true：每天时长装得下均摊量，按全局累计目标把考点均匀铺到 D 天（稳扎稳打、多留复习时间）；
-  // spread=false：均摊量超过每天容量，按最大容量切，needDays 会大于 D，触发不可行预警
-  const avgMin=totalMin0/cfg.days;
-  const spread=avgMin<=budget, dayCap=spread?avgMin:budget;
-  const days=[]; let cur=null,assigned=0;
-  q.forEach(leaf=>{
-    if(!cur){ cur={leaves:[],mins:0}; days.push(cur); }
-    else if(spread){ if(cur.leaves.length && assigned>=days.length*dayCap){ cur={leaves:[],mins:0}; days.push(cur); } }
-    else if(cur.leaves.length && cur.mins+leaf.w>dayCap){ cur={leaves:[],mins:0}; days.push(cur); }
-    cur.leaves.push(leaf); cur.mins+=leaf.w; assigned+=leaf.w;
-  });
-  days.forEach((d,i)=>{ d.idx=i; d.date=planAddDays(cfg.start,i); d.weekday=planWd(d.date); d.wordNew=wordPerDay; });
-  const totalMin=totalMin0, needDays=Math.max(1,days.length);
-  const allocMap={};
-  days.forEach(d=>d.leaves.forEach(l=>{
-    if(!allocMap[l.sub])allocMap[l.sub]={name:l.subName,color:l.color,count:0,min:0,ds:{}};
-    const a=allocMap[l.sub]; a.count++; a.min+=l.w; a.ds[d.idx]=1;
-  }));
-  const allocArr=Object.values(allocMap).map(a=>({name:a.name,color:a.color,count:a.count,min:a.min,days:Object.keys(a.ds).length}));
-  const finishDate=days.length?days[days.length-1].date:cfg.start;
+  const Q=planQueues();
+  const start=cfg.start, learnEnd=cfg.learnEnd||planDefaultLearnEnd(cfg.exam);
+  const D=planDiff(start,learnEnd)+1;
+  const h408=+(cfg.h408||6), hMath=+(cfg.hMath||8), hEng=+(cfg.hEng||2);
+  const wordPerDay=cfg.wordPerDay||planDefaultWordPerDay(hEng);
+
+  // 数学三子科队列与日型
+  const mq=Q.math||{}, m1=mq.math1?mq.math1.slice():[], m2=mq.math2?mq.math2.slice():[], m3=mq.math3?mq.math3.slice():[];
+  const M1TOT=189,M2TOT=47,M3TOT=42;
+  let taken1=0,taken2=0,taken3=0;
+  const cq=Q.c408?Q.c408.slice():[];
+  const pq=Q.poli?Q.poli.slice():[];
+  let cPtr=0,pPtr=0, wordScheduled=0;
+  const days=[];
+  const modFin={ c408:{total:279,done:279-cq.length,finish:-1},
+                 math:{total:278,done:278-(m1.length+m2.length+m3.length),finish:-1},
+                 poli:{total:108,done:108-pq.length,finish:-1} };
+  const rb=planReadingBuildSafe();
+  const wordRoundDone=wRoundLearned(); // 已学（跨设备/历史）
+  for(let idx=0;idx<Math.max(D,1);idx++){
+    const date=planAddDays(start,idx);
+    const leaves=[];
+    const mins={c408:0,math:0,poli:0};
+    // 408
+    let nC=Math.round(h408*60/PLAN_LEAF_MINS);
+    for(let k=0;k<nC&&cPtr<cq.length;k++){ const l=cq[cPtr++]; leaves.push(l); mins.c408+=l.w; }
+    if(cPtr>=cq.length&&modFin.c408.finish<0&&cq.length) modFin.c408.finish=idx;
+    // 数学日型
+    const stage2=taken1>=Math.round(m1.length*0.4);          // 线代启动：高数取走近40%（剩余队列口径）
+    const stage3=stage2&&taken3===0&&taken2>=Math.max(4,Math.round(m2.length*0.4));
+    let slots=[];
+    if(!stage2){ for(let k=0;k<hMath;k++) slots.push('math1'); }
+    else if(!stage3){ const a=Math.ceil(hMath/2); for(let k=0;k<a;k++)slots.push('math1'); for(let k=0;k<hMath-a;k++)slots.push('math2'); }
+    else { const n3=Math.ceil(hMath/2), n2=Math.ceil((hMath-n3)/2), n1=hMath-n3-n2;
+           for(let k=0;k<n1;k++)slots.push('math1'); for(let k=0;k<n2;k++)slots.push('math2'); for(let k=0;k<n3;k++)slots.push('math3'); }
+    slots.forEach(sid=>{
+      let l=null;
+      if(sid==='math1'&&taken1<m1.length)l=m1[taken1++];
+      else if(sid==='math2'&&taken2<m2.length)l=m2[taken2++];
+      else if(sid==='math3'&&taken3<m3.length)l=m3[taken3++];
+      if(!l){ // 该子科已尽，配额优先补给高数，其次线代/概统
+        if(taken1<m1.length)l=m1[taken1++];
+        else if(taken2<m2.length)l=m2[taken2++];
+        else if(taken3<m3.length)l=m3[taken3++];
+      }
+      if(l){ leaves.push(l); mins.math+=l.w; }
+    });
+    if(taken1>=m1.length&&taken2>=m2.length&&taken3>=m3.length&&modFin.math.finish<0&&(m1.length+m2.length+m3.length)) modFin.math.finish=idx;
+    // 政治（顺序、当日上限）
+    const pH=planPoliCapH(cfg,date), nP=Math.round(pH*60/PLAN_POLI_MINS);
+    for(let k=0;k<nP&&pPtr<pq.length;k++){ const l=pq[pPtr++]; leaves.push(l); mins.poli+=l.w; }
+    if(pPtr>=pq.length&&modFin.poli.finish<0&&pq.length) modFin.poli.finish=idx;
+    // 英语：单词一轮前只背单词，一轮后排阅读
+    let wordNew=0, readN=0;
+    const remainWords=Math.max(0,WORDS.length-wordRoundDone-wordScheduled);
+    if(remainWords>0){ wordNew=Math.min(wordPerDay,remainWords); wordScheduled+=wordNew; }
+    else { readN=planReadingForDate(rb,date); }
+    days.push({idx,date,weekday:planWd(date),leaves,mins,wordNew,readN});
+  }
+  // 若队列在窗口内没排完，finish 记为 D（不可行）
+  ['c408','math','poli'].forEach(k=>{ if(modFin[k].finish<0) modFin[k].finish=D; });
+  // 应用手动换题 overrides
+  planApplyOverrides(days);
+  // 单词一轮完成日（计划口径）
+  const wordDays=Math.ceil((WORDS.length-wordRoundDone)/wordPerDay);
+  const wordFinishDate=planAddDays(start,wordDays-1);
+  // 可行性
+  const warnings=[];
+  const modMeta={c408:{h:h408,unit:PLAN_LEAF_MINS},math:{h:hMath,unit:PLAN_LEAF_MINS},poli:{unit:PLAN_POLI_MINS}};
+  Object.keys(modFin).forEach(k=>{ const f=modFin[k]; f.feasible=f.finish<D; if(!f.feasible) warnings.push(k); });
   const examLeft=planDiff(planTodayStr(),cfg.exam);
-  const feasible=needDays<=cfg.days;
-  const beforeExam=planDiff(finishDate,cfg.exam)>=0;
-  let suggestHours=0;
-  if(!feasible){ suggestHours=Math.ceil(((totalMin/cfg.days)+wordMin+PLAN_REVIEW_MIN)/60*2)/2; }
-  let done=0; q.forEach(l=>{ if(state.mastery[l.path]==='mastered')done++; });
-  return {cfg,q,days,totalMin,needDays,wordPerDay,wordMin,budget,dayCap,finishDate,examLeft,feasible,beforeExam,suggestHours,allocArr,done,total:q.length};
+  const totalLeaves=modFin.c408.total+modFin.math.total+modFin.poli.total;
+  let done=0; Object.keys(modFin).forEach(k=>done+=modFin[k].done);
+  const allocArr=PLAN_MOD_DEFS.map(md=>{ const f=modFin[md.key]; return {name:md.name,color:md.color,total:f.total,done:f.done}; });
+  return {cfg,days,D,start,learnEnd,h408,hMath,hEng,hPoli:cfg.hPoli||1,wordPerDay,wordFinishDate,wordDays,
+          modFin,warnings,rb,examLeft,allocArr,done,total:totalLeaves,
+          finishDate:learnEnd};
 }
 function planTodayIndex(b){
-  const d=planDiff(b.cfg.start,planTodayStr());
+  const d=planDiff(b.start,planTodayStr());
   if(d<0)return {idx:0,status:'before'};
   if(d>=b.days.length)return {idx:b.days.length-1,status:'after'};
   return {idx:d,status:'today'};
 }
+
+/* ---------- 手动换题（同模块 · 同级考频 · 1换1 · 过去锁定） ---------- */
+function planOverrides(){ if(!state.planOverrides) state.planOverrides={}; return state.planOverrides; }
+function planLeafIndex(){
+  const idx={};
+  PLAN_MOD_DEFS.forEach(md=>planCollect(md.subs).forEach(l=>{ l.mod=md.key; l.w=md.mins; idx[l.path]=l; }));
+  return idx;
+}
+function planApplyOverrides(days){
+  const ov=state.planOverrides||{};
+  const index=planLeafIndex();
+  const pos={}; days.forEach((d,di)=>d.leaves.forEach((l,li)=>{pos[l.path]={di,li};}));
+  days.forEach(d=>{
+    const list=ov[d.date]; if(!list||!list.swaps)return;
+    list.swaps.forEach(sp=>{
+      const cur=pos[sp.from];
+      if(!cur||cur.di!==d.idx)return;
+      if(planMastered(sp.to)||!index[sp.to])return;
+      const nl=Object.assign({},index[sp.to]);
+      const other=pos[sp.to];
+      if(other && other.di!==d.idx){
+        // 目标排在未来某天：与那一天的目标考点对调（1换1、时长守恒）
+        const nf=Object.assign({},index[sp.from]);
+        days[other.di].leaves[other.li]=nf; pos[sp.from]={di:other.di,li:other.li};
+      } else {
+        delete pos[sp.from]; // 目标未排入：from 移出计划
+      }
+      days[d.idx].leaves[cur.li]=nl; pos[sp.to]={di:d.idx,li:cur.li};
+    });
+  });
+  days.forEach(d=>d.leaves.sort((a,b)=>({c408:0,math:1,poli:2}[a.mod]-{c408:0,math:1,poli:2}[b.mod])||(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq)));
+}
+function planSwapCandidates(date,fromPath){
+  const b=planBuild(), index=planLeafIndex();
+  const from=index[fromPath]; if(!from)return [];
+  const today=planTodayStr();
+  const pos={}; b.days.forEach(d=>d.leaves.forEach(l=>{pos[l.path]=d.date;}));
+  const out=[];
+  Object.keys(index).forEach(p=>{
+    if(p===fromPath)return;
+    const l=index[p];
+    if(l.mod!==from.mod)return;
+    if(planMastered(p))return;
+    if(l.mod!=='poli' && Math.abs((l.lv||0)-(from.lv||0))>1)return; // 考频接近，禁高频↔低频
+    const pd=pos[p];
+    if(pd===date)return;          // 同一天
+    if(pd && pd<today)return;     // 已在过去，锁定
+    if(pd && pd<date)return;      // 只换今天/未来
+    l._date=pd||'';
+    out.push(l);
+  });
+  out.sort((a,c)=>{
+    const ra=a._date?1:0, rc=c._date?1:0;
+    if(rc!==ra)return rc-ra;                  // 已排（可对调）优先
+    if(a._date&&c._date&&a._date!==c._date)return a._date<c._date?-1:1;  // 日期近优先
+    return (c.lv-a.lv)||(c.p-a.p)||(a.seq-c.seq);
+  });
+  return out.slice(0,30);
+}
+
+function planSwapOverlayEl(){
+  let el=document.getElementById('planSwapOverlay');
+  if(!el){ el=document.createElement('div'); el.id='planSwapOverlay'; el.className='overlay';
+    el.addEventListener('click',ev=>{ if(ev.target===el) planCloseSwap(); });
+    document.body.appendChild(el);
+  }
+  return el;
+}
+function planCloseSwap(){ const el=document.getElementById('planSwapOverlay'); if(el)el.classList.remove('open'); }
+function planShowSwap(inner){ const el=planSwapOverlayEl();
+  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>替换考点 · 同模块 / 同级考频 / 1换1</span><button class="dlg-x" onclick="planCloseSwap()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
+  el.classList.add('open');
+}
+function planSwap(date,fromPath,toPath){
+  const ov=planOverrides();
+  if(!ov[date])ov[date]={swaps:[]};
+  ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath);
+  ov[date].swaps.push({from:fromPath,to:toPath});
+  saveState(); cloudSave(); planCloseSwap(); renderPlan(); renderSidebar();
+}
+function planUndoSwap(date,fromPath){
+  const ov=planOverrides(); if(ov[date]&&ov[date].swaps){ ov[date].swaps=ov[date].swaps.filter(sp=>sp.from!==fromPath); }
+  saveState(); cloudSave(); planCloseSwap(); renderPlan(); renderSidebar();
+}
+function planOpenSwap(date,path){
+  const index=planLeafIndex(), from=index[path], cands=planSwapCandidates(date,path);
+  const past=planDiff(planTodayStr(),date)<0;
+  if(past){ toast('过去日期的任务已锁定，不能调整'); return; }
+  let rows=cands.map(l=>'<button class="p-swopt" onclick="planSwap(\''+date+'\',\''+path+'\',\''+l.path+'\')">'
+    +freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span><span class="p-swsub">'+l.subName+(l._date?' · '+l._date.slice(5):' · 未排')+'</span></button>').join('');
+  if(!rows)rows='<div class="sub" style="padding:10px">没有符合条件的同级考点可换（同模块、考频接近、未掌握、未排入计划）。</div>';
+  const ov=planOverrides()[date]; const swapped=ov&&ov.swaps?ov.swaps.find(sp=>sp.from===path):null;
+  let inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'）。只列出同学科模块、考频相差不超过一级、尚未掌握且未排入计划的考点，替换前后当天考点数量与总时长不变。</div>'
+    +(swapped?'<button class="p-btn" style="margin-bottom:10px" onclick="planUndoSwap(\''+date+'\',\''+path+'\')">撤销这次替换</button>':'')
+    +'<div class="p-swlist">'+rows+'</div>'
+    +'<button class="p-more" style="margin-top:12px" onclick="planCloseSwap()">取消</button>';
+  planShowSwap(inner);
+}
+
+/* ---------- 设置表单 ---------- */
 function planSetupHTML(forceOpen){
   const c=planCfg()||{};
-  let nLeaf=0; SYLLABUS.forEach(s=>eachLeaf(s,()=>nLeaf++));
-  const days=c.days||PLAN_DEFAULT_DAYS, hours=c.hours||PLAN_DEFAULT_HOURS;
-  const start=c.start||planTodayStr(), exam=c.exam||PLAN_EXAM_DEF;
-  const btn=planCfg()?'更新计划':'生成我的学习计划';
-  return '<details class="p-set"'+(forceOpen?' open':'')+'><summary>'+(planCfg()?'调整学习天数 / 每天时长 / 日期':'① 设置你的学习参数')+'</summary>'
+  const start=c.start||planTodayStr(), exam=c.exam||PLAN_EXAM_DEF, learnEnd=c.learnEnd||planDefaultLearnEnd(exam);
+  const h408=c.h408!=null?c.h408:6, hMath=c.hMath!=null?c.hMath:8, hEng=c.hEng!=null?c.hEng:2, hPoli=c.hPoli!=null?c.hPoli:1;
+  const wpd=c.wordPerDay||planDefaultWordPerDay(hEng);
+  const rStart=(c.readStart)||'', rEnd=c.readEnd||exam;
+  const btn=planCfg()?'更新学习计划':'生成我的学习计划';
+  return '<details class="p-set"'+(forceOpen?' open':'')+'><summary>'+(planCfg()?'调整各模块每日时长 / 日期':'① 设置四大模块的每日学习参数')+'</summary>'
    +'<div class="p-form">'
-   +'<label>学习天数<input id="pDays" type="number" min="7" max="400" value="'+days+'"></label>'
-   +'<label>每天学习时长（小时）<input id="pHours" type="number" min="1" max="16" step="0.5" value="'+hours+'"></label>'
    +'<label>开始日期<input id="pStart" type="date" value="'+start+'"></label>'
    +'<label>考研日期<input id="pExam" type="date" value="'+exam+'"></label>'
+   +'<label>新学截止日（其后进入真题月）<input id="pLearnEnd" type="date" value="'+learnEnd+'"></label>'
+   +'<label>408 每天小时（每考点1h）<input id="pH408" type="number" min="0" max="12" step="0.5" value="'+h408+'"></label>'
+   +'<label>数一 每天小时（每考点1h）<input id="pHMath" type="number" min="0" max="12" step="0.5" value="'+hMath+'"></label>'
+   +'<label>英语 每天小时<input id="pHEng" type="number" min="0" max="6" step="0.5" value="'+hEng+'"></label>'
+   +'<label>政治 每天小时（10月前≤1，其后≤2）<input id="pHPoli" type="number" min="0" max="2" step="0.5" value="'+hPoli+'"></label>'
+   +'<label>每天新词数（一轮前英语全背词）<input id="pWpd" type="number" min="20" max="600" step="10" value="'+wpd+'"></label>'
+   +'<label>阅读开始日（留空=单词一轮完成次日）<input id="pReadStart" type="date" value="'+rStart+'"></label>'
+   +'<label>阅读目标完成日<input id="pReadEnd" type="date" value="'+rEnd+'"></label>'
    +'<button class="p-btn" onclick="planSave()">'+btn+'</button>'
    +'</div>'
-   +(forceOpen?'<div class="sub" style="margin-top:12px;color:var(--ink-3);font-size:12.5px;line-height:1.7">按你的天数与每天时长，系统把 '+nLeaf+' 个考点（数学→408→政治→英语，章内按真题考频高频先学）和 '+WORDS.length+' 个大纲词自动切分到每一天，并为笔记/错题复习预留时间。</div>':'')
+   +(forceOpen?'<div class="sub" style="margin-top:12px;color:var(--ink-3);font-size:12.5px;line-height:1.7">默认时间盒：408 6h（6个考点）＋数一 8h（高数→线代→概统滚动）＋英语 2h（单词一轮前只背词，一轮后转阅读）＋政治（10月前1h、之后2h，按章节顺序）。408、数一严格按真题考频<b>高频→中频→低频</b>；政治不按考频。总天数由开始日与新学截止日自动决定，考点可在计划里用「⇄」同级替换。</div>':'')
    +'</details>';
 }
 function planSave(){
-  const days=Math.max(7,Math.min(400,parseInt(document.getElementById('pDays').value)||PLAN_DEFAULT_DAYS));
-  const hours=Math.max(1,Math.min(16,parseFloat(document.getElementById('pHours').value)||PLAN_DEFAULT_HOURS));
-  const start=document.getElementById('pStart').value||planTodayStr();
-  const exam=document.getElementById('pExam').value||PLAN_EXAM_DEF;
-  state.plan={days,hours,start,exam,v:1}; saveState(); pShowAll=false; renderPlan(); renderSidebar();
+  const g=id=>document.getElementById(id);
+  const start=g('pStart').value||planTodayStr();
+  const exam=g('pExam').value||PLAN_EXAM_DEF;
+  const learnEnd=g('pLearnEnd').value||planDefaultLearnEnd(exam);
+  const h408=Math.max(0,Math.min(12,parseFloat(g('pH408').value)||0));
+  const hMath=Math.max(0,Math.min(12,parseFloat(g('pHMath').value)||0));
+  const hEng=Math.max(0,Math.min(6,parseFloat(g('pHEng').value)||0));
+  const hPoli=Math.max(0,Math.min(2,parseFloat(g('pHPoli').value)||0));
+  const wordPerDay=Math.max(20,Math.min(600,parseInt(g('pWpd').value)||planDefaultWordPerDay(hEng)));
+  let readStart=g('pReadStart').value||'';
+  const readEnd=g('pReadEnd').value||exam;
+  if(!readStart){ readStart=planAddDays(start,Math.ceil((WORDS.length-wRoundLearned())/wordPerDay)); }
+  state.plan={v:2,start,exam,learnEnd,h408,hMath,hEng,hPoli,wordPerDay,readStart,readEnd};
+  // 同步阅读模块配置
+  if(typeof ensureReading==='function'){ ensureReading(); state.reading.start=readStart; state.reading.end=readEnd; }
+  saveState(); pShowAll=false; cloudSave(); renderPlan(); renderSidebar();
+  toast('学习计划已更新');
 }
 let pShowAll=false;
-function planGroupLeaves(leaves){
-  let html='',last=null;
-  leaves.forEach(l=>{
-    if(l.sub!==last){ html+='<div class="p-grp"><span class="p-dot" style="background:'+l.color+'"></span>'+l.subName+'</div>'; last=l.sub; }
-    const done=state.mastery[l.path]==='mastered';
-    html+='<div class="p-leaf'+(done?' done':'')+'" data-p="'+l.path+'">'
-      +'<input type="checkbox" class="p-cb" '+(done?'checked':'')+' onclick="planToggleLeaf(\''+l.path+'\')">'
-      +'<span class="p-lt">'+freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span></span>'
-      +'<button class="p-go" onclick="location.hash=\'#/tree/'+l.path+'\'">考点 ›</button></div>';
+
+/* ---------- 渲染 ---------- */
+const PLAN_MOD_LABEL={c408:'408',math:'数一',poli:'政治'};
+function planLeafRow(l,date){
+  const done=planMastered(l.path);
+  const past=planDiff(planTodayStr(),date)<0;
+  const swap=(past||done)?'':'<button class="p-swap" title="同级换题" onclick="planOpenSwap(\''+date+'\',\''+l.path+'\')">⇄</button>';
+  return '<div class="p-leaf'+(done?' done':'')+'" data-p="'+l.path+'">'
+    +'<input type="checkbox" class="p-cb" '+(done?'checked':'')+' onclick="planToggleLeaf(\''+l.path+'\')">'
+    +'<span class="p-lt">'+freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span></span>'
+    +swap+'<button class="p-go" onclick="location.hash=\'#/tree/'+l.path+'\'">考点 ›</button></div>';
+}
+function planGroupLeaves(day){
+  let html=''; const order=['c408','math','poli'];
+  order.forEach(mk=>{
+    const ls=day.leaves.filter(l=>l.mod===mk); if(!ls.length)return;
+    const md=PLAN_MOD_DEFS.find(x=>x.key===mk);
+    let last=null;
+    html+='<div class="p-grp"><span class="p-dot" style="background:'+md.color+'"></span>'+md.name+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h</div>';
+    ls.forEach(l=>{ if(l.subName!==last){ html+='<div class="p-subgrp">'+l.subName+'</div>'; last=l.subName; } html+=planLeafRow(l,day.date); });
   });
   return html;
 }
 function planToggleLeaf(path){
   if(state.mastery[path]==='mastered')delete state.mastery[path]; else state.mastery[path]='mastered';
-  saveState();
-  const li=document.querySelector('#planToday .p-leaf[data-p="'+path+'"]');
-  if(li)li.classList.toggle('done',state.mastery[path]==='mastered');
+  saveState(); cloudSave();
   planRefreshCounts(); renderSidebar();
 }
 function planRefreshCounts(){
@@ -7505,20 +7736,38 @@ function planRefreshCounts(){
   const oe=document.getElementById('pOvProg'); if(oe)oe.textContent='计划完成 '+b.done+' / '+b.total;
   const ob=document.getElementById('pOvBar'); if(ob)ob.style.width=(b.total?Math.round(100*b.done/b.total):0)+'%';
 }
+function planEngLine(d){
+  if(d.wordNew>0)return '新词 '+d.wordNew;
+  if(d.readN>0)return '阅读 '+d.readN+' 篇';
+  return '复习/巩固';
+}
 function planTimelineHTML(b,startIdx){
   const max=b.days.length-startIdx, n=pShowAll?max:Math.min(7,max); let h='';
   for(let k=0;k<n;k++){ const d=b.days[startIdx+k]; if(!d)break;
-    const subs=[...new Set(d.leaves.map(l=>l.subName))];
+    const mods=PLAN_MOD_DEFS.filter(md=>d.leaves.some(l=>l.mod===md.key)).map(md=>md.name);
     const dn=d.leaves.filter(l=>state.mastery[l.path]==='mastered').length;
-    const hrs=((d.mins+b.wordMin+PLAN_REVIEW_MIN)/60).toFixed(1);
+    const hrs=((d.mins.c408+d.mins.math+d.mins.poli)/60+b.hEng).toFixed(1);
     const now=(startIdx+k===planTodayIndex(b).idx);
     h+='<div class="p-tl'+(now?' now':'')+'"><div class="p-tl-d"><b>'+d.date.slice(5)+'</b><span>'+d.weekday+' · 第'+(d.idx+1)+'天</span></div>'
-      +'<div class="p-tl-m"><div class="p-tl-s">'+subs.map(s=>'<span>'+s+'</span>').join('')+'</div>'
-      +'<div class="p-tl-meta">'+d.leaves.length+' 考点 · 约 '+hrs+' 小时 · 新词 '+b.wordPerDay+(dn?' · 已完成 '+dn:'')+'</div></div></div>';
+      +'<div class="p-tl-m"><div class="p-tl-s">'+mods.map(s=>'<span>'+s+'</span>').join('')+'<span style="background:var(--net)">英</span></div>'
+      +'<div class="p-tl-meta">'+d.leaves.length+' 考点 · 约 '+hrs+'h · 英语：'+planEngLine(d)+(dn?' · 已完成 '+dn:'')+'</div></div></div>';
   }
   return h;
 }
 function planGoWords(){ location.hash='#/words'; setTimeout(()=>{ try{ wStart(); }catch(e){} },90); }
+function planModAlerts(b){
+  const names={c408:'408',math:'数一',poli:'政治'};
+  let h='';
+  Object.keys(b.modFin).forEach(k=>{ const f=b.modFin[k]; if(!f.feasible){
+    const md=PLAN_MOD_DEFS.find(x=>x.key===k);
+    h+='<div class="p-alert bad"><b>'+names[k]+'排不完：</b>窗口内还有 '+(f.total-f.done)+' 个考点排不进新学截止日 '+b.learnEnd+'。请增加'+names[k]+'每天小时数，或把新学截止日延后（压缩真题月前的复习）。</div>';
+  }
+  });
+  if(b.rb&&b.rb.feasible===false){ h+='<div class="p-alert bad"><b>阅读排不完：</b>'+b.rb.total+' 篇每天最多 4 篇需 '+b.rb.needDays+' 天，当前开始日 '+b.rb.start+' 到目标日只有 '+b.rb.availDays+' 天。请提前阅读开始日（提高每天新词数、尽早结束单词一轮）或后移目标日。</div>'; }
+  if(!h){ const slack=planDiff(b.learnEnd,b.cfg.exam);
+    h='<div class="p-alert ok"><b>计划可行：</b>新学窗口 '+b.D+' 天（'+b.start+' → '+b.learnEnd+'），其后约 '+Math.max(0,planDiff(b.learnEnd,b.cfg.exam))+' 天真题 / 冲刺。单词一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+' 完成），随后转阅读打卡。</div>'; }
+  return h;
+}
 function renderPlan(){
   const app=$('#planApp'); if(!app)return;
   if(!planCfg()){ app.innerHTML=planSetupHTML(true); return; }
@@ -7528,58 +7777,49 @@ function renderPlan(){
   const tpct=day&&day.leaves.length?Math.round(100*td/day.leaves.length):0;
   const wordDue=wDueIdxs().length, wordLeft=wNewIdxs(b.wordPerDay).length;
   const dueN=dueItems().length;
-  let alert='';
-  if(!b.feasible){
-    alert='<div class="p-alert bad"><b>时间偏紧：</b>'+b.total+' 个考点按每天 '+b.cfg.hours+' 小时约需 <b>'+b.needDays+'</b> 天，超过你设定的 '+b.cfg.days+' 天。建议把每天时长提高到约 <b>'+b.suggestHours+' 小时</b>，或把学习天数增加到 '+b.needDays+' 天。</div>';
-  }else if(!b.beforeExam){
-    alert='<div class="p-alert bad"><b>考前学不完：</b>按当前强度学完日为 '+b.finishDate+'，晚于考研日 '+b.cfg.exam+'，请提高每天时长或提前开始。</div>';
-  }else{
-    const slack=planDiff(b.finishDate,b.cfg.exam);
-    alert='<div class="p-alert ok"><b>计划可行：</b>约需 '+b.needDays+' 天学完全部考点，学完日 '+b.finishDate+'，距考研还有 '+slack+' 天可用于真题与冲刺。单词按每天 '+b.wordPerDay+' 个均摊，复习时间已预留。</div>';
-  }
+  const engPhase=(wRoundLearned()>=WORDS.length)?'reading':'words';
   let h=planSetupHTML(false);
   h+='<div class="p-hero">'
     +'<div class="p-stat"><div class="n">'+Math.max(0,b.examLeft)+'<small>天</small></div><div class="l">距考研（'+b.cfg.exam.slice(5)+'）</div></div>'
-    +'<div class="p-stat"><div class="n">'+(ti.idx+1)+'<small>/ '+b.needDays+'</small></div><div class="l">'+(ti.status==='before'?'计划尚未开始，首日 '+b.days[0].date:(ti.status==='after'?'考点已排完 · 冲刺期':'今天 '+day.date+' '+day.weekday))+'</div></div>'
-    +'<div class="p-stat"><div class="n">'+(day?day.leaves.length:0)+'<small>考点</small></div><div class="l">今日新学任务</div></div>'
-    +'<div class="p-stat"><div class="n">'+b.done+'<small>/ '+b.total+'</small></div><div class="l">计划考点已掌握</div></div>'
+    +'<div class="p-stat"><div class="n">'+(ti.status==='before'?1:ti.idx+1)+'<small>/ '+b.D+'</small></div><div class="l">'+(ti.status==='before'?'计划未开始 · 首日 '+b.days[0].date:(ti.status==='after'?'新学已结束 · 真题/冲刺期':'今天 '+day.date+' '+day.weekday))+'</div></div>'
+    +'<div class="p-stat"><div class="n">'+(day?day.leaves.length:0)+'<small>考点</small></div><div class="l">今日新学（408/数一/政治）</div></div>'
+    +'<div class="p-stat"><div class="n">'+b.done+'<small>/ '+b.total+'</small></div><div class="l">考点已掌握</div></div>'
     +'</div>';
-  h+=alert;
+  h+=planModAlerts(b);
   h+='<div class="p-cols"><div>';
-  // 今日考点
   h+='<div class="p-card" id="planToday"><h3>'+(ti.status==='after'?'冲刺 / 复盘':'今日学习任务')+'</h3>'
-    +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 约 '+((day?day.mins:0)/60+b.wordMin/60+PLAN_REVIEW_MIN/60).toFixed(1)+' 小时（考点 '+((day?day.mins:0)/60).toFixed(1)+'h＋单词 '+(b.wordMin/60).toFixed(1)+'h＋复习 '+(PLAN_REVIEW_MIN/60).toFixed(1)+'h）':'全部考点已排完')+'</div>';
-  if(day&&day.leaves.length) h+=planGroupLeaves(day.leaves);
-  else h+='<div class="sub">考点计划已结束，今天用于真题、错题与薄弱点复盘。</div>';
+    +'<div class="sub">'+(day?day.date+' '+day.weekday+' · 考点约 '+((day.mins.c408+day.mins.math+day.mins.poli)/60).toFixed(1)+'h＋英语 '+b.hEng+'h（'+planEngLine(day)+'）＋复习机动':'新学已排完')+'</div>';
+  if(day&&day.leaves.length)h+=planGroupLeaves(day); else h+='<div class="sub">考点计划已结束，今天用于真题、错题与薄弱点复盘。</div>';
   h+='<div class="p-prog"><span id="pTodayProg">'+td+' / '+(day?day.leaves.length:0)+' 完成</span><div class="pbar" style="flex:1"><i id="pTodayBar" style="width:'+tpct+'%;background:var(--kc-done)"></i></div><span>'+tpct+'%</span></div>';
   h+='</div>';
-  // 未来预览
-  h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.needDays+' 天':'从今天起 7 天（可展开全部）')+' · 章内按真题考频高频先学</div>'
+  h+='<div class="p-card"><h3>未来计划</h3><div class="sub">'+(pShowAll?'全部 '+b.D+' 天':'从今天起 7 天（可展开全部）')+' · 408/数一高频先学，政治按章节，⇄可同级换题</div>'
     +'<div id="pTimeline">'+planTimelineHTML(b,ti.idx)+'</div>'
-    +(b.days.length-ti.idx>7?'<button class="p-more" onclick="planToggleAll()">'+(pShowAll?'收起，只看 7 天':'展开全部 '+b.needDays+' 天计划')+'</button>':'')
+    +(b.days.length-ti.idx>7?'<button class="p-more" onclick="planToggleAll()">'+(pShowAll?'收起，只看 7 天':'展开全部 '+b.D+' 天计划')+'</button>':'')
     +'</div>';
   h+='</div><div>';
-  // 右侧：单词 / 复习 / 整体进度 / 学科分配
-  h+='<div class="p-quick">'
-    +'<div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词</b><span>新词 '+wordLeft+' / 目标 '+b.wordPerDay+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>'
-    +'<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div>'
-    +'</div>';
-  h+='<div class="p-card" style="margin-top:14px"><h3>计划总进度</h3>'
-    +'<div class="p-prog" style="margin-top:6px"><span id="pOvProg">计划完成 '+b.done+' / '+b.total+'</span></div>'
-    +'<div class="pbar" style="margin:8px 0"><i id="pOvBar" style="width:'+ovPct+'%;background:var(--kc-done)"></i></div>'
-    +'<div class="sub" style="margin-bottom:12px">考点总学时约 '+Math.round(b.totalMin/60)+' 小时 · 每天单词 '+(b.wordMin/60).toFixed(1)+'h＋复习 '+(PLAN_REVIEW_MIN/60).toFixed(1)+'h 已计入排期</div>'
-    +'<div class="p-stack">'+b.allocArr.map(a=>'<i title="'+a.name+' '+a.count+'考点" style="width:'+(100*a.min/b.totalMin)+'%;background:'+a.color+'"></i>').join('')+'</div>'
-    +'<div class="p-alloc">'+b.allocArr.map(a=>'<div class="pa"><span class="pan">'+a.name+'</span><span class="pab"><i style="width:'+(100*a.min/b.totalMin)+'%;background:'+a.color+'"></i></span><span class="pam">'+a.count+' 考点 · '+a.days+' 天</span></div>').join('')+'</div>'
-    +'</div>';
+  // 英语卡片：一轮前单词，一轮后阅读
+  if(engPhase==='words'){
+    h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#EDE7F6;color:var(--net)">A</div><div class="qm"><b>今日单词（一轮前）</b><span>新词 '+wordLeft+' / 目标 '+b.wordPerDay+' · 待复习 '+wordDue+'</span></div><button onclick="planGoWords()">去背词</button></div>';
+  }else{
+    const rd=(b.rb&&todayReading)?todayReading():null;
+    h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#E3F6EE;color:#0a8a5f">读</div><div class="qm"><b>今日阅读打卡</b><span>'+(rd?('应做 '+rd.n+' 篇（'+rd.label+'）'):'单词一轮已完成，去安排阅读')+'</span></div><button onclick="location.hash=\'#/reading\'">去阅读</button></div>';
+  }
+  h+='<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div></div>';
+  // 模块进度
+  h+='<div class="p-card" style="margin-top:14px"><h3>各模块进度</h3>';
+  h+='<div class="p-alloc">'+b.allocArr.map(a=>{const pct=a.total?Math.round(100*a.done/a.total):0;return '<div class="pa"><span class="pan">'+a.name+'</span><span class="pab"><i style="width:'+pct+'%;background:'+a.color+'"></i></span><span class="pam">'+a.done+' / '+a.total+' · '+pct+'%</span></div>';}).join('')+'</div>';
+  h+='<div class="p-prog" style="margin-top:10px"><span id="pOvProg">计划完成 '+b.done+' / '+b.total+'</span></div><div class="pbar" style="margin:8px 0"><i id="pOvBar" style="width:'+ovPct+'%;background:var(--kc-done)"></i></div>';
+  h+='<div class="sub" style="margin-bottom:6px">单词 '+b.wordPerDay+'/天 · 一轮约 '+b.wordDays+' 天（'+b.wordFinishDate+'）· 一轮后转阅读打卡（每天≤4篇）</div>';
+  h+='</div>';
   h+='</div></div>';
   app.innerHTML=h;
 }
 function planToggleAll(){ pShowAll=!pShowAll; renderPlan(); }
 function planSidebarItem(){
   const route=currentRoute(), on=route.type==='plan';
-  let meta='个性化排期';
+  let meta='四大模块排期';
   const b=planCfg()?planBuild():null;
-  if(b){ const ti=planTodayIndex(b); meta='第'+(ti.idx+1)+'/'+b.needDays+' 天 · 考研'+Math.max(0,b.examLeft)+'天'; }
+  if(b){ const ti=planTodayIndex(b); meta='第'+(ti.idx+1)+'/'+b.D+' 天 · 考研'+Math.max(0,b.examLeft)+'天'; }
   return '<button class="snav '+(on?'active':'')+' p-sidebtn" data-goto="#/plan" style="'+(on?'border-left:3px solid var(--ink)':'')+'">'
     +'<span class="scol" style="background:var(--ink);'+(on?'':'opacity:.5')+'"></span>'
     +'<span class="sinfo"><span class="sname">学习计划<span class="en">PLAN</span></span><span class="smeta">'+meta+'</span></span>'
@@ -7587,16 +7827,148 @@ function planSidebarItem(){
 }
 function planOverviewBanner(){
   if(!planCfg()){
-    return '<div class="p-banner"><div class="pbb-l"><b>制定个性化学习计划</b><span>输入学习天数与每天时长，按真题考频自动排期</span></div><button onclick="location.hash=\'#/plan\'">一键生成</button></div>';
+    return '<div class="p-banner"><div class="pbb-l"><b>制定个性化学习计划</b><span>按四大模块时间盒与真题考频自动排期</span></div><button onclick="location.hash=\'#/plan\'">一键生成</button></div>';
   }
   const b=planBuild(), ti=planTodayIndex(b), day=b.days[ti.idx];
   const pct=b.total?Math.round(100*b.done/b.total):0;
   return '<div class="p-banner"><div class="pbb-l">'
-    +'<b>第 '+(ti.idx+1)+' / '+b.needDays+' 天 · 距考研 '+Math.max(0,b.examLeft)+' 天</b>'
-    +'<span>今日 '+(day?day.leaves.length:0)+' 考点 · 新词 '+b.wordPerDay+' · 待复习 '+dueItems().length+' · 计划完成 '+b.done+'/'+b.total+'</span>'
+    +'<b>第 '+(ti.idx+1)+' / '+b.D+' 天 · 距考研 '+Math.max(0,b.examLeft)+' 天</b>'
+    +'<span>今日 '+(day?day.leaves.length:0)+' 考点 · '+planEngLine(day||{wordNew:0,readN:0})+' · 待复习 '+dueItems().length+' · 完成 '+b.done+'/'+b.total+'</span>'
     +'<div class="pbb-bar"><i style="width:'+pct+'%"></i></div></div>'
     +'<button onclick="location.hash=\'#/plan\'">今日学习</button></div>';
 }
+
+
+/* ================= 英语阅读打卡（新东方100篇基础+100篇强化 · 单词一轮后启动） ================= */
+const READ_BASE_N=100, READ_STRONG_N=100, READ_CAP=4;
+function ensureReading(){
+  if(!state.reading||typeof state.reading!=='object'){ state.reading={start:'',end:'',done:{}}; }
+  const r=state.reading;
+  if(typeof r.baseN!=='number')r.baseN=100;
+  if(typeof r.strongN!=='number')r.strongN=100;
+  if(!r.done||typeof r.done!=='object')r.done={};
+  return r;
+}
+function mergeReading(local,cloud){
+  const l=local||{start:'',end:'',done:{}};
+  const out={start:l.start||(cloud&&cloud.start)||'',end:l.end||(cloud&&cloud.end)||'',baseN:l.baseN||READ_BASE_N,strongN:l.strongN||READ_STRONG_N,done:{}};
+  const keys=new Set([].concat(Object.keys(l.done||{}),Object.keys((cloud&&cloud.done)||{})));
+  keys.forEach(k=>{ const a=(l.done||{})[k], b=(cloud&&cloud.done||{})[k]; out.done[k]=b?b:a; });
+  return out;
+}
+function rTotal(){ const r=ensureReading(); return (r.baseN||READ_BASE_N)+(r.strongN||READ_STRONG_N); }
+function rLabel(idx){ const r=ensureReading(); const bn=r.baseN||READ_BASE_N;
+  return idx<bn?('基础 Text '+(idx+1)):('强化 Text '+(idx-bn)); }
+function rDefaultStart(){
+  const learned=wRoundLearned();
+  let wpd=WORD_DAILY_DEF; try{ wpd=planWordPerDay(); }catch(e){}
+  const need=Math.ceil(Math.max(0,WORDS.length-learned)/wpd);
+  return planAddDays(planTodayStr(),need);
+}
+function readingBuild(){
+  const r=ensureReading();
+  const total=rTotal();
+  const start=r.start||rDefaultStart();
+  const end=r.end||(planCfg()?planCfg().exam:PLAN_EXAM_DEF)||PLAN_EXAM_DEF;
+  const R=planDiff(start,end)+1;
+  const needDays=Math.ceil(total/READ_CAP);
+  const feasible=R>=needDays;
+  const perDay=feasible?Math.min(READ_CAP,Math.ceil(total/Math.max(1,R))):READ_CAP;
+  const days=[];
+  const dayN=Math.max(R,needDays);
+  for(let d=0;d<dayN;d++){
+    const date=planAddDays(start,d);
+    const si=d*perDay, ei=Math.min(si+perDay,total)-1;
+    if(si>=total){ days.push({date,n:0,startIdx:-1,endIdx:-1,label:''}); continue; }
+    days.push({date,n:ei-si+1,startIdx:si,endIdx:ei,label:rLabel(si)+' ~ '+rLabel(ei)});
+  }
+  let doneN=0; Object.keys(r.done).forEach(k=>{ if(+k>=0&&+k<total&&r.done[k])doneN++; });
+  return {start,end,R,needDays,feasible,perDay,total,days,doneN,baseN:r.baseN||READ_BASE_N,strongN:r.strongN||READ_STRONG_N};
+}
+function todayReading(){ const b=readingBuild(); return b.days.find(x=>x.date===planTodayStr()&&x.n>0)||null; }
+function readingToggle(idx){
+  const r=ensureReading();
+  if(r.done[idx]){ delete r.done[idx]; } else { r.done[idx]=Date.now(); }
+  saveState(); cloudSave(); renderReading(); renderSidebar();
+}
+function readingDoToday(){
+  const b=readingBuild(), t=todayReading(); if(!t){ toast('今天没有安排阅读'); return; }
+  const r=ensureReading();
+  for(let i=t.startIdx;i<=t.endIdx;i++){ if(!r.done[i])r.done[i]=Date.now(); }
+  saveState(); cloudSave(); renderReading(); renderSidebar(); toast('今日阅读已打卡 '+t.n+' 篇');
+}
+function readingSave(){
+  const r=ensureReading();
+  const s=document.getElementById('rStart').value||rDefaultStart();
+  const e=document.getElementById('rEnd').value||PLAN_EXAM_DEF;
+  r.start=s; r.end=e;
+  if(planCfg()){ state.plan.readStart=s; state.plan.readEnd=e; }
+  saveState(); cloudSave(); renderReading(); renderSidebar(); toast('阅读计划已保存');
+}
+function readingSetupHTML(b){
+  return '<details class="p-set"><summary>调整阅读开始 / 目标日期</summary><div class="p-form">'
+   +'<label>阅读开始日（建议单词一轮完成后）<input id="rStart" type="date" value="'+b.start+'"></label>'
+   +'<label>阅读目标完成日<input id="rEnd" type="date" value="'+b.end+'"></label>'
+   +'<button class="p-btn" onclick="readingSave()">保存阅读计划</button>'
+   +'<div class="sub" style="margin-top:10px;font-size:12.5px;line-height:1.7">共 '+b.total+' 篇（基础 '+b.baseN+'＋强化 '+b.strongN+'），先基础后强化，每天最多 '+READ_CAP+' 篇，至少需要 '+b.needDays+' 天。当前可用 '+b.R+' 天，每天约 '+b.perDay+' 篇。</div>'
+   +'</div></details>';
+}
+function readingGrid(b){
+  const r=ensureReading(), t=todayReading();
+  const todaySet={}; if(t){ for(let i=t.startIdx;i<=t.endIdx;i++)todaySet[i]=1; }
+  let cells='';
+  for(let i=0;i<b.total;i++){
+    const done=!!r.done[i], base=i<b.baseN, today=!!todaySet[i];
+    const bg=done?(base?'#0a8a5f':'#c2560a'):(today?(base?'#bfe9da':'#ffe2c4'):(base?'#e3f6ee':'#fff0e2'));
+    const col=done?'#fff':(base?'#0a8a5f':'#c2560a');
+    const bd=today?'box-shadow:0 0 0 2px var(--ink);':'';
+    cells+='<button class="r-cell" title="'+rLabel(i)+(done?' · 已完成':'')+(today?' · 今日':'')+'" '
+      +'style="background:'+bg+';color:'+col+';'+bd+'" onclick="readingToggle('+i+')">'+(i+1)+'</button>';
+  }
+  return '<div class="r-grid">'+cells+'</div>';
+}
+function renderReading(){
+  const app=$('#readingApp'); if(!app)return;
+  ensureReading();
+  const b=readingBuild(), t=todayReading();
+  const pct=Math.round(100*b.doneN/b.total);
+  const baseDone=Object.keys(ensureReading().done).filter(k=>+k<b.baseN&&ensureReading().done[k]).length;
+  const strongDone=b.doneN-baseDone;
+  const wordsLearned=wRoundLearned(), wordsRound=wordsLearned>=WORDS.length;
+  let h='';
+  if(!b.feasible){
+    h+='<div class="p-alert bad"><b>阅读排不完：</b>'+b.total+' 篇每天最多 '+READ_CAP+' 篇需 '+b.needDays+' 天，从 '+b.start+' 到 '+b.end+' 只有 '+b.R+' 天。请把开始日提前（提高每天新词数、尽早结束单词一轮），或把目标日后移到考研当天。</div>';
+  }else{
+    h+='<div class="p-alert ok"><b>阅读计划可行：</b>'+b.start+' 开始，'+b.end+' 前完成，共 '+b.R+' 天，每天约 '+b.perDay+' 篇，先基础后强化。</div>';
+  }
+  if(!wordsRound){
+    h+='<div class="p-alert" style="background:#fff7e6;border-color:#f0c36d"><b>单词一轮未完成：</b>已学 '+wordsLearned+' / '+WORDS.length+'。按规则一轮完成前以背单词为主，阅读开始日已默认排在预计一轮完成后（'+b.start+'）；你也可以手动提前。</div>';
+  }
+  h+=readingSetupHTML(b);
+  h+='<div class="p-hero"><div class="p-stat"><div class="n">'+b.doneN+'<small>/ '+b.total+'</small></div><div class="l">阅读已完成</div></div>'
+    +'<div class="p-stat"><div class="n">'+baseDone+'<small>/ '+b.baseN+'</small></div><div class="l">基础篇</div></div>'
+    +'<div class="p-stat"><div class="n">'+strongDone+'<small>/ '+b.strongN+'</small></div><div class="l">强化篇</div></div>'
+    +'<div class="p-stat"><div class="n">'+(t?t.n:0)+'<small>篇</small></div><div class="l">今日任务</div></div></div>';
+  h+='<div class="p-card"><h3>今日阅读</h3>';
+  if(t){ h+='<div class="sub" style="margin:6px 0 12px">'+t.date+' '+planWd(t.date)+' · 应做 <b>'+t.n+'</b> 篇：'+t.label+'</div>'
+    +'<button class="p-btn" onclick="readingDoToday()">一键完成今日 '+t.n+' 篇</button>'; }
+  else { h+='<div class="sub" style="margin:6px 0 12px">今天没有安排阅读（可能尚未到开始日，或已全部排完）。</div>'; }
+  h+='<div class="p-prog" style="margin-top:14px"><span>'+b.doneN+' / '+b.total+'</span><div class="pbar" style="flex:1"><i style="width:'+pct+'%;background:#0a8a5f"></i></div><span>'+pct+'%</span></div></div>';
+  h+='<div class="p-card"><h3>逐篇打卡（点击格子切换完成）</h3>'
+    +'<div class="sub" style="margin:6px 0 12px"><span style="display:inline-block;width:10px;height:10px;background:#0a8a5f;border-radius:2px;margin-right:5px"></span>基础篇（1-'+b.baseN+'，绿）　<span style="display:inline-block;width:10px;height:10px;background:#c2560a;border-radius:2px;margin:0 5px 0 12px"></span>强化篇（'+(b.baseN+1)+'-'+b.total+'，橙）　描边为今日范围</div>'
+    +readingGrid(b)+'</div>';
+  h+='<div class="p-card"><h3>英语其他板块</h3><div class="sub" style="line-height:1.9">单词一轮完成后，除阅读理解外，每天的英语时间可穿插<b>小三门</b>（完形填空、新题型、翻译）与<b>作文</b>；这两类打卡将在后续版本加入，当前先用阅读打卡把 200 篇阅读训练排满。背单词与复习仍走「英语词汇」。</div></div>';
+  app.innerHTML=h;
+}
+function readingSidebarItem(){
+  const route=currentRoute(), on=route.type==='reading';
+  let meta='新东方100篇×2';
+  try{ const b=readingBuild(); meta=b.doneN+' / '+b.total+' 篇'; }catch(e){}
+  return '<button class="snav '+(on?'active':'')+'" data-goto="#/reading" style="'+(on?'border-left:3px solid #0a8a5f':'')+'">'
+   +'<span class="scol" style="background:#0a8a5f;'+(on?'':'opacity:.5')+'"></span>'
+   +'<span class="sinfo"><span class="sname">阅读打卡<span class="en">READING</span></span><span class="smeta">'+meta+'</span></span></button>';
+}
+
 
 /* ================= 真题模考（两天一周期 · R2 试卷照片 · 成绩趋势） ================= */
 const EXAM_FIRST_YEAR=2009, EXAM_LAST_YEAR=2026, EXAM_CYCLES=18, EXAM_DEFAULT_DATE='2026-12-19';
@@ -8088,6 +8460,7 @@ function renderSidebar(){
   const _planEl=$('#sideNav').firstElementChild; if(_planEl) _planEl.insertAdjacentHTML('afterend', examSidebarItem());
 
   $('#sideNav').insertAdjacentHTML('beforeend', wordSidebarItem());
+  $('#sideNav').insertAdjacentHTML('beforeend', readingSidebarItem());
 
   $('#overallPct').textContent = overallStats().pct + '%';
 
@@ -8139,6 +8512,12 @@ function currentRoute(){
 
   }
 
+  if(h.indexOf('#/reading')===0){
+
+    return {type:'reading'};
+
+  }
+
   if(h.indexOf('#/words')===0){
 
     return {type:'words', path:''};
@@ -8175,6 +8554,7 @@ function render(){
   $('#view-words').classList.toggle('active', route.type==='words');
 
   $('#view-plan').classList.toggle('active', route.type==='plan');
+  $('#view-reading').classList.toggle('active', route.type==='reading');
 
   $('#view-exams').classList.toggle('active', route.type==='exams');
 
@@ -8187,6 +8567,7 @@ function render(){
     if(route.type==='tree') on = b.dataset.nav === '#/tree/'+curSub;
 
     else if(route.type==='words') on = b.dataset.nav === '#/tree/eng';
+    else if(route.type==='reading') on = b.dataset.nav === '#/tree/eng';
 
     else if(route.type==='plan') on = false;
 
@@ -8211,6 +8592,7 @@ function render(){
   else if(route.type==='words') renderWords();
 
   else if(route.type==='plan') renderPlan();
+  else if(route.type==='reading') renderReading();
 
   else if(route.type==='exams') renderExams();
 
@@ -8281,6 +8663,57 @@ function renderTree(){
 
 
 /* ---------- 考频徽标与章内排序 ---------- */
+/* ===== 数学一 33 题型精确考频（近15年）覆盖层 =====
+   题型框架：郭雨港《数一所有题型分类、通用解法详解》
+   考频来源：抖音@晨曦学长《25考研数学一·近15年考频分析》（n=近15年考查次数，n>=8高频/4-7中频/<=3低频） */
+(function(){
+ const FW='郭雨港《数一所有题型分类、通用解法详解》', SRC='抖音@晨曦学长《25考研数学一·近15年考频分析》';
+ const lvT={3:'高频',2:'中频',1:'低频'};
+ Object.keys(FREQ).forEach(k=>{ if(/^math[123]\//.test(k)) FREQ[k]={lv:1,p:1.5,t:'math',tag:'选填偶考',tip:'选填偶考考点，未进入近15年大题高频统计，按低频了解即可。题型框架：'+FW+'；考频：'+SRC+'。'}; });
+ // 选填/基础高频章节（33题型图未单列但属必考基础）
+ [['math2/0',2,4,'矩阵与行列式（选填基础）'],['math3/0',2,3,'随机事件与概率（基础）'],['math3/1',2,3,'一维随机变量及其分布（基础）'],['math3/5',2,3,'数理统计基本概念（参数估计基础）']].forEach(b=>{
+   const pre=b[0],lv=b[1],pp=b[2],nm=b[3];
+   Object.keys(FREQ).forEach(k=>{ if(k.indexOf(pre+'/')===0) FREQ[k]={lv:lv,p:pp,t:'math',tag:'选填常考',tip:'【'+nm+'】选填与基础高频，需熟练掌握。题型框架：'+FW+'；考频：'+SRC+'。'}; });
+ });
+ // [频次, 题型名, 小节前缀或精确叶子path...]
+ const G=[
+ [10,'函数极限','math1/1/0','math1/1/1','math1/1/2','math1/1/3'],
+ [4,'数列极限（夹逼/定积分定义/单调有界）','math1/1/6','math1/1/7'],
+ [5,'无穷小量比阶','math1/1/4'],
+ [3,'连续与间断','math1/1/5','math1/1/11','math1/2/0','math1/2/4'],
+ [2,'可导性判别','math1/2/1'],
+ [9,'导数与求导运算','math1/2/2','math1/2/3','math1/3/0'],
+ [10,'极值、拐点与渐近线','math1/3/1','math1/3/4','math1/3/5'],
+ [6,'微分中值定理证明','math1/3/2','math1/3/3','math1/3/7','math1/3/8','math1/3/9','math1/3/10','math1/3/11','math1/3/12'],
+ [2,'不定积分','math1/4/0','math1/4/1','math1/4/2','math1/4/3','math1/4/4','math1/4/5'],
+ [15,'定积分计算','math1/5/0','math1/5/1','math1/5/2','math1/5/3','math1/5/4','math1/5/5','math1/5/7','math1/5/8','math1/5/9','math1/5/10','math1/5/11'],
+ [3,'定积分几何应用（面积/体积/弧长）','math1/5/6'],
+ [2,'多元连续/可偏导/可微判别','math1/6/0'],
+ [11,'多元偏导与全微分','math1/6/1','math1/6/3'],
+ [10,'多元函数极值与最值','math1/6/2'],
+ [7,'二重积分','math1/7/0','math1/7/1','math1/7/2','math1/7/3','math1/7/4','math1/7/5'],
+ [2,'三重积分','math1/7/6'],
+ [8,'一阶微分方程','math1/8/0','math1/8/2','math1/8/3'],
+ [9,'二阶常系数线性微分方程','math1/8/1'],
+ [5,'常数项级数敛散性','math1/9/0','math1/9/1'],
+ [13,'幂级数收敛半径/收敛域/和函数（含函数展开）','math1/9/2','math1/9/3','math1/9/4','math1/9/5'],
+ [22,'曲线积分与曲面积分','math1/11/0','math1/11/1','math1/11/2'],
+ [3,'向量组线性相关/无关','math2/1/0','math2/1/2'],
+ [5,'向量线性表出','math2/1/1','math2/1/3','math2/1/4'],
+ [11,'线性方程组求解','math2/2/0','math2/2/1','math2/2/2','math2/2/2','math2/2/3','math2/2/4'],
+ [8,'相似对角化：可逆矩阵P与正交矩阵Q','math2/3/0','math2/3/1','math2/3/2'],
+ [14,'二次型','math2/3/3'],
+ [4,'二维离散型随机变量及分布','math3/2/0','math3/2/2','math3/2/3/0'],
+ [9,'二维连续型：分布函数与概率密度','math3/2/1','math3/2/3/1','math3/2/3/2'],
+ [14,'随机变量的数学期望与方差（含协方差/相关系数）','math3/3/0','math3/3/1'],
+ [10,'参数估计：矩估计与最大似然估计','math3/6/0','math3/6/1','math3/6/2','math3/6/3']
+ ];
+ G.forEach(g=>{const n=g[0],name=g[1],lv=n>=8?3:(n>=4?2:1);
+   for(let j=2;j<g.length;j++){const pre=g[j];
+     Object.keys(FREQ).forEach(k=>{ if(k===pre||k.indexOf(pre+'/')===0) FREQ[k]={lv:lv,p:n,t:'math',tag:'近15年'+n+'次',tip:'【'+name+'】近15年考查 '+n+' 次（'+lvT[lv]+'）。题型框架：'+FW+'；考频：'+SRC+'。'}; });
+   }});
+})();
+
 function freqOf(p){ return FREQ[p]||null; }
 const FREQ_LB=['低频','中频','高频'];
 function freqPill(p){
