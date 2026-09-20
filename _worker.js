@@ -18,7 +18,7 @@ async function handleApi(request, env) {
   const origin = request.headers.get('Origin') || '*';
   const cors = {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
   };
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
@@ -103,6 +103,45 @@ async function handleApi(request, env) {
       return json(200, { ok: true }, cors);
     }
 
+    // ===== 照片（真题/错题）：Cloudflare R2，对象 key 强制按 userId 隔离，防越权 =====
+    // 上传：POST /api/photo/upload  { ext:'jpg'|'png'|'webp', dataBase64: dataURL或纯base64 }
+    if (path === '/api/photo/upload' && request.method === 'POST') {
+      if (!env.PHOTOS) return json(500, { ok: false, error: 'R2 未绑定' }, cors);
+      const { ext, dataBase64, contentType } = body;
+      if (!dataBase64) return json(400, { ok: false, error: '缺少图片数据' }, cors);
+      const clean = String(dataBase64).replace(/^data:[^;]*;base64,/, '');
+      let bytes;
+      try { bytes = base64ToBytes(clean); }
+      catch (e) { return json(400, { ok: false, error: '图片解码失败' }, cors); }
+      if (bytes.length > 12 * 1024 * 1024) return json(413, { ok: false, error: '图片过大（上限12MB），请压缩后上传' }, cors);
+      const e = String(ext || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'jpg';
+      const mime = contentType || (e === 'png' ? 'image/png' : e === 'webp' ? 'image/webp' : e === 'gif' ? 'image/gif' : 'image/jpeg');
+      const key = userId + '/' + crypto.randomUUID() + '.' + e;
+      await env.PHOTOS.put(key, bytes, { httpMetadata: { contentType: mime } });
+      return json(200, { ok: true, key, url: '/api/photo/' + key }, cors);
+    }
+
+    // 读取：GET /api/photo/{userId}/{file}（只能取自己目录）
+    if (path.startsWith('/api/photo/') && request.method === 'GET') {
+      const key = decodeURIComponent(path.slice('/api/photo/'.length));
+      if (!key.startsWith(userId + '/')) return new Response('Forbidden', { status: 403 });
+      const obj = await env.PHOTOS.get(key);
+      if (!obj) return new Response('Not Found', { status: 404 });
+      const headers = new Headers();
+      obj.writeHttpMetadata(headers);
+      headers.set('Access-Control-Allow-Origin', origin);
+      headers.set('Cache-Control', 'private, max-age=31536000, immutable');
+      return new Response(obj.body, { status: 200, headers });
+    }
+
+    // 删除：DELETE /api/photo/{userId}/{file}
+    if (path.startsWith('/api/photo/') && request.method === 'DELETE') {
+      const key = decodeURIComponent(path.slice('/api/photo/'.length));
+      if (!key.startsWith(userId + '/')) return json(403, { ok: false, error: 'forbidden' }, cors);
+      await env.PHOTOS.delete(key);
+      return json(200, { ok: true }, cors);
+    }
+
     return json(404, { ok: false, error: 'not found' }, cors);
   } catch (e) {
     return json(500, { ok: false, error: String(e && e.message || e) }, cors);
@@ -112,6 +151,13 @@ async function handleApi(request, env) {
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function base64ToBytes(b64) {
+  const bin = atob(b64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return u8;
 }
 
 function generateToken() {

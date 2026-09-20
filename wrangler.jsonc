@@ -12,5 +12,11 @@
       "database_name": "k408-db",
       "database_id": "57ead5bf-a80a-4d8d-b4cf-0ff5a59d50b0"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PHOTOS",
+      "bucket_name": "k408-exam-photos"
+    }
   ]
 }
