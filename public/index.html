@@ -1466,6 +1466,67 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .p-more{width:100%;margin-top:12px;background:none;border:1px dashed var(--line);color:var(--ink-2);border-radius:9px;padding:9px;font-size:13px;cursor:pointer}
 .p-more:hover{border-color:var(--ink-3)}
 .p-sidebtn{position:relative}
+
+/* ===== 批4 学习闭环：掌握清单 / 知识定位 / 做题 / 书源错因 ===== */
+:root{ --kc-prac:#0E8A68; }
+.mc-card{margin-top:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);padding:14px 16px}
+.mc-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;margin-bottom:10px}
+.mc-head .mc-pct{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:700}
+.mc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.mc-item{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--panel-2);cursor:pointer;font-size:12.5px;line-height:1.4}
+.mc-item .mc-ico{flex:none;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
+.mc-item.done{border-color:rgba(14,138,104,.45)}
+.mc-item.done .mc-ico{background:var(--kc-done);color:#fff}
+.mc-item:not(.done) .mc-ico{background:var(--line);color:var(--ink-3)}
+.mc-item .mc-t{font-weight:600;color:var(--ink)}
+.mc-item .mc-s{display:block;color:var(--ink-3);font-size:11px;margin-top:1px}
+.mc-ready{margin-top:11px;font-size:12.5px;color:var(--kc-done);font-weight:700;display:none}
+.mc-ready.show{display:block}
+.mc-auto{margin-top:7px;font-size:11.5px;color:var(--ink-3)}
+.mc-auto button{border:none;background:none;color:var(--kc-note);cursor:pointer;font-size:11.5px;text-decoration:underline;padding:0}
+.lc-block{margin-top:16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);padding:14px 16px}
+.lc-bt{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;margin-bottom:10px}
+.lc-bt .hint{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);font-weight:500;letter-spacing:.5px}
+.lc-bt button{margin-left:auto}
+.loc-list,.pr-list{display:flex;flex-direction:column;gap:8px}
+.loc-row{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-left:4px solid var(--kc-note);border-radius:9px;padding:9px 12px;background:var(--panel-2)}
+.loc-kind{flex:none;font-size:10.5px;font-weight:700;color:#fff;background:var(--kc-note);border-radius:6px;padding:3px 8px;margin-top:1px}
+.loc-main{flex:1;min-width:0;font-size:12.5px;line-height:1.55}
+.loc-src{font-weight:700;color:var(--ink)}
+.loc-loc{color:var(--ink-2)}
+.loc-note{color:var(--ink-3);font-size:11.5px;margin-top:2px}
+.loc-ops,.pr-ops{flex:none;display:flex;gap:6px}
+.loc-ops button,.pr-ops button{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:3px 9px;font-size:11px;cursor:pointer;color:var(--ink-2)}
+.pr-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:var(--panel-2);font-size:12.5px}
+.pr-badge{flex:none;font-size:10.5px;font-weight:700;border-radius:6px;padding:3px 8px;color:#fff}
+.pr-badge.right{background:var(--kc-prac)}
+.pr-badge.wrong{background:var(--kc-mistake)}
+.pr-main{flex:1;min-width:0;color:var(--ink-2);line-height:1.5}
+.pr-main b{color:var(--ink)}
+.pr-rs{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+.pr-r{font-size:10.5px;color:var(--kc-mistake);border:1px solid var(--kc-mistake);border-radius:5px;padding:1px 6px}
+.sj-src{font-size:11px;color:var(--ink-3);margin-top:2px}
+.reason-tags{display:flex;flex-wrap:wrap;gap:7px}
+.reason-chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--ink-2);user-select:none}
+.reason-chip.on{border-color:var(--kc-mistake);background:var(--kc-mistake);color:#fff}
+.reason-chip.add{border-style:dashed;color:var(--kc-note)}
+.src-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.src-grid .path-select{max-width:none;width:100%}
+.essence-chk{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--kc-wait);cursor:pointer;margin:9px 0 2px}
+.essence-chk input{width:15px;height:15px}
+.tag.essence{background:var(--kc-wait);color:#fff}
+.lib-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.lib-tab{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 13px;font-size:12.5px;cursor:pointer}
+.lib-tab.on{background:var(--kc-note);color:#fff;border-color:var(--kc-note)}
+.lib-list{display:flex;flex-direction:column;gap:8px}
+.lib-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:7px 11px;background:var(--panel-2)}
+.lib-row .lib-name{flex:1;font-size:13px;color:var(--ink)}
+.lib-row button{border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--kc-mistake)}
+.lib-add{margin-top:10px;display:flex;gap:8px}
+.lib-add input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:var(--panel);color:var(--ink)}
+.lib-section-title{font-weight:700;font-size:13px;margin:20px 0 9px}
+.mk-hidden{display:none}
+
 </style>
 
 </head>
@@ -1743,6 +1804,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
             <button class="iconbtn primary" id="addNoteBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>笔记</button>
             <button class="iconbtn" id="addMapBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>导图</button>
             <button class="iconbtn" id="addMistakeBtn" style="color:#B3402A"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>错题</button>
+            <button class="iconbtn" id="libraryBtn">书源 · 错因库</button>
           </div>
         </div>
         <div id="reviewPanel"></div>
@@ -1919,6 +1981,8 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 
       <input type="text" class="note-title-input" id="noteTitle" placeholder="笔记标题，例如：快速排序的划分过程易错点" autocomplete="off">
 
+      <label class="essence-chk"><input type="checkbox" id="noteEssence">⭐ 设为「核心精华」笔记（掌握该考点的条件之一）</label>
+
       <div class="md-tb" id="mdToolbar">
 
         <button data-cmd="bold" title="加粗">B</button>
@@ -2027,6 +2091,19 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
         <label>正确解析 / 对应知识点</label>
         <textarea id="mistakeAnalysis" class="mk-area" spellcheck="false" placeholder="正确解法、结论、对应知识点与口诀…"></textarea>
       </div>
+      <div class="mk-field">
+        <label>题目来源（书 / 资料，可在学习中心「书源 · 错因库」维护）</label>
+        <div class="src-grid">
+          <select id="mistakeBook" class="path-select"></select>
+          <input id="mistakeChapter" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="章 / 套卷" autocomplete="off">
+          <input id="mistakePage" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="页码" autocomplete="off">
+        </div>
+        <input id="mistakeQno" class="note-title-input" style="width:100%;box-sizing:border-box;margin-top:8px" placeholder="题号（可选）" autocomplete="off">
+      </div>
+      <div class="mk-field">
+        <label>错因（可多选，可新增）</label>
+        <div class="reason-tags" id="mistakeReasons"></div>
+      </div>
       <div class="mk-field-row">
         <label>复习状态</label>
         <select id="mistakeStatusInput" class="path-select">
@@ -2039,6 +2116,126 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
       <span class="md-hint" style="margin-right:auto">错题关联到所选考点，登录后云端同步</span>
       <button class="iconbtn" id="mistakeCancelBtn">取消</button>
       <button class="iconbtn primary" id="mistakeSaveBtn">保存错题</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 知识定位编辑器 ===== -->
+<div class="overlay tall" id="locatorOverlay">
+  <div class="editor-box" style="max-width:560px">
+    <div class="editor-head">
+      <h3 id="locatorEditorTitle">添加知识定位</h3>
+      <div class="editor-head-actions">
+        <button class="iconbtn" id="locatorCloseBtn" aria-label="关闭" style="padding:6px;font-size:18px">×</button>
+      </div>
+    </div>
+    <div class="editor-page">
+      <input type="hidden" id="locatorPath">
+      <div class="mk-field">
+        <label>来源类型</label>
+        <select id="locatorKind" class="path-select" style="max-width:none;width:100%">
+          <option value="教材">教材</option>
+          <option value="辅导讲义">辅导讲义</option>
+          <option value="网课">网课 / 视频课</option>
+          <option value="网站">网站 / 电子资料</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="mk-field">
+        <label>书名 / 讲义 / 网站 / 老师（必填）</label>
+        <input id="locatorSource" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="例如：王道·数据结构复习指导 / 唐迟阅读班 / B站某老师" autocomplete="off">
+      </div>
+      <div class="mk-field">
+        <label>具体位置（必填：页码 / 第几节课 / 章节）</label>
+        <input id="locatorLoc" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="例如：P128 / 第 15 讲 / 第 3 章第 2 节 / 网址" autocomplete="off">
+      </div>
+      <div class="mk-field">
+        <label>备注（可选）</label>
+        <textarea id="locatorNote" class="mk-area" placeholder="老师、要点、视频时间点等"></textarea>
+      </div>
+    </div>
+    <div class="editor-foot">
+      <span class="md-hint" style="margin-right:auto">记录你在哪里学到这个考点，方便回查</span>
+      <button class="iconbtn" id="locatorCancelBtn">取消</button>
+      <button class="iconbtn primary" id="locatorSaveBtn">保存定位</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 做题记录编辑器 ===== -->
+<div class="overlay tall" id="practiceOverlay">
+  <div class="editor-box" style="max-width:640px">
+    <div class="editor-head">
+      <h3>记录做题</h3>
+      <div class="editor-head-actions">
+        <select id="practicePath" aria-label="关联考点" class="path-select"></select>
+        <button class="iconbtn" id="practiceCloseBtn" aria-label="关闭" style="padding:6px;font-size:18px">×</button>
+      </div>
+    </div>
+    <div class="editor-page">
+      <div class="mk-field">
+        <label>结果</label>
+        <div class="seg" id="prResultSeg">
+          <button type="button" data-prresult="right" class="on">做对了</button>
+          <button type="button" data-prresult="wrong">做错了</button>
+        </div>
+        <input type="radio" name="prResult" value="right" class="mk-hidden" checked>
+        <input type="radio" name="prResult" value="wrong" class="mk-hidden">
+      </div>
+      <div class="mk-field">
+        <label>题目来源（书 / 资料）</label>
+        <div class="src-grid">
+          <select id="practiceBook" class="path-select"></select>
+          <input id="practiceChapter" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="章 / 套卷" autocomplete="off">
+          <input id="practicePage" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="页码" autocomplete="off">
+        </div>
+        <input id="practiceQno" class="note-title-input" style="width:100%;box-sizing:border-box;margin-top:8px" placeholder="题号（可选）" autocomplete="off">
+      </div>
+      <div class="mk-field" id="practiceWrongBox">
+        <label>错因（可多选，可新增）</label>
+        <div class="reason-tags" id="practiceReasons"></div>
+      </div>
+      <div class="mk-field" id="practiceQuestionBox">
+        <label>题干 / 错因记录（做错时建议填写，可一键存入错题本，支持 Markdown 与 $公式$）</label>
+        <textarea id="practiceQuestion" class="mk-area" placeholder="把题目和当时的错误记下来…"></textarea>
+        <label class="essence-chk" style="color:var(--kc-mistake)"><input type="checkbox" id="practiceToMistake">同时存入错题本（纳入订正与复习）</label>
+      </div>
+    </div>
+    <div class="editor-foot">
+      <span class="md-hint" style="margin-right:auto">做对 / 做错都计入「做过对应题目」</span>
+      <button class="iconbtn" id="practiceCancelBtn">取消</button>
+      <button class="iconbtn primary" id="practiceSaveBtn">保存记录</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 书源 / 错因库管理 ===== -->
+<div class="overlay tall" id="libraryOverlay">
+  <div class="editor-box" style="max-width:700px">
+    <div class="editor-head">
+      <h3>书源与错因库</h3>
+      <div class="editor-head-actions">
+        <button class="iconbtn" id="libraryCloseBtn" aria-label="关闭" style="padding:6px;font-size:18px">×</button>
+      </div>
+    </div>
+    <div class="editor-page">
+      <div class="lib-tabs" id="libTabs"></div>
+      <div id="libBooks"></div>
+      <div class="lib-add">
+        <input id="libBookInput" placeholder="添加一本书 / 资料，例如：李林 880 题" autocomplete="off">
+        <button class="iconbtn primary" id="libAddBookBtn">添加书</button>
+      </div>
+      <div class="lib-section-title">统一错因库（记录错题时可多选）</div>
+      <div class="reason-tags" id="libReasons"></div>
+      <div class="lib-add">
+        <input id="libReasonInput" placeholder="添加一个错因，例如：符号看错" autocomplete="off">
+        <button class="iconbtn primary" id="libAddReasonBtn">添加错因</button>
+      </div>
+    </div>
+    <div class="editor-foot">
+      <span class="md-hint" style="margin-right:auto">书源按科组共享：408 四科共用、数学三科共用、英语 / 政治各自独立；登录后云同步</span>
+      <button class="iconbtn primary" id="libraryDoneBtn">完成</button>
     </div>
   </div>
 </div>
@@ -6237,7 +6434,8 @@ const SYLLABUS = [
 
 const LS_KEY = 'k408-knowledge-v1';
 
-let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[], words:{}, plan:null };
+let state = { mastery:{}, notes:{}, myNotes:[], drawings:{}, maps:[], items:[], words:{}, plan:null,
+  locators:{}, books:null, reasons:null, practices:{}, masteryManual:{} };
 
 try{
 
@@ -6329,6 +6527,248 @@ if(!state.words) state.words={};
 
 ensureAllReviews();
 
+/* ===== 批4 学习闭环：书源库 / 错因库 / 知识定位 / 做题记录 / 掌握自动判定 ===== */
+const BOOK_GROUPS = [
+  { key:'c408', label:'408（数据结构 / 组成原理 / 操作系统 / 计算机网络 共用）', subs:['ds','co','os','net'] },
+  { key:'math', label:'数学一（高数 / 线代 / 概统 共用）', subs:['math1','math2','math3'] },
+  { key:'eng',  label:'英语一', subs:['eng'] },
+  { key:'poli', label:'政治', subs:['poli1','poli2','poli3','poli4','poli5','poli6'] }
+];
+const DEFAULT_BOOKS = {
+  c408: ['王道考研·数据结构复习指导','王道考研·计算机组成原理复习指导','王道考研·操作系统复习指导','王道考研·计算机网络复习指导','王道考研·408历年真题','天勤·408高分笔记'],
+  math: ['李永乐·数学复习全书（数学一）','李永乐·数学基础过关660题','张宇·基础30讲','张宇·题源探析1000题','汤家凤·接力题典1800','数学一历年真题'],
+  eng:  ['张剑黄皮书·英语一历年真题','考研真相·英语一','唐迟·阅读的逻辑','王江涛·高分写作'],
+  poli: ['肖秀荣·知识点精讲精练','肖秀荣·1000题','徐涛·核心考案','肖四','肖八']
+};
+const DEFAULT_REASONS = ['概念/定义不清','公式或定理记错','定理适用条件忽略','解题方法不会','计算失误','审题错误','跳步导致出错','时间不够没做完','粗心笔误','知识点遗忘'];
+function genBookId(){ return 'bk'+Date.now()+Math.random().toString(36).slice(2,6); }
+function bookGroupOf(subId){ const g=BOOK_GROUPS.find(g=>g.subs.includes(subId)); return g?g.key:null; }
+function ensureLearningData(){
+  let changed=false;
+  if(!state.locators){ state.locators={}; changed=true; }
+  if(!state.practices){ state.practices={}; changed=true; }
+  if(!state.masteryManual){ state.masteryManual={}; changed=true; }
+  if(!state.books){
+    state.books={c408:[],math:[],eng:[],poli:[]};
+    Object.keys(DEFAULT_BOOKS).forEach(k=>{ state.books[k]=DEFAULT_BOOKS[k].map(n=>({id:genBookId(),name:n})); });
+    changed=true;
+  } else { BOOK_GROUPS.forEach(g=>{ if(!Array.isArray(state.books[g.key])){ state.books[g.key]=[]; changed=true; } }); }
+  if(!Array.isArray(state.reasons)){ state.reasons=DEFAULT_REASONS.slice(); changed=true; }
+  if(changed){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} }
+}
+function booksForSub(subId){ const k=bookGroupOf(subId); return k ? (state.books[k]||[]) : []; }
+function bookName(id){ for(const g of BOOK_GROUPS){ for(const b of (state.books[g.key]||[])){ if(b.id===id) return b.name; } } return ''; }
+function locatorsOf(path){ return state.locators[path]||[]; }
+function practicesOf(path){ return state.practices[path]||[]; }
+function mergePathArrays(local, cloud){
+  const out = Object.assign({}, local||{});
+  Object.keys(cloud||{}).forEach(p=>{
+    const map={}; (out[p]||[]).forEach(x=>{ if(x&&x.id) map[x.id]=x; });
+    (cloud[p]||[]).forEach(x=>{ if(x&&x.id){ const ex=map[x.id]; if(!ex || (x.ts||x.updated||0)>=(ex.ts||ex.updated||0)) map[x.id]=x; } });
+    out[p]=Object.keys(map).map(k=>map[k]);
+  });
+  return out;
+}
+function mergeBooks(local, cloud){
+  const out={ c408:[],math:[],eng:[],poli:[] };
+  BOOK_GROUPS.forEach(g=>{
+    const k=g.key, seen={}; const arr=[];
+    (local&&local[k]||[]).concat(cloud&&cloud[k]||[]).forEach(b=>{ if(b&&b.id&&!seen[b.id]&&b.name){ seen[b.id]=1; arr.push(b); } });
+    out[k]=arr;
+  });
+  return out;
+}
+/* 掌握四条件：知识定位 / 核心精华笔记 / 做过题 / 错题全部订正 */
+function masteryChecklist(path){
+  const loc = locatorsOf(path).length>0;
+  const essence = state.items.some(it=>it.path===path && it.kind==='note' && it.essence);
+  const practiced = practicesOf(path).length>0;
+  const openMistakes = state.items.filter(it=>it.path===path && it.kind==='mistake' && it.status!=='mastered').length;
+  const mistakesClear = openMistakes===0;
+  return { loc, essence, practiced, mistakesClear, ready: loc&&essence&&practiced&&mistakesClear, openMistakes };
+}
+function applyAutoMastery(path){
+  const c=masteryChecklist(path);
+  if(c.ready && !state.masteryManual[path] && state.mastery[path]!=='mastered'){ state.mastery[path]='mastered'; return true; }
+  return false;
+}
+function recheckMastery(path){
+  if(!path) return false;
+  if(applyAutoMastery(path)){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} cloudSave(); toast('🎉 四项条件已完成，该考点自动标记为「已掌握」'); return true; }
+  return false;
+}
+function subjOfPath(path){ const info=pathInfo(path); return info?info.sub.id:(path?path.split('/')[0]:''); }
+function mistakeSourceText(it){
+  const parts=[];
+  if(it.bookId && bookName(it.bookId)) parts.push(bookName(it.bookId));
+  if(it.chapter) parts.push(it.chapter);
+  if(it.page) parts.push('P'+it.page);
+  if(it.qno) parts.push('第'+it.qno+'题');
+  return parts.join(' · ');
+}
+/* ---- 掌握条件面板 ---- */
+function masteryPanelHtml(path){
+  const c=masteryChecklist(path);
+  const doneN=[c.loc,c.essence,c.practiced,c.mistakesClear].filter(Boolean).length;
+  const rows=[
+    {ok:c.loc,          t:'知识定位',   s:c.loc?'已记录学习来源':'记录在哪学的（书/讲义/网课+位置）', act:'locator'},
+    {ok:c.essence,      t:'核心精华',   s:c.essence?'已整理精华笔记':'写一条「核心精华」笔记', act:'essence'},
+    {ok:c.practiced,    t:'做题记录',   s:c.practiced?'已记录做题情况':'做完对应题目并记录', act:'practice'},
+    {ok:c.mistakesClear,t:'错题订正',   s:c.mistakesClear?'无未解决错题':(c.openMistakes+' 道错题待订正'), act:'mistakes'}
+  ];
+  let h='<div class="mc-card"><div class="mc-head">掌握条件<span class="mc-pct">'+doneN+' / 4</span></div><div class="mc-grid">';
+  rows.forEach(r=>{
+    h+='<div class="mc-item '+(r.ok?'done':'')+'" data-mc-act="'+r.act+'"><span class="mc-ico">'+(r.ok?'✓':'')+'</span><span><span class="mc-t">'+r.t+'</span><span class="mc-s">'+esc(r.s)+'</span></span></div>';
+  });
+  h+='</div>';
+  if(c.ready) h+='<div class="mc-ready show">✓ 四项条件已完成，考点判定为「已掌握」，笔记与错题已纳入艾宾浩斯复习</div>';
+  else if(state.masteryManual[path] && state.mastery[path]!=='mastered')
+    h+='<div class="mc-auto">当前为手动状态，自动判定已暂停 · <button data-mc-resume="1">恢复自动判定</button></div>';
+  else
+    h+='<div class="mc-auto">四项全部完成后自动点亮「已掌握」；也可在上方手动切换状态</div>';
+  h+='</div>';
+  return h;
+}
+/* ---- 知识定位面板 ---- */
+function locatorPanelHtml(path){
+  const list=locatorsOf(path);
+  let h='<div class="lc-block"><div class="lc-bt">知识定位<span class="hint">WHERE I LEARNED IT</span><button class="iconbtn" data-add-locator="1">＋ 添加定位</button></div>';
+  if(!list.length){ h+='<div class="sj-empty">还没记录来源。写明教材/讲义/网课 + 页码或节次，方便回查。</div>'; }
+  else{
+    h+='<div class="loc-list">'+list.map(l=>'<div class="loc-row"><span class="loc-kind">'+esc(l.kind)+'</span><div class="loc-main"><span class="loc-src">'+esc(l.source)+'</span> · <span class="loc-loc">'+esc(l.loc)+'</span>'+(l.note?'<div class="loc-note">'+esc(l.note)+'</div>':'')+'</div><div class="loc-ops"><button data-edit-locator="'+l.id+'">编辑</button><button class="del" data-del-locator="'+l.id+'">删除</button></div></div>').join('')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---- 做题记录面板 ---- */
+function practicePanelHtml(path){
+  const list=practicesOf(path);
+  let h='<div class="lc-block"><div class="lc-bt">做题记录<span class="hint">PRACTICE</span><button class="iconbtn" data-add-practice2="1">＋ 记录做题</button></div>';
+  if(!list.length){ h+='<div class="sj-empty">还没有做题记录。学完后做对应题目，做对/做错都记一条，做错可一键存入错题本。</div>'; }
+  else{
+    h+='<div class="pr-list">'+list.map(r=>{
+      const src=[bookName(r.bookId),r.chapter,(r.page?('P'+r.page):''),r.qno?('第'+r.qno+'题'):''].filter(Boolean).join(' · ');
+      const tags=(r.reasons||[]).map(x=>'<span class="pr-r">'+esc(x)+'</span>').join('');
+      return '<div class="pr-row"><span class="pr-badge '+(r.result==='right'?'right':'wrong')+'">'+(r.result==='right'?'做对':'做错')+'</span><div class="pr-main"><b>'+esc(src||'未标注来源')+'</b>'+(tags?'<div class="pr-rs">'+tags+'</div>':'')+'</div><div class="pr-ops"><button class="del" data-del-practice="'+r.id+'">删除</button></div></div>';
+    }).join('')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---- 错因标签 ---- */
+function reasonChipsHtml(selected){
+  const sel={}; (selected||[]).forEach(x=>sel[x]=1);
+  let h=(state.reasons||[]).map(r=>'<span class="reason-chip'+(sel[r]?' on':'')+'" data-reason="'+esc(r)+'">'+esc(r)+'</span>').join('');
+  h+='<span class="reason-chip add" data-reason-add="1">＋ 新错因</span>';
+  return h;
+}
+function selectedReasons(container){
+  return Array.from(container.querySelectorAll('.reason-chip.on')).map(x=>x.dataset.reason);
+}
+function refreshReasonChips(container, selected){ container.innerHTML=reasonChipsHtml(selected); }
+function bookOptionsHtml(subId, selected){
+  let h='<option value="">未选择 / 其他资料</option>';
+  booksForSub(subId).forEach(b=>{ h+='<option value="'+b.id+'"'+(b.id===selected?' selected':'')+'>'+esc(b.name)+'</option>'; });
+  return h;
+}
+/* ---- 知识定位编辑器 ---- */
+let locatorEditingId=null;
+function openLocatorEditor(path, id){
+  locatorEditingId=id||null;
+  const list=locatorsOf(path), l=id?list.find(x=>x.id===id):null;
+  $('#locatorEditorTitle').textContent=l?'编辑知识定位':'添加知识定位';
+  $('#locatorPath').value=path||'';
+  $('#locatorKind').value=l?(l.kind||'教材'):'教材';
+  $('#locatorSource').value=l?(l.source||''):'';
+  $('#locatorLoc').value=l?(l.loc||''):'';
+  $('#locatorNote').value=l?(l.note||''):'';
+  $('#locatorOverlay').classList.add('open');
+  $('#locatorSource').focus();
+}
+function closeLocatorEditor(){ $('#locatorOverlay').classList.remove('open'); locatorEditingId=null; }
+function saveLocator(){
+  const path=$('#locatorPath').value;
+  const kind=$('#locatorKind').value, source=$('#locatorSource').value.trim(), loc=$('#locatorLoc').value.trim(), note=$('#locatorNote').value.trim();
+  if(!path){ toast('请先关联到具体考点'); return; }
+  if(!source){ toast('请填写书名 / 讲义 / 网站'); $('#locatorSource').focus(); return; }
+  if(!loc){ toast('请填写具体位置（页码 / 节次）'); $('#locatorLoc').focus(); return; }
+  if(!state.locators[path]) state.locators[path]=[];
+  const now=Date.now();
+  if(locatorEditingId){ const l=state.locators[path].find(x=>x.id===locatorEditingId); if(l) Object.assign(l,{kind,source,loc,note}); }
+  else state.locators[path].push({id:genItemId('l'),kind,source,loc,note,ts:now});
+  saveState(); closeLocatorEditor(); afterItemChange(); recheckMastery(path); toast('知识定位已保存');
+}
+function deleteLocator(path,id){
+  if(!state.locators[path]) return;
+  state.locators[path]=state.locators[path].filter(x=>x.id!==id);
+  saveState(); afterItemChange(); toast('已删除定位');
+}
+/* ---- 做题记录编辑器 ---- */
+function openPracticeEditor(presetPath){
+  fillPathSelects();
+  $('#practicePath').value=presetPath||'';
+  $('input[name="prResult"][value="right"]').checked=true;
+  $('#practiceChapter').value=''; $('#practicePage').value=''; $('#practiceQno').value=''; $('#practiceQuestion').value='';
+  $('#practiceToMistake').checked=true;
+  fillPracticeBooks(); refreshPracticeReasonBox([]); practiceToggleResult();
+  $('#practiceOverlay').classList.add('open');
+}
+function closePracticeEditor(){ $('#practiceOverlay').classList.remove('open'); }
+function fillPracticeBooks(){
+  const sel=$('#practiceBook'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=bookOptionsHtml(subjOfPath($('#practicePath').value), cur||'');
+}
+function refreshPracticeReasonBox(selected){ const c=$('#practiceReasons'); if(c) c.innerHTML=reasonChipsHtml(selected); }
+function practiceToggleResult(){
+  const wrong=$('input[name="prResult"]:checked').value==='wrong';
+  $('#practiceWrongBox').classList.toggle('mk-hidden', !wrong);
+}
+function savePractice(){
+  const path=$('#practicePath').value;
+  if(!path){ toast('请先关联到具体考点'); return; }
+  const result=$('input[name="prResult"]:checked').value;
+  const bookId=$('#practiceBook').value, chapter=$('#practiceChapter').value.trim(), page=$('#practicePage').value.trim(), qno=$('#practiceQno').value.trim();
+  const reasons=result==='wrong'?selectedReasons($('#practiceReasons')):[];
+  const question=$('#practiceQuestion').value.trim();
+  if(!state.practices[path]) state.practices[path]=[];
+  const now=Date.now();
+  state.practices[path].push({id:genItemId('p'),result,bookId,chapter,page,qno,reasons,ts:now});
+  let madeMistake=false;
+  if(result==='wrong' && $('#practiceToMistake').checked && question){
+    const m={id:genItemId('k'),kind:'mistake',path,subject:subjOfPath(path)||'other',title:'',question,wrong:'',analysis:'',
+      status:'open',bookId,chapter,page,qno,reasons,created:now,updated:now,rv:newReview(now)};
+    state.items.push(m); madeMistake=true;
+  }
+  saveState(); closePracticeEditor(); afterItemChange(); recheckMastery(path);
+  toast(madeMistake?'做题已记录，并已存入错题本':'做题已记录');
+}
+function deletePractice(path,id){
+  if(!state.practices[path]) return;
+  state.practices[path]=state.practices[path].filter(x=>x.id!==id);
+  saveState(); afterItemChange(); toast('已删除做题记录');
+}
+/* ---- 书源 / 错因库管理 ---- */
+let libGroup='c408';
+function openLibrary(){ renderLibrary(); $('#libraryOverlay').classList.add('open'); }
+function closeLibrary(){ $('#libraryOverlay').classList.remove('open'); }
+function renderLibrary(){
+  const tabs=$('#libTabs'); if(!tabs) return;
+  tabs.innerHTML=BOOK_GROUPS.map(g=>'<span class="lib-tab'+(g.key===libGroup?' on':'')+'" data-lib-tab="'+g.key+'">'+esc(g.label)+'</span>').join('');
+  const books=state.books[libGroup]||[];
+  $('#libBooks').innerHTML='<div class="lib-list">'+books.map(b=>
+    '<div class="lib-row"><span class="lib-name">'+esc(b.name)+'</span><button data-lib-delbook="'+b.id+'">删除</button></div>').join('')
+    +'<div class="sj-empty" style="'+(books.length?'display:none':'')+'">这个科组还没有书，在下方添加。</div></div>';
+  $('#libReasons').innerHTML=(state.reasons||[]).map((r,i)=>'<span class="reason-chip" data-lib-delreason="'+i+'">'+esc(r)+' ×</span>').join('');
+}
+/* 错题编辑器：来源书选项 + 错因 */
+function fillMistakeBook(){
+  const sel=$('#mistakeBook'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=bookOptionsHtml(subjOfPath($('#mistakePath').value), cur||'');
+}
+function refreshMistakeReasons(selected){ const c=$('#mistakeReasons'); if(c) c.innerHTML=reasonChipsHtml(selected); }
+
+ensureLearningData();
+
 
 
 /* ---------- 云端同步（可选） ---------- */
@@ -6386,6 +6826,11 @@ function cloudSave(immediate){
     api('/api/data', 'POST', { key: 'words', value: state.words }).catch(()=>{});
 
     api('/api/data', 'POST', { key: 'plan', value: state.plan }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'locators', value: state.locators }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'practices', value: state.practices }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'books', value: state.books }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'reasons', value: state.reasons }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'masteryManual', value: state.masteryManual }).catch(()=>{});
 
     api('/api/data', 'POST', { key: 'drawings', value: state.drawings }).catch(()=>{});
 
@@ -6428,6 +6873,12 @@ async function cloudLoad(){
       if(r.data.words) state.words = mergeWords(state.words||{}, r.data.words);
 
       if(r.data.plan) state.plan = r.data.plan;
+      if(r.data.locators) state.locators = mergePathArrays(state.locators, r.data.locators);
+      if(r.data.practices) state.practices = mergePathArrays(state.practices, r.data.practices);
+      if(r.data.masteryManual) state.masteryManual = Object.assign({}, state.masteryManual, r.data.masteryManual);
+      if(r.data.books) state.books = mergeBooks(state.books, r.data.books);
+      if(Array.isArray(r.data.reasons)) state.reasons = Array.from(new Set([...(state.reasons||[]),...r.data.reasons]));
+      ensureLearningData();
 
       if(r.data.drawings) state.drawings = Object.assign({}, state.drawings, r.data.drawings);
 
@@ -7853,9 +8304,11 @@ function renderDetail(){
 
       </div>
 
-      ${m?`<span class="study-note">当前：<b>${MASTERY[m]}</b>${m==='mastered'?'，本章节进度自动更新':''}</span>`:''}
+      ${m?`<span class="study-note">当前：<b>${MASTERY[m]}</b>${m==='mastered'?'，四项条件满足后自动判定':''}</span>`:''}
 
     </div>`;
+
+    html += masteryPanelHtml(path);
 
 
 
@@ -7913,6 +8366,8 @@ function renderDetail(){
 
 
 
+  if(isLeafNode(node)){ html += locatorPanelHtml(leafPath(node)) + practicePanelHtml(leafPath(node)); }
+
   /* ===== 我的学习记录（速记 + 笔记 / 导图 / 错题，均关联本节点）===== */
   const path = isLeafNode(node) ? leafPath(node) : route.path;
   const noteText = state.notes[path] || '';
@@ -7926,6 +8381,7 @@ function renderDetail(){
       <button type="button" data-add="note" style="--kc:var(--kc-note)">＋ 笔记</button>
       <button type="button" data-add="map" style="--kc:var(--kc-map)">＋ 导图</button>
       <button type="button" data-add="mistake" style="--kc:var(--kc-mistake)">＋ 错题</button>
+      <button type="button" data-add="practice" style="--kc:var(--kc-prac)">＋ 做题</button>
     </div>
     <div class="sj-list">${myItems.length ? myItems.map(journalRow).join('') : '<div class="sj-empty">还没有关联到这里的笔记 / 导图 / 错题，点上方按钮添加。</div>'}</div>
   </div>`;
@@ -7961,14 +8417,17 @@ function renderDetail(){
       const v = btn.dataset.v;
 
       state.mastery[p] = (state.mastery[p]===v) ? '' : v;
-
       if(!state.mastery[p]) delete state.mastery[p];
+      if(v==='mastered'){ delete state.masteryManual[p]; }
+      else { state.masteryManual[p]=true; }
 
       saveState();
 
       renderTree();
 
       renderSidebar();
+
+      renderDetail();
 
     });
 
@@ -7989,6 +8448,7 @@ function renderDetail(){
     const kind=b.dataset.add;
     if(kind==='note') openNoteEditor(null, path);
     else if(kind==='mistake') openMistakeEditor(null, path);
+    else if(kind==='practice') openPracticeEditor(path);
     else if(kind==='map') newMap(path);
   }));
   /* 事件：本考点学习条目操作 */
@@ -8008,6 +8468,25 @@ function renderDetail(){
   pane.querySelectorAll('[data-del-item]').forEach(b=>b.addEventListener('click',()=>{
     bindDelConfirm(b,()=>{ deleteItem(b.dataset.delItem); saveState(); renderDetail(); renderSidebar(); toast('已删除'); });
   }));
+
+  /* 事件：掌握条件 / 知识定位 / 做题记录 */
+  pane.querySelectorAll('[data-mc-act]').forEach(el=>el.addEventListener('click',()=>{
+    const act=el.dataset.mcAct;
+    if(act==='locator') openLocatorEditor(path);
+    else if(act==='essence'){ openNoteEditor(null,path); toast('写好后勾选「⭐核心精华」再保存'); }
+    else if(act==='practice') openPracticeEditor(path);
+    else if(act==='mistakes'){
+      const it=state.items.find(x=>x.path===path&&x.kind==='mistake'&&x.status!=='mastered');
+      if(it) openMistakeEditor(it.id,path); else toast('该考点没有待订正错题');
+    }
+  }));
+  const _resume=pane.querySelector('[data-mc-resume]');
+  if(_resume) _resume.addEventListener('click',()=>{ delete state.masteryManual[path]; saveState(); recheckMastery(path); renderTree(); renderSidebar(); renderDetail(); });
+  pane.querySelectorAll('[data-add-locator]').forEach(b=>b.addEventListener('click',()=>openLocatorEditor(path)));
+  pane.querySelectorAll('[data-edit-locator]').forEach(b=>b.addEventListener('click',()=>openLocatorEditor(path,b.dataset.editLocator)));
+  pane.querySelectorAll('[data-del-locator]').forEach(b=>b.addEventListener('click',()=>bindDelConfirm(b,()=>{ deleteLocator(path,b.dataset.delLocator); renderTree(); renderSidebar(); })));
+  pane.querySelectorAll('[data-add-practice2]').forEach(b=>b.addEventListener('click',()=>openPracticeEditor(path)));
+  pane.querySelectorAll('[data-del-practice]').forEach(b=>b.addEventListener('click',()=>bindDelConfirm(b,()=>{ deletePractice(path,b.dataset.delPractice); renderTree(); renderSidebar(); })));
 
   /* 事件：子节点跳转 */
 
@@ -8252,9 +8731,10 @@ function pathOptionsHtml(){
 }
 function fillPathSelects(){
   const html=pathOptionsHtml();
-  const a=$('#notePath'), b=$('#mistakePath');
+  const a=$('#notePath'), b=$('#mistakePath'), c=$('#practicePath');
   if(a) a.innerHTML=html;
   if(b) b.innerHTML=html;
+  if(c) c.innerHTML=html;
   const s=$('#notesSubject');
   if(s && !s.dataset.filled){
     let oh='<option value="all">全部学科</option>';
@@ -8399,8 +8879,9 @@ function journalRow(it){
   const titleClick = it.kind==='map' ? '' : 'data-edit-item="'+it.id+'"';
   const rvTxt = rv.code==='done' ? ('已完成 '+rv.total+' 轮巩固') : (reviewLabel(it)+' · 第 '+(rv.stage+1)+'/'+rv.total+' 轮');
   return '<div class="sj-item" style="--kc:'+k.color+'"><span class="sj-kind">'+k.label+'</span>'
-    +'<div class="sj-main"><div class="sj-title" '+titleClick+'>'+esc(itemTitle(it))+'</div>'
+    +'<div class="sj-main"><div class="sj-title" '+titleClick+'>'+(it.kind==='note'&&it.essence?'⭐ ':'')+esc(itemTitle(it))+'</div>'
     +'<div class="sj-preview">'+esc(journalDigest(it))+'</div>'
+    +(it.kind==='mistake'&&(it.bookId||it.page||it.chapter)?('<div class="sj-src">'+esc(mistakeSourceText(it))+'</div>'):'')
     +'<div class="sj-rv'+(rv.code==='due'?' over':'')+'">'+esc(rvTxt)+'</div></div>'
     +'<div class="sj-ops">'+ops+'</div></div>';
 }
@@ -8452,6 +8933,7 @@ function openNoteEditor(id, presetPath){
   $('#noteTitle').value=n?(n.title||''):'';
   $('#notePath').value=n?(n.path||''):(presetPath||'');
   $('#noteContent').value=n?(n.content||''):'';
+  const _ne=$('#noteEssence'); if(_ne) _ne.checked=!!(n&&n.essence);
   $('#noteOverlay').classList.add('open');
   setMdMode('split'); updatePreview();
   $('#noteTitle').focus();
@@ -8464,13 +8946,14 @@ function saveNote(){
   const title=$('#noteTitle').value.trim();
   const path=$('#notePath').value||'';
   const content=$('#noteContent').value.trim();
+  const essence=!!($('#noteEssence')&&$('#noteEssence').checked);
   if(!title){ toast('请填写笔记标题'); $('#noteTitle').focus(); return; }
   const now=Date.now();
   let it=editingId?getItem(editingId):null;
-  if(it){ it.title=title; it.path=path; it.content=content; it.updated=now; ensureReview(it); setItemSubject(it); }
-  else{ it={id:genItemId('n'),kind:'note',path,subject:'other',title,content,created:now,updated:now,rv:newReview(now)};
+  if(it){ it.title=title; it.path=path; it.content=content; it.essence=essence; it.updated=now; ensureReview(it); setItemSubject(it); }
+  else{ it={id:genItemId('n'),kind:'note',path,subject:'other',title,content,essence,created:now,updated:now,rv:newReview(now)};
     setItemSubject(it); state.items.push(it); }
-  saveState(); closeNoteEditor(); afterItemChange(); toast('笔记已保存');
+  saveState(); closeNoteEditor(); afterItemChange(); recheckMastery(path); toast('笔记已保存');
 }
 /* ---- 错题编辑器（关联考点） ---- */
 function openMistakeEditor(id, presetPath){
@@ -8484,6 +8967,11 @@ function openMistakeEditor(id, presetPath){
   $('#mistakeWrong').value=m?(m.wrong||''):'';
   $('#mistakeAnalysis').value=m?(m.analysis||''):'';
   $('#mistakeStatusInput').value=m?(m.status||'open'):'open';
+  $('#mistakeChapter').value=m?(m.chapter||''):'';
+  $('#mistakePage').value=m?(m.page||''):'';
+  $('#mistakeQno').value=m?(m.qno||''):'';
+  fillMistakeBook(); const _mb=$('#mistakeBook'); if(m&&m.bookId&&_mb) _mb.value=m.bookId;
+  refreshMistakeReasons(m?(m.reasons||[]):[]);
   $('#mistakeOverlay').classList.add('open');
   $('#mistakeQuestion').focus();
 }
@@ -8499,12 +8987,14 @@ function saveMistake(){
   const wrong=$('#mistakeWrong').value.trim();
   const analysis=$('#mistakeAnalysis').value.trim();
   const status=$('#mistakeStatusInput').value||'open';
+  const bookId=$('#mistakeBook').value, chapter=$('#mistakeChapter').value.trim(), page=$('#mistakePage').value.trim(), qno=$('#mistakeQno').value.trim();
+  const reasons=selectedReasons($('#mistakeReasons'));
   const now=Date.now();
   let m=mistakeEditingId?getItem(mistakeEditingId):null;
-  if(m){ Object.assign(m,{title,path,question,wrong,analysis,status,updated:now}); ensureReview(m); setItemSubject(m); }
-  else{ m={id:genItemId('k'),kind:'mistake',path,subject:'other',title,question,wrong,analysis,status,created:now,updated:now,rv:newReview(now)};
+  if(m){ Object.assign(m,{title,path,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,updated:now}); ensureReview(m); setItemSubject(m); }
+  else{ m={id:genItemId('k'),kind:'mistake',path,subject:'other',title,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,created:now,updated:now,rv:newReview(now)};
     setItemSubject(m); state.items.push(m); }
-  saveState(); closeMistakeEditor(); afterItemChange(); toast('错题已保存');
+  saveState(); closeMistakeEditor(); afterItemChange(); recheckMastery(path); toast('错题已保存');
 }
 function openItemById(id){
   const it=getItem(id); if(!it) return;
@@ -10476,6 +10966,71 @@ function init(){
   $('#mistakeCloseBtn').addEventListener('click', closeMistakeEditor);
   $('#mistakeCancelBtn').addEventListener('click', closeMistakeEditor);
   $('#mistakeSaveBtn').addEventListener('click', saveMistake);
+
+  /* 批4：知识定位 / 做题 / 书源错因库 */
+  $('#locatorOverlay').addEventListener('click', ev=>{ if(ev.target.id==='locatorOverlay') closeLocatorEditor(); });
+  $('#locatorCloseBtn').addEventListener('click', closeLocatorEditor);
+  $('#locatorCancelBtn').addEventListener('click', closeLocatorEditor);
+  $('#locatorSaveBtn').addEventListener('click', saveLocator);
+
+  $('#practiceOverlay').addEventListener('click', ev=>{ if(ev.target.id==='practiceOverlay') closePracticeEditor(); });
+  $('#practiceCloseBtn').addEventListener('click', closePracticeEditor);
+  $('#practiceCancelBtn').addEventListener('click', closePracticeEditor);
+  $('#practiceSaveBtn').addEventListener('click', savePractice);
+  $('#practicePath').addEventListener('change', fillPracticeBooks);
+  $('#prResultSeg').addEventListener('click', ev=>{
+    const b=ev.target.closest('button[data-prresult]'); if(!b) return;
+    $('#prResultSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    const v=b.dataset.prresult;
+    document.querySelectorAll('input[name="prResult"]').forEach(r=>{ r.checked=(r.value===v); });
+    const wrong=v==='wrong';
+    $('#practiceWrongBox').classList.toggle('mk-hidden',!wrong);
+  });
+  $('#practiceOverlay').addEventListener('click', ev=>{
+    const chip=ev.target.closest('.reason-chip'); if(!chip) return;
+    if(chip.dataset.reasonAdd){
+      const name=(prompt('输入新的错因名称：')||'').trim();
+      if(name){ if(!state.reasons.includes(name)) state.reasons.push(name); refreshPracticeReasonBox(selectedReasons($('#practiceReasons')).concat([name])); }
+    } else chip.classList.toggle('on');
+  });
+
+  $('#mistakePath').addEventListener('change', fillMistakeBook);
+  $('#mistakeOverlay').addEventListener('click', ev=>{
+    const chip=ev.target.closest('.reason-chip'); if(!chip) return;
+    if(chip.dataset.reasonAdd){
+      const name=(prompt('输入新的错因名称：')||'').trim();
+      if(name){ if(!state.reasons.includes(name)) state.reasons.push(name); refreshMistakeReasons(selectedReasons($('#mistakeReasons')).concat([name])); }
+    } else chip.classList.toggle('on');
+  });
+
+  $('#libraryBtn').addEventListener('click', openLibrary);
+  $('#libraryOverlay').addEventListener('click', ev=>{ if(ev.target.id==='libraryOverlay') closeLibrary(); });
+  $('#libraryCloseBtn').addEventListener('click', closeLibrary);
+  $('#libraryDoneBtn').addEventListener('click', closeLibrary);
+  $('#libTabs').addEventListener('click', ev=>{ const b=ev.target.closest('[data-lib-tab]'); if(b){ libGroup=b.dataset.libTab; renderLibrary(); } });
+  $('#libBooks').addEventListener('click', ev=>{
+    const b=ev.target.closest('[data-lib-delbook]'); if(!b) return;
+    const id=b.dataset.libDelbook;
+    state.books[libGroup]=(state.books[libGroup]||[]).filter(x=>x.id!==id);
+    saveState(); renderLibrary();
+  });
+  $('#libAddBookBtn').addEventListener('click', ()=>{
+    const inp=$('#libBookInput'), name=inp.value.trim();
+    if(!name){ inp.focus(); return; }
+    if(!state.books[libGroup]) state.books[libGroup]=[];
+    if(state.books[libGroup].some(b=>b.name===name)){ toast('该书已存在'); return; }
+    state.books[libGroup].push({id:genBookId(),name}); inp.value=''; saveState(); renderLibrary(); toast('已添加书源');
+  });
+  $('#libReasons').addEventListener('click', ev=>{
+    const b=ev.target.closest('[data-lib-delreason]'); if(!b) return;
+    state.reasons.splice(Number(b.dataset.libDelreason),1); saveState(); renderLibrary();
+  });
+  $('#libAddReasonBtn').addEventListener('click', ()=>{
+    const inp=$('#libReasonInput'), name=inp.value.trim();
+    if(!name){ inp.focus(); return; }
+    if(state.reasons.includes(name)){ toast('该错因已存在'); return; }
+    state.reasons.push(name); inp.value=''; saveState(); renderLibrary(); toast('已添加错因');
+  });
 
   /* 笔记编辑器：工具栏 / 模式切换 / 实时预览 */
 
