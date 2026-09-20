@@ -7439,7 +7439,7 @@ function isSectionOpen(subId, ci, si){ return openState[`${subId}/${ci}/${si}`] 
 const WORDS=(typeof window.WORDS_DATA!=='undefined'&&Array.isArray(window.WORDS_DATA))?window.WORDS_DATA:[];
 const WORD_DAILY_DEF=80;
 let wSession=null;
-const wView={letter:'ALL',kw:'',showAll:false,openKey:''};
+const wView={letter:'a',kw:'',showAll:false,openKey:'',locateKey:''};
 function wDailyN(){ return planWordPerDay(); }
 function normWord(s){ return String(s).toLowerCase().trim().replace(/\s+/g,' '); }
 function wKey(i){ return normWord(WORDS[i][0]); }
@@ -8592,20 +8592,21 @@ function renderWords(){
    +'<button class="w-showall" id="wShowAll" type="button">'+(wView.showAll?'隐藏全部释义':'显示全部释义')+'</button></div>';
   h+='<div class="w-abc" id="wAbc"></div><div class="w-list" id="wList"></div>';
   app.innerHTML=h;
-  wView.located=false;
+  if(wView.letter==='ALL')wView.letter='a';
+  wView.locateKey='';
   renderWordsAbc(); renderWordsList();
   const si=$('#wSearchInput');
-  si.addEventListener('input',e=>{ wView.kw=e.target.value; wView.letter='ALL'; wView.located=true; renderWordsAbc(); renderWordsList(); const n=$('#wSearchInput'); n.focus(); const t=n.value; n.setSelectionRange(t.length,t.length); });
+  si.addEventListener('input',e=>{ wView.kw=e.target.value; wView.locateKey=''; renderWordsList(); const n=$('#wSearchInput'); n.focus(); const t=n.value; n.setSelectionRange(t.length,t.length); });
   $('#wShowAll').addEventListener('click',()=>{ wView.showAll=!wView.showAll; wView.openKey=''; renderWordsList(); const b=$('#wShowAll'); if(b)b.textContent=wView.showAll?'隐藏全部释义':'显示全部释义'; });
 }
 function renderWordsAbc(){
   const el=$('#wAbc'); if(!el)return; const Lm=wLetters();
-  let h='<button class="'+(wView.letter==='ALL'?'on':'')+'" data-l="ALL">全部</button>';
+  let h='';
   const keys=Object.keys(Lm).sort();
   keys.forEach(L=>{ if(L==='#'){ h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="#">#</button>'; }
     else h+='<button class="'+(wView.letter===L?'on':'')+'" data-l="'+L+'">'+L.toUpperCase()+'<span class="badge">'+Lm[L].length+'</span></button>'; });
   el.innerHTML=h;
-  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{wView.letter=b.dataset.l;wView.kw='';wView.openKey='';wView.located=true;renderWords();}));
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{wView.letter=b.dataset.l;wView.kw='';wView.openKey='';wView.locateKey='';renderWords();}));
 }
 let wIO=null;
 function wLetterGroups(){ return wLetters(); }
@@ -8625,26 +8626,17 @@ function renderWordsList(){
     el.innerHTML=idxs.length?('<div class="w-searchres">'+idxs.map(wordRow).join('')+'</div>'):'<div style="color:var(--ink-3);font-size:13px;padding:10px">没有匹配的单词。</div>';
     return;
   }
-  const letters=(wView.letter==='ALL')?Object.keys(Lm).sort():[wView.letter];
-  el.innerHTML=letters.map(L=>'<div class="w-letter"><div class="w-letter-h">'+(L==='#'?'#':L.toUpperCase())+'<span>'+(Lm[L]?Lm[L].length:0)+'</span></div><div class="w-letter-body" data-l="'+L+'"></div></div>').join('');
-  const bodies=el.querySelectorAll('.w-letter-body');
-  if(wView.letter==='ALL'){
-    if(typeof IntersectionObserver!=='undefined'){
-      wIO=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ const b=e.target; if(b.dataset.fill!=='1')fillLetter(b.dataset.l,b); wIO.unobserve(b); locateLastWord(); } }); },{root:null,rootMargin:'300px 0px 600px 0px'});
-      bodies.forEach(b=>wIO.observe(b));
-    } else { bodies.forEach(b=>fillLetter(b.dataset.l,b)); }
-    locateLastWord();
-  } else {
-    bodies.forEach(b=>fillLetter(b.dataset.l,b));
-  }
+  const L=wView.letter;
+  const arr=Lm[L]||[];
+  el.innerHTML='<div class="w-letter"><div class="w-letter-h">'+(L==='#'?'#':L.toUpperCase())+'<span>'+arr.length+'</span></div><div class="w-letter-body" data-l="'+L+'">'+arr.map(wordRow).join('')+'</div></div>';
+  locateLastWord();
 }
+function wLetterOf(word){ const ch=String(word||'')[0]; return /[a-z]/i.test(ch)?ch.toLowerCase():'#'; }
 function locateLastWord(){
-  if(wView.located)return; const k=state.wordLast; if(!k||wView.letter!=='ALL')return;
-  const idx=WORDS.findIndex(x=>normWord(x[0])===k); if(idx<0)return;
-  const L=(/[a-z]/i.test(WORDS[idx][0][0])?WORDS[idx][0][0].toLowerCase():'#');
-  const body=document.querySelector('.w-letter-body[data-l="'+L+'"]'); if(!body)return;
-  if(body.dataset.fill!=='1')fillLetter(L,body);
-  wView.located=true;
+  const k=wView.locateKey; if(!k)return;
+  const idx=WORDS.findIndex(x=>normWord(x[0])===k);
+  wView.locateKey='';
+  if(idx<0)return;
   setTimeout(()=>{ const row=document.getElementById('wrow'+idx); if(row){ row.scrollIntoView({block:'center'}); row.classList.add('wflash'); setTimeout(()=>row.classList.remove('wflash'),1800); } },120);
 }
 function wBookSrcSel(i){
@@ -8689,7 +8681,7 @@ function wordRow(i){
 }
 function wJumpWord(wd){
   const k=normWord(wd); const idx=WORDS.findIndex(x=>normWord(x[0])===k); if(idx<0)return toast('词库中没有「'+wd+'」');
-  wView.openKey=k; wView.kw=''; wView.letter='ALL'; wView.located=false; renderWords();
+  wView.letter=wLetterOf(WORDS[idx][0]); wView.kw=''; wView.openKey=k; wView.locateKey=k; renderWords();
 }
 function wToggleRow(i){ wView.openKey=(wView.openKey===wKey(i))?'':wKey(i); renderWordsList(); }
 function wQuick(i,g){ wGrade(i,g); renderWordsAbc(); renderWordsList(); try{renderSidebar();}catch(e){} try{renderPlan();}catch(e){} }
