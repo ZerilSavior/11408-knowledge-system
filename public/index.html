@@ -637,12 +637,12 @@
       </div>
     </div>
     <div class="editor-page">
-      <input type="hidden" id="locatorPath">
+      <input type="hidden" id="locatorPath"><datalist id="locatorSourceList"></datalist>
       <div class="mk-field">
         <label>来源类型</label>
         <select id="locatorKind" class="path-select" style="max-width:none;width:100%">
-          <option value="教材">教材</option>
           <option value="辅导讲义">辅导讲义</option>
+          <option value="教材">教材</option>
           <option value="网课">网课 / 视频课</option>
           <option value="网站">网站 / 电子资料</option>
           <option value="其他">其他</option>
@@ -650,7 +650,7 @@
       </div>
       <div class="mk-field">
         <label>书名 / 讲义 / 网站 / 老师（必填）</label>
-        <input id="locatorSource" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="例如：王道·数据结构复习指导 / 唐迟阅读班 / B站某老师" autocomplete="off">
+        <input id="locatorSource" list="locatorSourceList" class="note-title-input" style="width:100%;box-sizing:border-box" placeholder="例如：王道·数据结构复习指导 / 唐迟阅读班 / B站某老师" autocomplete="off">
       </div>
       <div class="mk-field">
         <label>具体位置（必填：页码 / 第几节课 / 章节）</label>

@@ -7,10 +7,10 @@ const BOOK_GROUPS = [
   { key:'poli', label:'政治', subs:['poli1','poli2','poli3','poli4','poli5','poli6'] }
 ];
 const DEFAULT_BOOKS = {
-  c408: ['王道考研·数据结构复习指导','王道考研·计算机组成原理复习指导','王道考研·操作系统复习指导','王道考研·计算机网络复习指导','王道考研·408历年真题','天勤·408高分笔记'],
+  c408: ['王道考研·数据结构复习指导','王道考研·计算机组成原理复习指导','王道考研·操作系统复习指导','王道考研·计算机网络复习指导','王道考研·408历年真题','天勤·408高分笔记','王道习题册','王道强化PPT','袁春风《计算机组成原理》','王卓数据结构强化PPT','里昂25计组讲义','里昂26操作系统讲义','湖科大《深入浅出计算机网络》','湖科大计算机网络强化'],
   math: ['郭雨港·数一所有题型分类、通用解法详解','郭雨港·名师习题册','李永乐·数学复习全书（数学一）','李永乐·数学基础过关660题','张宇·基础30讲','张宇·题源探析1000题','汤家凤·接力题典1800','数学一历年真题'],
   eng:  ['张剑黄皮书·英语一历年真题','考研真相·英语一','唐迟·阅读的逻辑','王江涛·高分写作'],
-  poli: ['肖秀荣·知识点精讲精练','肖秀荣·1000题','徐涛·核心考案','肖四','肖八']
+  poli: ['肖秀荣·知识点精讲精练','肖秀荣·1000题','徐涛·核心考案','肖四','肖八','大李子知识清单','大李子720题']
 };
 const DEFAULT_REASONS = ['概念/定义不清','公式或定理记错','定理适用条件忽略','解题方法不会','计算失误','审题错误','跳步导致出错','时间不够没做完','粗心笔误','知识点遗忘'];
 function genBookId(){ return 'bk'+Date.now()+Math.random().toString(36).slice(2,6); }
@@ -193,7 +193,8 @@ function openLocatorEditor(path, id){
   const list=locatorsOf(path), l=id?list.find(x=>x.id===id):null;
   $('#locatorEditorTitle').textContent=l?'编辑知识定位':'添加知识定位';
   $('#locatorPath').value=path||'';
-  $('#locatorKind').value=l?(l.kind||'教材'):'教材';
+  (function(){var dl=$('#locatorSourceList');if(dl)dl.innerHTML=booksForSub(subjOfPath(path)).map(function(b){return '<option value="'+esc(b.name)+'"></option>';}).join('');})();
+  $('#locatorKind').value=l?(l.kind||'辅导讲义'):'辅导讲义';
   $('#locatorSource').value=l?(l.source||''):'';
   $('#locatorLoc').value=l?(l.loc||''):'';
   $('#locatorNote').value=l?(l.note||''):'';

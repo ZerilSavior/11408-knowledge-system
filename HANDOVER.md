@@ -806,3 +806,19 @@ git push origin main
   * CDP（shot_modular.py，本地 python -m http.server 起在 public、无头 Chrome）：home / tree-ds / tree-math1 / words / plan / reading / mindmap / exams / notes 全部渲染且无 Runtime.exceptionThrown / console error；words=26 字母、无 ALL、默认 A629；导图 /data/mindmap/p001.jpg 真实显示；全局函数 renderPlan/renderWords/renderReading/renderExams/init 均就位。
   * 线上 https://zeril.cn 与 workers.dev：首页为约 29KB 骨架、引用 /js/main.js、无内联大脚本；/js/*、/styles/*、/data/words.js、/data/mindmap/p001.jpg 均 200。
 * 最终架构（高内聚低耦合，零构建原生 ESM）：前端 index.html（纯骨架）+ styles/{base,exam}.css + js/main.js（入口：按序 import → Object.assign 全局自挂 → 启动序列）+ js/core/{util,store,cloud,md-render,ui-shell,bootstrap,app-init} + js/data/{diagrams,syllabus,topic-content} + js/features/{study-loop,words,plan,reading,exams,mindmap,notes,drawings,maps} + data/{words,word-rel,words-rare}.js + mindmap/p001..p726.jpg；后端 worker/{index,http,crypto,schema,auth,data,photos}.js，wrangler.jsonc main 指向 worker/index.js。模块职责以第 15.2 节为准。
+
+
+## 17. 批 17：知识定位联动书源库 + 默认书扩充 + 辅导讲义前置（2026-09-20）
+
+> 诉求：知识定位里「书名 / 讲义 / 网站」原本是纯手输文本框，每次都要手打书名（数学 / 408 / 政治皆然）；要求能直接从书籍库选书；来源类型默认「辅导讲义」；补默认书。
+
+* 知识定位编辑器（`public/index.html` 的 locatorOverlay + `features/study-loop.js` 的 `openLocatorEditor`）：
+  * 来源输入 `#locatorSource` 由纯 input 改为 `input + <datalist id="locatorSourceList">`；打开弹窗时按当前考点所属科组（`booksForSub(subjOfPath(path))`）填充该书单，**可下拉选默认书 / 自加书，也仍可直接手输网课老师 / 网站 / URL**。
+  * locator 数据模型不变：仍只存 `source` 书名字符串（不存 bookId），故云同步 / 掌握判定 / 旧数据全部不受影响。
+  * 来源类型 `#locatorKind` 选项顺序把「辅导讲义」调到第一位，新增定位默认 kind 由「教材」改为「辅导讲义」。
+* 默认书扩充（`DEFAULT_BOOKS`，**只在各数组末尾追加**，确定性 id `bkdef_<组>_<索引>` 不漂移；`normalizeBooks()` 对老用户只增不删、自动补齐）：
+  * c408 追加 8 本：王道习题册、王道强化PPT、袁春风《计算机组成原理》、王卓数据结构强化PPT、里昂25计组讲义、里昂26操作系统讲义、湖科大《深入浅出计算机网络》、湖科大计算机网络强化（现共 14 本）。
+  * poli 追加 2 本：大李子知识清单、大李子720题（现共 7 本）。
+  * math 未改（共 8 本）：用户点名的「张宇·基础30讲」「郭雨港·数一所有题型分类、通用解法详解（通解）」本就在列。
+* 验证：`check_modules.py` BAD=0；`test_books.js` 15 项、`test_plan.js` 59 项全绿；CDP（verify_locator.py，本地 http + 无头 Chrome）政治 datalist=7、408=14（8 本新书全在）、数学=8（张宇30讲 / 郭雨港通解在），首位与默认 kind=辅导讲义，input 的 list 关联成功，选「里昂25计组讲义 + P12」保存闭环正确、弹窗关闭，全程零 Runtime / console 异常。
+* 改动文件：`public/index.html`（locatorOverlay：option 顺序、input 加 list、新增 datalist 元素）、`public/js/features/study-loop.js`（DEFAULT_BOOKS 追加、openLocatorEditor 内联填充 datalist，未新增需导出的顶层符号）。
