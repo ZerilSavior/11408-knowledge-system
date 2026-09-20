@@ -792,3 +792,17 @@ git push origin main
 ### 15.5 回滚
 
 归位前基线 commit **d7a4c77**（批 10 机械拆分版，功能完整但内聚错位）：`git checkout d7a4c77 -- public/js` 后**需手动删除新增的 `public/js/features/plan.js`**。再往前的单文件基线为 0f72679（见 14.8）。
+
+
+## 16. 批 16：重构独立核验 + favicon 收尾（2026-09-20）
+
+> 用户在另一条线已完成批 10/11 模块化后，又提出「前端只写在一个 html、后端不分模块、AI 味重」。核查确认重构**确已完成、提交并上线**，本次未重复拆分，只做独立验证与一处收尾。**根因提示：用户习惯双击 public/index.html（file://）打开，而批 10 起前端是 ES Modules，file:// 下被浏览器 CORS 拦截会整页空白 / 静默不执行——这会让人误以为「还是老的单文件 / 没改」。本地预览必须走 http（双击 start-web.bat，或 python -m http.server --directory public），线上 https 不受影响。**
+
+* 重构前两轮小迭代已包含在模块化版本中、功能归属：书源按书名去重 + 数学新增郭雨港两本（commit 7eddcf5）在 features/study-loop.js（DEFAULT_BOOKS 确定性 id / normalizeBooks / mergeBooks）；词汇页删「全部」分类、默认进字母 A 单字母渲染（commit 0f72679，批 10 重构基线）在 features/words.js（wView.letter='a' / wLetterOf / 无 data-l="ALL" 按钮）。
+* 收尾：index.html 加内联 SVG favicon（与顶栏节点网络 logo 一致，data URI，零额外请求），消除控制台唯一的 /favicon.ico 404。commit 2519c54，线上 Version 482f05ad。
+* 独立验证（不依赖批 10/11 自述）：
+  * check_modules.py：public/js、public/data、worker 共 29 个 JS 模块 node --check 全过，BAD=0。
+  * 单测：test_plan.js 59 项、test_books.js 15 项全绿（经 bundle_harness.js 按 main.js 顺序拼装载入）。
+  * CDP（shot_modular.py，本地 python -m http.server 起在 public、无头 Chrome）：home / tree-ds / tree-math1 / words / plan / reading / mindmap / exams / notes 全部渲染且无 Runtime.exceptionThrown / console error；words=26 字母、无 ALL、默认 A629；导图 /data/mindmap/p001.jpg 真实显示；全局函数 renderPlan/renderWords/renderReading/renderExams/init 均就位。
+  * 线上 https://zeril.cn 与 workers.dev：首页为约 29KB 骨架、引用 /js/main.js、无内联大脚本；/js/*、/styles/*、/data/words.js、/data/mindmap/p001.jpg 均 200。
+* 最终架构（高内聚低耦合，零构建原生 ESM）：前端 index.html（纯骨架）+ styles/{base,exam}.css + js/main.js（入口：按序 import → Object.assign 全局自挂 → 启动序列）+ js/core/{util,store,cloud,md-render,ui-shell,bootstrap,app-init} + js/data/{diagrams,syllabus,topic-content} + js/features/{study-loop,words,plan,reading,exams,mindmap,notes,drawings,maps} + data/{words,word-rel,words-rare}.js + mindmap/p001..p726.jpg；后端 worker/{index,http,crypto,schema,auth,data,photos}.js，wrangler.jsonc main 指向 worker/index.js。模块职责以第 15.2 节为准。
