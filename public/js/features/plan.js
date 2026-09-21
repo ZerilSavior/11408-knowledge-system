@@ -6,7 +6,7 @@ const PLAN_LEAF_MINS=60;            // 新考点约 1h
 
 const PLAN_LEARNED_MINS=30;         // 已学过章节的考点 0.5h
 
-const PLAN_POLI_MINS=30;            // 政治每考点 0.5h
+const PLAN_POLI_MINS=60;            // 政治每考点 1h
 
 const PLAN_POLI_CAP_DATE='2026-10-01';  // 10月前政治≤1h，之后≤2h
 
@@ -183,13 +183,13 @@ function planBuild(){
     group.forEach(([sid])=>{ const got=consume(sid,bud[sid]); arr=arr.concat(got); total+=got.reduce((a,l)=>a+l.w,0); });
     let remain=budget-total;
     const hasLeft={}; group.forEach(([sid])=>{ const q=Q[sid]; hasLeft[sid]=q.fp<q.f.length||q.lp<q.l.length; });
-    if(autoFill && remain>=PLAN_POLI_MINS-0.01){
+    if(autoFill && remain>=PLAN_LEARNED_MINS-0.01){
       const elig=group.filter(([sid])=>hasLeft[sid]&&bud[sid]>0.01).map(([sid])=>sid);
       const wsum=elig.reduce((a,sid)=>a+bud[sid],0);
       if(wsum>0){
         elig.forEach(sid=>{ const got=consume(sid,remain*bud[sid]/wsum); arr=arr.concat(got); const u=got.reduce((a,l)=>a+l.w,0); total+=u; remain-=u; });
         const order=elig.slice().sort((a,b)=>bud[b]-bud[a]); let guard=0;
-        while(remain>=PLAN_POLI_MINS-0.01 && guard<500){ let progressed=false;
+        while(remain>=PLAN_LEARNED_MINS-0.01 && guard<500){ let progressed=false;
           for(const sid of order){ const q=Q[sid]; let l=null,wh=null;
             if(q.fp<q.f.length&&q.f[q.fp].w<=remain+.01){ l=q.f[q.fp];wh='f'; }
             else if(q.lp<q.l.length&&q.l[q.lp].w<=remain+.01){ l=q.l[q.lp];wh='l'; }
@@ -309,7 +309,7 @@ function planApplyOverrides(days){
     const list=ov[d.date]; if(!list||!list.swaps)return;
     list.swaps.forEach(sp=>{
       const cur=pos[sp.from]; if(!cur||cur.di!==d.idx)return;
-      if(planLeafDone(sp.to)||!index[sp.to])return;
+      if((planLeafDone(sp.to)&&state.mastery[sp.to]!=='unlearned')||!index[sp.to])return;
       const nl=Object.assign({},index[sp.to]);
       const other=pos[sp.to];
       if(other&&other.di!==d.idx){
@@ -337,7 +337,7 @@ function planSwapCandidates(date,fromPath){
   Object.keys(index).forEach(p=>{
     if(p===fromPath)return; const l=index[p];
     if(l.mod!==from.mod)return;
-    if(planLeafDone(p))return;
+    if(planLeafDone(p)&&state.mastery[p]!=='unlearned')return;
     if(l.w!==from.w)return;                 // 时长守恒（0.5h↔0.5h、1h↔1h）
     if(l.mod!=='poli'&&(l.lv||0)<(from.lv||0)&&((from.lv||0)-(l.lv||0))>1)return;  // 往低换限≤1级，往高换不限
     const pd=pos[p];
