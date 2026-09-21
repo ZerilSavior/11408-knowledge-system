@@ -323,6 +323,12 @@ function planApplyOverrides(days){
   days.forEach(d=>d.leaves.sort((a,b)=>(mo[a.mod]-mo[b.mod])||(b.lv-a.lv)||(b.p-a.p)||(a.seq-b.seq)));
 }
 
+function planSubOrder(mod){
+  if(mod==='c408') return ['ds','co','os','net'];
+  if(mod==='math') return ['math1','math2','math3'];
+  if(mod==='poli') return PLAN_POLI_SUBS.slice();
+  return [];
+}
 function planSwapCandidates(date,fromPath){
   const b=planBuild(),index=planLeafIndex(); const from=index[fromPath]; if(!from)return [];
   const today=planTodayStr(); const pos={}; b.days.forEach(d=>d.leaves.forEach(l=>{pos[l.path]=d.date;}));
@@ -339,12 +345,13 @@ function planSwapCandidates(date,fromPath){
     if(lockNow&&lockNow.indexOf(p)>=0)return;
     l._date=pd||''; out.push(l);
   });
+  const subOrder=planSubOrder(from.mod);
   out.sort((a,c)=>{
-    const ra=a._date?1:0,rc=c._date?1:0; if(rc!==ra)return rc-ra;
-    if(a._date&&c._date&&a._date!==c._date)return a._date<c._date?-1:1;
-    return (c.lv-a.lv)||(c.p-a.p)||(a.seq-c.seq);
+    const sa=subOrder.indexOf(a.sub),sc=subOrder.indexOf(c.sub);
+    if(sa!==sc)return sa-sc;
+    return (a.seq||0)-(c.seq||0);
   });
-  return out.slice(0,30);
+  return out;
 }
 
 function planSwapOverlayEl(){
@@ -380,8 +387,18 @@ function planUndoSwap(date,fromPath){
 function planOpenSwap(date,path){
   const index=planLeafIndex(),from=index[path],cands=planSwapCandidates(date,path);
   if(planDiff(planTodayStr(),date)<0){ toast('过去日期的任务已锁定，不能调整'); return; }
-  let rows=cands.map(l=>'<button class="p-swopt" onclick="planSwap(\''+date+'\',\''+path+'\',\''+l.path+'\')">'
-    +freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span><span class="p-swsub">'+l.subName+(l.w===30?' · 0.5h':' · 1h')+(l._date?' · '+l._date.slice(5):' · 未排')+'</span></button>').join('');
+  const subOrder=planSubOrder(from.mod);
+  const groups={}; cands.forEach(l=>{ (groups[l.sub]=groups[l.sub]||[]).push(l); });
+  let rows='';
+  subOrder.forEach(sid=>{
+    const gs=groups[sid]; if(!gs||!gs.length)return;
+    rows+='<div class="p-subgrp">'+esc(gs[0].subName)+' · '+gs.length+'</div>';
+    gs.forEach(l=>{
+      rows+='<button class="p-swopt" onclick="planSwap(\''+date+'\',\''+path+'\',\''+l.path+'\')">'
+        +freqPill(l.path)+'<span class="p-ti">'+esc(l.title)+'</span>'
+        +'<span class="p-swsub">'+(l.w===30?'0.5h':'1h')+(l._date?' · '+l._date.slice(5):' · 未排')+'</span></button>';
+    });
+  });
   if(!rows)rows='<div class="sub" style="padding:10px">没有符合条件的同级考点可换（同模块、时长相同、考频接近、未掌握、未排入计划）。</div>';
   const ov=planOverrides()[date]; const swapped=ov&&ov.swaps?ov.swaps.find(sp=>sp.from===path):null;
   const inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'，'+(from.w===30?'0.5h':'1h')+'）。只列同学科模块、时长相同、考频相差不超过一级、未掌握且未排入的考点，替换前后当天数量与总时长不变。</div>'
