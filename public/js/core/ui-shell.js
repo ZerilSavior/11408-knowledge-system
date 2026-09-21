@@ -30,12 +30,12 @@ function renderSidebar(){
   const examBtn=examSidebarItem().replace('class="snav ','class="snav sub ');
   let html=planSidebarItem();
   html+=group('数学一 · 150 分','#7b53d6',['math1','math2','math3'].map(subBtn).join(''));
-  html+=group('408 计算机 · 150 分','#1a9e6e',['ds','co','os','net'].map(subBtn).join(''));
+  html+=group('408 计算机 · 150 分','#1a9e6e',['ds','co','os','net'].map(subBtn).join('')
+     +toolBtn('#/code50','代码题50','CODE','#c05b1f',code50SideMeta(),null));
   html+=group('英语一 · 100 分','#2f7fd6',
      subBtn('eng')
      +toolBtn('#/words','英语词汇','WORDS','#2f7fd6',ws.learned+' / '+WORDS.length+' 已背',Math.round(100*ws.learned/WORDS.length))
      +toolBtn('#/reading','阅读打卡','READ','#0a8a5f',readingSideMeta(),null)
-     +toolBtn('#/code50','代码题50','CODE','#c05b1f',code50SideMeta(),null)
      +toolBtn('#/mindmap','导图速记','MIND','#8e44ad',mindmapSideMeta(),null));
   html+=group('政治 · 100 分','#c0392b',['poli1','poli2','poli3','poli4','poli5','poli6'].map(subBtn).join(''));
   html+=group('学习工具','#5b6b7e',examBtn+notesBtn);
