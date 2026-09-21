@@ -529,11 +529,12 @@ function planLeafRow(l,date){
   const done=planLeafDone(l.path);
   const past=planDiff(planTodayStr(),date)<0;
   const swap=(past||done)?'':'<button class="p-swap" title="同时长同级换题" onclick="planOpenSwap(\''+date+'\',\''+l.path+'\')">⇄</button>';
-  const half=(l.mod!=='poli'&&l.w===PLAN_LEARNED_MINS)?'<span class="p-half" title="已学章节·0.5h">½</span>':'';
+  const isHalf=l.w===PLAN_LEARNED_MINS;
+  const dur='<span class="p-dur '+(isHalf?'half':'full')+'" title="'+(isHalf?'0.5h':'1h')+'">'+(isHalf?'½':'1h')+'</span>';
   const polinote=(l.mod==='poli'&&planPoliNoteDone(l.path)&&state.mastery[l.path]!=='mastered')?'<span class="p-half" style="background:#fdecea;color:#c0392b" title="已有本章笔记">记</span>':'';
   return '<div class="p-leaf'+(done?' done':'')+'" data-p="'+l.path+'">'
     +'<input type="checkbox" class="p-cb" '+(done?'checked':'')+' onclick="planToggleLeaf(\''+l.path+'\')">'
-    +'<span class="p-lt">'+freqPill(l.path)+half+polinote+'<span class="p-ti">'+esc(l.title)+'</span></span>'
+    +'<span class="p-lt">'+freqPill(l.path)+dur+polinote+'<span class="p-ti">'+esc(l.title)+'</span></span>'
     +swap+'<button class="p-go" onclick="location.hash=\'#/tree/'+l.path+'\'">考点 ›</button></div>';
 }
 
@@ -541,12 +542,17 @@ function planGroupLeaves(day){
   let html=''; const order=['c408','math','poli']; const names={c408:'408',math:'数一',poli:'政治'}; const colors={c408:'#1a9e6e',math:'#7b53d6',poli:'#c0392b'};
   order.forEach(mk=>{
     const ls=day.leaves.filter(l=>l.mod===mk); if(!ls.length)return;
-    let last=null;
     const gDone=ls.filter(l=>planLeafDone(l.path)).length;
     html+='<div class="p-grp"><span class="p-dot" style="background:'+colors[mk]+'"></span>'+names[mk]+' · '+ls.length+'个 · '+(ls.reduce((a,l)=>a+l.w,0)/60).toFixed(1)+'h'+(gDone===ls.length?' <b style="color:var(--kc-done)">✓ 已完成</b>':' · '+gDone+'/'+ls.length)+'</div>';
     const lo=(day.leftover&&day.leftover[mk])||0;
     if(lo>=30&&day.custom) html+='<div class="p-leftover">⚠ 有子科已学完，空余 '+(lo/60).toFixed(1)+'h 未安排（按你今天设定的时长，引擎不擅自转给他科）；点「今日各科时长」把它补到未完成科目。</div>';
-    ls.forEach(l=>{ if(l.subName!==last){ html+='<div class="p-subgrp">'+l.subName+'</div>'; last=l.subName; } html+=planLeafRow(l,day.date); });
+    const subGroups={}; ls.forEach(l=>{ (subGroups[l.sub]=subGroups[l.sub]||[]).push(l); });
+    planSubOrder(mk).forEach(sid=>{
+      const gs=subGroups[sid]; if(!gs||!gs.length)return;
+      const gh=gs.reduce((a,l)=>a+l.w,0)/60;
+      html+='<div class="p-subgrp">'+esc(gs[0].subName)+' · '+gs.length+'个 · '+gh.toFixed(1)+'h</div>';
+      gs.forEach(l=>{ html+=planLeafRow(l,day.date); });
+    });
   });
   return html;
 }

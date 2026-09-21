@@ -1470,6 +1470,9 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .p-leaf .p-ti{color:var(--ink)}
 .p-go{border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:7px;padding:4px 10px;font-size:12px;cursor:pointer;flex:none}
 .p-go:hover{border-color:var(--ink-3);color:var(--ink)}
+.p-dur{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:16px;padding:0 4px;border-radius:4px;font-size:10px;font-weight:700;flex:none;line-height:1}
+.p-dur.half{background:#fff3e0;color:#e65100}
+.p-dur.full{background:#e3f2fd;color:#1565c0}
 .p-prog{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:13px;color:var(--ink-2)}
 .p-prog .pbar{flex:1}
 .p-quick{display:flex;flex-direction:column;gap:12px}
