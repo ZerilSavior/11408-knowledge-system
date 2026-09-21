@@ -35,6 +35,7 @@ function renderSidebar(){
      subBtn('eng')
      +toolBtn('#/words','英语词汇','WORDS','#2f7fd6',ws.learned+' / '+WORDS.length+' 已背',Math.round(100*ws.learned/WORDS.length))
      +toolBtn('#/reading','阅读打卡','READ','#0a8a5f',readingSideMeta(),null)
+     +toolBtn('#/code50','代码题50','CODE','#c05b1f',code50SideMeta(),null)
      +toolBtn('#/mindmap','导图速记','MIND','#8e44ad',mindmapSideMeta(),null));
   html+=group('政治 · 100 分','#c0392b',['poli1','poli2','poli3','poli4','poli5','poli6'].map(subBtn).join(''));
   html+=group('学习工具','#5b6b7e',examBtn+notesBtn);
@@ -92,6 +93,12 @@ function currentRoute(){
 
   }
 
+  if(h.indexOf('#/code50')===0){
+
+    return {type:'code50'};
+
+  }
+
   if(h.indexOf('#/mindmap')===0){
 
     return {type:'mindmap'};
@@ -135,6 +142,7 @@ function render(){
 
   $('#view-plan').classList.toggle('active', route.type==='plan');
   $('#view-reading').classList.toggle('active', route.type==='reading');
+  $('#view-code50').classList.toggle('active', route.type==='code50');
 
   $('#view-mindmap').classList.toggle('active', route.type==='mindmap');
 
@@ -175,6 +183,7 @@ function render(){
 
   else if(route.type==='plan') renderPlan();
   else if(route.type==='reading') renderReading();
+  else if(route.type==='code50') renderCode50();
 
   else if(route.type==='mindmap') renderMindmap();
 

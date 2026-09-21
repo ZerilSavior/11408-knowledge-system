@@ -46,6 +46,7 @@ function cloudSave(immediate){
     api('/api/data', 'POST', { key: 'masteryManual', value: state.masteryManual }).catch(()=>{});
     api('/api/data', 'POST', { key: 'exams', value: state.exams }).catch(()=>{});
     api('/api/data', 'POST', { key: 'reading', value: state.reading }).catch(()=>{});
+    api('/api/data', 'POST', { key: 'code50', value: state.code50 }).catch(()=>{});
     api('/api/data', 'POST', { key: 'planOverrides', value: state.planOverrides }).catch(()=>{});
     api('/api/data', 'POST', { key: 'planTodayLock', value: state.planTodayLock }).catch(()=>{});
 
@@ -97,6 +98,7 @@ async function cloudLoad(){
       if(Array.isArray(r.data.reasons)) state.reasons = Array.from(new Set([...(state.reasons||[]),...r.data.reasons]));
       if(r.data.exams) state.exams = mergeExams(state.exams, r.data.exams);
       if(r.data.reading) state.reading = mergeReading(state.reading, r.data.reading);
+      if(r.data.code50) state.code50 = mergeCode50(state.code50, r.data.code50);
       if(r.data.planOverrides) state.planOverrides = Object.assign({}, state.planOverrides||{}, r.data.planOverrides);
       if(r.data.planTodayLock) state.planTodayLock = r.data.planTodayLock;
       ensureLearningData();

@@ -216,8 +216,7 @@ function planBuild(){
     if(idx<Dlearn){
       const cm=consumeModule(PLAN_C408_SUBS,dc,PLAN_C408_DEF,autoFill); leaves.push(...cm.arr); mins.c408=cm.total; leftover.c408=cm.leftover;
       const mm=consumeModule(PLAN_MATH_SUBS,dc,PLAN_MATH_DEF,autoFill); leaves.push(...mm.arr); mins.math=mm.total; leftover.math=mm.leftover;
-      // 每日一题：代码题预测50题，每天1道，0.5h（额外任务，不占用配额）
-      if(codePtr<codeQ.length){ const cl=codeQ[codePtr++]; cl.w=PLAN_LEARNED_MINS; leaves.push(cl); mins.c408+=cl.w; }
+      // 代码题预测50题已改为独立打卡模块（#/code50），不再混入408考点时间盒
     }
     // 政治：全程排，普通1-5顺序，时政只在真题月
     const cap=planPoliCapH(cfg,date), pBudget=cap*60; let pUsed=0;
