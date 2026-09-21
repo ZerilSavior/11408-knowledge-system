@@ -643,7 +643,9 @@ function renderPlan(){
     const rd=(b.rb&&typeof todayReading==='function')?todayReading():null;
     h+='<div class="p-quick"><div class="p-q"><div class="qi" style="background:#E3F6EE;color:#0a8a5f">读</div><div class="qm"><b>今日阅读打卡</b><span>'+(rd?('应做 '+rd.n+' 篇（'+rd.label+'）'):'单词一轮已完成，去安排阅读')+'</span></div><button onclick="location.hash=\'#/reading\'">去阅读</button></div>';
   }
-  h+='<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div></div>';
+  h+='<div class="p-q"><div class="qi" style="background:#E7EEF8;color:var(--os)">复</div><div class="qm"><b>今日复习</b><span>笔记 / 导图 / 错题待复习 '+dueN+' 条（艾宾浩斯）</span></div><button onclick="location.hash=\'#/notes\'">去复习</button></div>';
+  try{ h+=code50TodayCard(); }catch(e){}
+  h+='</div>';
   h+='<div class="p-card" style="margin-top:14px"><h3>各模块进度</h3>';
   h+='<div class="p-alloc">'+b.allocArr.map(a=>{const pct=a.total?Math.round(100*a.done/a.total):0;return '<div class="pa"><span class="pan">'+a.name+'</span><span class="pab"><i style="width:'+pct+'%;background:'+a.color+'"></i></span><span class="pam">'+a.done+' / '+a.total+' · '+pct+'%</span></div>';}).join('')+'</div>';
   h+='<div class="p-prog" style="margin-top:10px"><span id="pOvProg">计划完成 '+b.done+' / '+b.total+'</span></div><div class="pbar" style="margin:8px 0"><i id="pOvBar" style="width:'+ovPct+'%;background:var(--kc-done)"></i></div>';
