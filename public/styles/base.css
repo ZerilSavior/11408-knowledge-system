@@ -1580,3 +1580,14 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .lib-section-title{font-weight:700;font-size:13px;margin:20px 0 9px}
 .mk-hidden{display:none}
 
+
+/* === 批21：掌握状态锁定、知识定位链接、笔记图片 === */
+.seg button.locked-off{opacity:.4;cursor:not-allowed;background:var(--panel)}
+.seg button.locked-off:hover{background:var(--panel)}
+.seg button.on.mastered.locked{cursor:default}
+.seg button:disabled{cursor:not-allowed}
+.loc-loc{word-break:break-word}
+.loc-link{font-family:var(--font-mono);font-size:11px;color:var(--kc-note);word-break:break-all;text-decoration:underline}
+.loc-copy{margin-left:5px;border:1px solid var(--line);background:var(--panel);border-radius:5px;font-size:10px;padding:0 6px;line-height:17px;cursor:pointer;color:var(--ink-2);vertical-align:middle}
+.loc-copy:hover{background:var(--panel-2)}
+img.md-img{max-width:100%;height:auto;border-radius:8px;margin:6px 0}

@@ -86,7 +86,8 @@ function toggleLearnedChapter(sub,ci){
 function planPoliNoteDone(path){ return (state.items||[]).some(it=>it.kind==='note'&&it.path===path); }
 
 function planLeafDone(path){
-  if(state.mastery[path]==='mastered')return true;
+  const m=state.mastery[path];
+  if(m==='mastered'||m==='studying')return true;
   if(path.indexOf('poli')===0) return planPoliNoteDone(path);
   return false;
 }
@@ -534,7 +535,8 @@ function planGroupLeaves(day){
 }
 
 function planToggleLeaf(path){
-  if(state.mastery[path]==='mastered')delete state.mastery[path]; else state.mastery[path]='mastered';
+  if(state.mastery[path]==='mastered'){ toast('已掌握由四项条件自动判定，不能在此取消'); return; }
+  if(state.mastery[path]==='studying') delete state.mastery[path]; else state.mastery[path]='studying';
   saveState(); cloudSave(); planRefreshCounts(); renderSidebar();
 }
 

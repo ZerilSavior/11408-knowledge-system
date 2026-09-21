@@ -104,14 +104,37 @@ function masteryChecklist(path){
   const mistakesClear = openMistakes===0;
   return { loc, essence, practiced, mistakesClear, ready: loc&&essence&&practiced&&mistakesClear, openMistakes };
 }
-function applyAutoMastery(path){
-  const c=masteryChecklist(path);
-  if(c.ready && !state.masteryManual[path] && state.mastery[path]!=='mastered'){ state.mastery[path]='mastered'; return true; }
-  return false;
+/* 文本中的 http(s) 链接 -> 可点超链接 + 一键复制（先 esc 再替换） */
+function linkifyText(t){
+  let s=esc(t==null?'':String(t));
+  s=s.replace(/(https?:\/\/[A-Za-z0-9~%./?#=&:;+\-@!*'()_,]+)/g,(m0)=>{
+    let url=m0, tail='';
+    const tp=/[.,;!?，。；！？、)]+$/.exec(url);
+    if(tp){ tail=tp[0]; url=url.slice(0,-tail.length); }
+    return '<a class="loc-link" href="'+url+'" target="_blank" rel="noopener noreferrer">'+url+'</a><button type="button" class="loc-copy" data-copy="'+url+'" title="复制链接">复制</button>'+tail;
+  });
+  return s;
 }
+/* 掌握状态唯一权威：四项齐->mastered；不齐而当前 mastered->退回 studying（自动双向） */
+function syncMastery(path){
+  if(!path) return null;
+  const c=masteryChecklist(path);
+  const cur=state.mastery[path];
+  if(c.ready){ if(cur!=='mastered'){ state.mastery[path]='mastered'; return 'up'; } return null; }
+  if(cur==='mastered'){ state.mastery[path]='studying'; return 'down'; }
+  return null;
+}
+function applyAutoMastery(path){ return syncMastery(path)==='up'; }
 function recheckMastery(path){
   if(!path) return false;
-  if(applyAutoMastery(path)){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} cloudSave(); toast('🎉 四项条件已完成，该考点自动标记为「已掌握」'); return true; }
+  const r=syncMastery(path);
+  if(r){
+    try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){}
+    cloudSave();
+    if(r==='up') toast('🎉 四项条件已完成，该考点自动判定为「已掌握」');
+    else toast('掌握条件发生变化，该考点已转回「学习中」');
+    return true;
+  }
   return false;
 }
 function subjOfPath(path){ const info=pathInfo(path); return info?info.sub.id:(path?path.split('/')[0]:''); }
@@ -138,11 +161,9 @@ function masteryPanelHtml(path){
     h+='<div class="mc-item '+(r.ok?'done':'')+'" data-mc-act="'+r.act+'"><span class="mc-ico">'+(r.ok?'✓':'')+'</span><span><span class="mc-t">'+r.t+'</span><span class="mc-s">'+esc(r.s)+'</span></span></div>';
   });
   h+='</div>';
-  if(c.ready) h+='<div class="mc-ready show">✓ 四项条件已完成，考点判定为「已掌握」，笔记与错题已纳入艾宾浩斯复习</div>';
-  else if(state.masteryManual[path] && state.mastery[path]!=='mastered')
-    h+='<div class="mc-auto">当前为手动状态，自动判定已暂停 · <button data-mc-resume="1">恢复自动判定</button></div>';
+  if(c.ready) h+='<div class="mc-ready show">✓ 四项条件已完成，系统已自动判定为「已掌握」，笔记与错题已纳入艾宾浩斯复习</div>';
   else
-    h+='<div class="mc-auto">四项全部完成后自动点亮「已掌握」；也可在上方手动切换状态</div>';
+    h+='<div class="mc-auto">四项条件全部完成后由系统自动判定为「已掌握」，掌握状态不可手动设置；你只需在上方切换「未学 / 学习中」。</div>';
   h+='</div>';
   return h;
 }
@@ -152,7 +173,7 @@ function locatorPanelHtml(path){
   let h='<div class="lc-block"><div class="lc-bt">知识定位<span class="hint">WHERE I LEARNED IT</span><button class="iconbtn" data-add-locator="1">＋ 添加定位</button></div>';
   if(!list.length){ h+='<div class="sj-empty">还没记录来源。写明教材/讲义/网课 + 页码或节次，方便回查。</div>'; }
   else{
-    h+='<div class="loc-list">'+list.map(l=>'<div class="loc-row"><span class="loc-kind">'+esc(l.kind)+'</span><div class="loc-main"><span class="loc-src">'+esc(l.source)+'</span> · <span class="loc-loc">'+esc(l.loc)+'</span>'+(l.note?'<div class="loc-note">'+esc(l.note)+'</div>':'')+'</div><div class="loc-ops"><button data-edit-locator="'+l.id+'">编辑</button><button class="del" data-del-locator="'+l.id+'">删除</button></div></div>').join('')+'</div>';
+    h+='<div class="loc-list">'+list.map(l=>'<div class="loc-row"><span class="loc-kind">'+esc(l.kind)+'</span><div class="loc-main"><span class="loc-src">'+linkifyText(l.source)+'</span> · <span class="loc-loc">'+linkifyText(l.loc)+'</span>'+(l.note?'<div class="loc-note">'+linkifyText(l.note)+'</div>':'')+'</div><div class="loc-ops"><button data-edit-locator="'+l.id+'">编辑</button><button class="del" data-del-locator="'+l.id+'">删除</button></div></div>').join('')+'</div>';
   }
   return h+'</div>';
 }
@@ -217,7 +238,7 @@ function saveLocator(){
 function deleteLocator(path,id){
   if(!state.locators[path]) return;
   state.locators[path]=state.locators[path].filter(x=>x.id!==id);
-  saveState(); afterItemChange(); toast('已删除定位');
+  saveState(); afterItemChange(); recheckMastery(path); toast('已删除定位');
 }
 /* ---- 做题记录编辑器 ---- */
 function openPracticeEditor(presetPath){
@@ -305,5 +326,5 @@ async function cloudInit(){ /* 新版登录后由 cloudLoad 处理 */ }
 /* ===== 用户认证 + 云端同步 ===== */
 
 
-Object.assign(globalThis, { BOOK_GROUPS, DEFAULT_BOOKS, DEFAULT_REASONS, genBookId, defBookId, normalizeBooks, bookGroupOf, ensureLearningData, booksForSub, bookName, locatorsOf, practicesOf, mergePathArrays, mergeBooks, masteryChecklist, applyAutoMastery, recheckMastery, subjOfPath, mistakeSourceText, masteryPanelHtml, locatorPanelHtml, practicePanelHtml, reasonChipsHtml, selectedReasons, refreshReasonChips, bookOptionsHtml, locatorEditingId, openLocatorEditor, closeLocatorEditor, saveLocator, deleteLocator, openPracticeEditor, closePracticeEditor, fillPracticeBooks, refreshPracticeReasonBox, practiceToggleResult, savePractice, deletePractice, libGroup, openLibrary, closeLibrary, renderLibrary, fillMistakeBook, refreshMistakeReasons, cloudReady, cloudSaveTimer, cloudInit });
-export { BOOK_GROUPS, DEFAULT_BOOKS, DEFAULT_REASONS, genBookId, defBookId, normalizeBooks, bookGroupOf, ensureLearningData, booksForSub, bookName, locatorsOf, practicesOf, mergePathArrays, mergeBooks, masteryChecklist, applyAutoMastery, recheckMastery, subjOfPath, mistakeSourceText, masteryPanelHtml, locatorPanelHtml, practicePanelHtml, reasonChipsHtml, selectedReasons, refreshReasonChips, bookOptionsHtml, locatorEditingId, openLocatorEditor, closeLocatorEditor, saveLocator, deleteLocator, openPracticeEditor, closePracticeEditor, fillPracticeBooks, refreshPracticeReasonBox, practiceToggleResult, savePractice, deletePractice, libGroup, openLibrary, closeLibrary, renderLibrary, fillMistakeBook, refreshMistakeReasons, cloudReady, cloudSaveTimer, cloudInit };
+Object.assign(globalThis, { BOOK_GROUPS, DEFAULT_BOOKS, DEFAULT_REASONS, genBookId, defBookId, normalizeBooks, bookGroupOf, ensureLearningData, booksForSub, bookName, locatorsOf, practicesOf, mergePathArrays, mergeBooks, masteryChecklist, applyAutoMastery, recheckMastery, syncMastery, linkifyText, subjOfPath, mistakeSourceText, masteryPanelHtml, locatorPanelHtml, practicePanelHtml, reasonChipsHtml, selectedReasons, refreshReasonChips, bookOptionsHtml, locatorEditingId, openLocatorEditor, closeLocatorEditor, saveLocator, deleteLocator, openPracticeEditor, closePracticeEditor, fillPracticeBooks, refreshPracticeReasonBox, practiceToggleResult, savePractice, deletePractice, libGroup, openLibrary, closeLibrary, renderLibrary, fillMistakeBook, refreshMistakeReasons, cloudReady, cloudSaveTimer, cloudInit });
+export { BOOK_GROUPS, DEFAULT_BOOKS, DEFAULT_REASONS, genBookId, defBookId, normalizeBooks, bookGroupOf, ensureLearningData, booksForSub, bookName, locatorsOf, practicesOf, mergePathArrays, mergeBooks, masteryChecklist, applyAutoMastery, recheckMastery, syncMastery, linkifyText, subjOfPath, mistakeSourceText, masteryPanelHtml, locatorPanelHtml, practicePanelHtml, reasonChipsHtml, selectedReasons, refreshReasonChips, bookOptionsHtml, locatorEditingId, openLocatorEditor, closeLocatorEditor, saveLocator, deleteLocator, openPracticeEditor, closePracticeEditor, fillPracticeBooks, refreshPracticeReasonBox, practiceToggleResult, savePractice, deletePractice, libGroup, openLibrary, closeLibrary, renderLibrary, fillMistakeBook, refreshMistakeReasons, cloudReady, cloudSaveTimer, cloudInit };

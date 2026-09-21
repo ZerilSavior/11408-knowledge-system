@@ -172,7 +172,21 @@ function mdTool(cmd){
 
     case 'ol': before='\n1. '; ins='列表项'; break;
 
-    case 'link': before='['; after='](https://)'; ins='链接文字'; break;
+    case 'link': {
+      if(sel){
+        const lead='[', tail='](https://)';
+        ta.setRangeText(lead+sel+tail, start, end, 'end');
+        const u0=start+lead.length+sel.length+2;
+        ta.setSelectionRange(u0, u0+8);
+      }else{
+        const u=window.prompt('请输入链接地址（含 http:// 或 https://）：','https://');
+        if(!u || u==='https://'){ ta.focus(); return; }
+        const url=/^https?:\/\//.test(u)?u:'https://'+u;
+        const txt=window.prompt('链接显示的文字：','链接文字')||'链接文字';
+        ta.setRangeText('['+txt+']('+url+')', start, end, 'end');
+      }
+      ta.focus(); updatePreview(); return;
+    }
 
     default: return;
 
@@ -217,7 +231,7 @@ const mdRenderer = {
 
     const alt = text ? esc(text) : '涂鸦';
 
-    return `<img src="${esc(src)}" alt="${alt}"${t} loading="lazy">`;
+    return `<img class="md-img" src="${esc(src)}" alt="${alt}"${t} loading="lazy">`;
 
   },
 

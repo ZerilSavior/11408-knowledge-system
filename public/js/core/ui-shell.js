@@ -742,7 +742,7 @@ function renderDetail(){
 
     const content = (node.topic && node.topic.content) || (node.section && node.section.content);
 
-    const m = state.mastery[path] || '';
+    let m = state.mastery[path] || '';
 
 
 
@@ -750,13 +750,17 @@ function renderDetail(){
     if(engBrowse){
       html += '<div class="mc-card" style="margin:16px 0;background:var(--panel-2);border:1px dashed var(--line);padding:13px 16px;color:var(--ink-2);font-size:13.5px;line-height:1.8"><b>【英语 · 考纲浏览】</b>英语一考纲仅供浏览，不按单个考点判定掌握。英语综合掌握度 ＝ 单词 60% ＋ 新东方阅读 25% ＋ 历年真题 15%，请在左侧「英语词汇」「阅读打卡」中打卡；做完 200 篇阅读、所有单词标认识、做完历年真题即为 100%。</div>';
     } else {
+    { const _sr=syncMastery(path); if(_sr){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} cloudSave(); } m=state.mastery[path]||''; }
+    const masteredLocked = m==='mastered';
     html += `<div class="study-row">
       <span class="sl">学习状态</span>
       <div class="seg" data-mastery="${path}">
-        ${[['','未学'],['studying','学习中'],['mastered','已掌握']].map(([v,l])=>
-          `<button data-v="${v}" class="${m===v?'on '+v:''}">${l}</button>`).join('')}
+        ${[['','未学'],['studying','学习中'],['mastered','已掌握']].map(([v,l])=>{
+          if(v==='mastered'){ return `<button data-v="mastered" class="${masteredLocked?'on mastered locked':'locked-off'}" disabled title="${masteredLocked?'四项条件已完成，自动判定为已掌握（不可手动更改）':'完成下方四项条件后自动点亮，不可手动选择'}">${l}</button>`; }
+          return `<button data-v="${v}" class="${m===v?'on '+v:''}"${masteredLocked?' disabled':''}>${l}</button>`;
+        }).join('')}
       </div>
-      ${m?`<span class="study-note">当前：<b>${MASTERY[m]}</b>${m==='mastered'?'，四项条件满足后自动判定':''}</span>`:''}
+      ${m?`<span class="study-note">当前：<b>${MASTERY[m]}</b>${m==='mastered'?'（四项条件自动判定，不可手动更改）':'，完成四项条件后自动判定为已掌握'}</span>`:''}
     </div>`;
     html += masteryPanelHtml(path);
     }
@@ -867,10 +871,10 @@ function renderDetail(){
 
       const v = btn.dataset.v;
 
+      if(v==='mastered'){ toast('「已掌握」由四项条件自动判定，无法手动选择'); return; }
+      if(state.mastery[p]==='mastered'){ toast('已自动判定为已掌握，不可手动改回；删除对应的笔记 / 做题 / 定位后会自动转回学习中'); return; }
       state.mastery[p] = (state.mastery[p]===v) ? '' : v;
       if(!state.mastery[p]) delete state.mastery[p];
-      if(v==='mastered'){ delete state.masteryManual[p]; }
-      else { state.masteryManual[p]=true; }
 
       saveState();
 
@@ -936,6 +940,12 @@ function renderDetail(){
   pane.querySelectorAll('[data-add-locator]').forEach(b=>b.addEventListener('click',()=>openLocatorEditor(path)));
   pane.querySelectorAll('[data-edit-locator]').forEach(b=>b.addEventListener('click',()=>openLocatorEditor(path,b.dataset.editLocator)));
   pane.querySelectorAll('[data-del-locator]').forEach(b=>b.addEventListener('click',()=>bindDelConfirm(b,()=>{ deleteLocator(path,b.dataset.delLocator); renderTree(); renderSidebar(); })));
+  pane.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+    const u=b.dataset.copy||'';
+    const done=()=>toast('链接已复制');
+    const fallback=()=>{ const t=document.createElement('textarea'); t.value=u; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(t); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(u).then(done,fallback); } else fallback();
+  }));
   pane.querySelectorAll('[data-add-practice2]').forEach(b=>b.addEventListener('click',()=>openPracticeEditor(path)));
   pane.querySelectorAll('[data-del-practice]').forEach(b=>b.addEventListener('click',()=>bindDelConfirm(b,()=>{ deletePractice(path,b.dataset.delPractice); renderTree(); renderSidebar(); })));
 

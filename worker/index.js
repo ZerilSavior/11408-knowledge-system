@@ -28,6 +28,12 @@ export default {
       if (path === '/api/register' && request.method === 'POST') return await register(env, body, cors);
       if (path === '/api/login' && request.method === 'POST') return await login(env, body, cors);
 
+      // 笔记附件（R2 /note/ 能力URL）：凭不可猜的 UUID 路径匿名只读，供 <img>/下载直接访问
+      if (request.method === 'GET' && /^\/api\/photo\/[^/]+\/note\//.test(path)) {
+        const noteResp = await handlePhotos(request, env, null, path, body);
+        if (noteResp) return noteResp;
+      }
+
       // 以下接口需要认证
       const userId = await authenticate(request, env);
       if (userId === null) return json(401, { ok: false, error: '未登录' }, cors);

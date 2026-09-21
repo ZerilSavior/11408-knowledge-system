@@ -210,7 +210,8 @@ function init(){
     if(!b) return;
 
     if(b.dataset.cmd==='draw') openDrawEditor();
-
+    else if(b.dataset.cmd==='image') notePickImage();
+    else if(b.dataset.cmd==='file') notePickFile();
     else mdTool(b.dataset.cmd);
 
   });
