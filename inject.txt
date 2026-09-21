@@ -1,0 +1,9 @@
+﻿python.exe : C:\Users\20350\anaconda3\python.exe: can't open file 
+'C:\\Users\\20350\\Doubao\\chats\\2026-09-18\\new-chat\\408-knowledge-system\\inject_plan_v3.py': [Errno 2] No such 
+file or directory
+所在位置 行:1 字符: 148
++ ... ew-chat-4"; & "C:\Users\20350\anaconda3\python.exe" inject_plan_v3.py ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\20350\...le or directory:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

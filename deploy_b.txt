@@ -1,0 +1,32 @@
+﻿node.exe : [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy 
+for fetch requests.[0m
+所在位置 行:1 字符: 1
++ & "C:\Users\20350\AppData\Local\Doubao\User Data\sandbox_runtime\base ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m▲ [43;33m...h requests.[0m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+
+
+ ⛅️ wrangler 4.135.0
+────────────────────
+🌀 Building list of assets...
+✨ Read 732 files from the assets directory C:\Users\20350\Doubao\chats\2026-09-18\new-chat\408-knowledge-system\public
+🌀 Starting asset upload...
+🌀 Found 1 new or modified static asset to upload. Proceeding with upload...
++ /index.html
+Uploaded 1 of 1 asset
+✨ Success! Uploaded 1 file (729 already uploaded) (3.70 sec)
+
+Total Upload: 7.57 KiB / gzip: 2.51 KiB
+Worker Startup Time: 1 ms
+Your Worker has access to the following bindings:
+Binding                            Resource         
+env.DB (k408-db)                   D1 Database      
+env.PHOTOS (k408-exam-photos)      R2 Bucket        
+
+Uploaded 11408-knowledge-system (9.19 sec)
+Deployed 11408-knowledge-system triggers (1.62 sec)
+  https://11408-knowledge-system.203506561.workers.dev
+Current Version ID: 7469af16-3032-44ea-90f3-4745d1ef3b5f

@@ -1,0 +1,164 @@
+﻿node.exe : npm warn exec The following package was not found and will be installed: wrangler@4.135.0
+所在位置 行:1 字符: 1
++ & "C:\Users\20350\AppData\Local\Doubao\User Data\sandbox_runtime\base ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn exec T...rangler@4.135.0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ ⛅️ wrangler 4.135.0
+────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+🌀 Building list of assets...
+✨ Read 732 files from the assets directory C:\Users\20350\Doubao\chats\2026-09-18\new-chat\408-knowledge-system\public
+🌀 Starting asset upload...
+🌀 Found 730 new or modified static assets to upload. Proceeding with upload...
++ /data/mindmap/p506.jpg
++ /data/mindmap/p463.jpg
++ /data/mindmap/p655.jpg
++ /data/mindmap/p640.jpg
++ /data/mindmap/p664.jpg
++ /data/mindmap/p561.jpg
++ /data/mindmap/p658.jpg
++ /data/mindmap/p589.jpg
++ /data/mindmap/p306.jpg
++ /data/mindmap/p477.jpg
++ /data/mindmap/p516.jpg
++ /data/mindmap/p349.jpg
++ /data/mindmap/p590.jpg
++ /data/mindmap/p555.jpg
++ /data/mindmap/p656.jpg
++ /data/mindmap/p679.jpg
++ /data/mindmap/p427.jpg
++ /data/mindmap/p464.jpg
++ /data/mindmap/p662.jpg
++ /data/mindmap/p585.jpg
++ /data/mindmap/p317.jpg
++ /data/mindmap/p588.jpg
++ /data/mindmap/p560.jpg
++ /data/mindmap/p521.jpg
++ /data/mindmap/p452.jpg
++ /data/mindmap/p130.jpg
++ /data/mindmap/p686.jpg
++ /data/mindmap/p632.jpg
++ /data/mindmap/p598.jpg
++ /data/mindmap/p485.jpg
++ /data/mindmap/p613.jpg
++ /data/mindmap/p433.jpg
++ /data/mindmap/p604.jpg
++ /data/mindmap/p387.jpg
++ /data/mindmap/p466.jpg
++ /data/mindmap/p591.jpg
++ /data/mindmap/p440.jpg
++ /data/mindmap/p568.jpg
++ /data/mindmap/p653.jpg
++ /data/mindmap/p424.jpg
++ /data/mindmap/p099.jpg
++ /data/mindmap/p390.jpg
++ /data/mindmap/p690.jpg
++ /data/mindmap/p026.jpg
++ /data/mindmap/p705.jpg
++ /data/mindmap/p711.jpg
++ /data/mindmap/p231.jpg
++ /data/mindmap/p628.jpg
++ /data/mindmap/p614.jpg
++ /data/mindmap/p695.jpg
++ /data/mindmap/p612.jpg
++ /data/mindmap/p570.jpg
++ /data/mindmap/p642.jpg
++ /data/mindmap/p680.jpg
++ /data/mindmap/p537.jpg
++ /data/mindmap/p001.jpg
++ /data/mindmap/p607.jpg
++ /data/mindmap/p687.jpg
++ /data/mindmap/p549.jpg
++ /data/mindmap/p352.jpg
++ /data/mindmap/p371.jpg
++ /data/mindmap/p031.jpg
++ /data/mindmap/p174.jpg
++ /data/mindmap/p353.jpg
++ /data/mindmap/p578.jpg
++ /data/mindmap/p013.jpg
++ /data/mindmap/p012.jpg
++ /data/mindmap/p085.jpg
++ /data/mindmap/p345.jpg
++ /data/mindmap/p660.jpg
++ /data/mindmap/p540.jpg
++ /data/mindmap/p577.jpg
++ /data/mindmap/p372.jpg
++ /data/mindmap/p457.jpg
++ /data/mindmap/p482.jpg
++ /data/mindmap/p152.jpg
++ /data/mindmap/p587.jpg
++ /data/mindmap/p697.jpg
++ /data/mindmap/p187.jpg
++ /data/mindmap/p469.jpg
++ /data/mindmap/p439.jpg
++ /data/mindmap/p725.jpg
++ /data/mindmap/p715.jpg
++ /data/mindmap/p625.jpg
++ /data/mindmap/p176.jpg
++ /data/mindmap/p180.jpg
++ /data/mindmap/p624.jpg
++ /data/mindmap/p580.jpg
++ /data/mindmap/p223.jpg
++ /data/mindmap/p343.jpg
++ /data/mindmap/p385.jpg
++ /data/mindmap/p616.jpg
++ /data/mindmap/p206.jpg
++ /data/mindmap/p476.jpg
++ /data/mindmap/p287.jpg
++ /data/mindmap/p630.jpg
++ /data/mindmap/p225.jpg
++ /data/mindmap/p325.jpg
++ /data/mindmap/p015.jpg
++ /data/mindmap/p689.jpg
+   (truncating changed assets log, set `WRANGLER_LOG=debug` environment variable to see full diff)
+Asset upload failed. Retrying... 1 of 5 attempts.
+
+Asset upload failed. Retrying... 1 of 5 attempts.
+
+Asset upload failed. Retrying... 2 of 5 attempts.
+
+Asset upload failed. Retrying... 2 of 5 attempts.
+
+Uploaded 243 of 730 assets
+Asset upload failed. Retrying... 3 of 5 attempts.
+
+Uploaded 486 of 730 assets
+Asset upload failed. Retrying... 4 of 5 attempts.
+
+Asset upload failed. Retrying... 5 of 5 attempts.
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mfetch failed[0m
+
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mA fetch request failed, likely due to a connectivity issue.[0m
+
+  
+  Common causes:
+    - No internet connection or network connectivity problems
+    - Firewall or VPN blocking the request
+    - Network proxy configuration issues
+  
+  Please check your network connection and try again.
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mfetch failed[0m
+
+
+[32mIf you think this is a bug then please create an issue at https://github.com/cloudflare/workers-sdk/issues/new/choose[0m
+This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise 
+which was not handled with .catch(). The promise rejected with the reason:
+TypeError: fetch failed
+    at Object.processResponse (C:\Users\20350\AppData\Local\Doubao\User 
+Data\sandbox_runtime\.cache\node\npm-cache\_npx\32026684e21afda6\node_modules\wrangler\wrangler-dist\cli.js:50739:21)
+    at C:\Users\20350\AppData\Local\Doubao\User 
+Data\sandbox_runtime\.cache\node\npm-cache\_npx\32026684e21afda6\node_modules\wrangler\wrangler-dist\cli.js:51125:23
+    at node:internal/process/task_queues:149:7
+    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    at AsyncResource.runMicrotask (node:internal/process/task_queues:146:8)
+🪵  Logs were written to 
+"C:\Users\20350\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2026-09-20_08-06-33_716.log"

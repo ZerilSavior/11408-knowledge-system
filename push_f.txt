@@ -1,0 +1,10 @@
+﻿git : To https://github.com/ZerilSavior/11408-knowledge-system.git
+所在位置 行:1 字符: 160
++ ... 0.1:11304'; git -c http.proxy=http://127.0.0.1:11304 -c https.proxy=h ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (To https://gith...edge-system.git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at 2519c541835db6f7845deb15252b46fac9b7bfc9 
+but expected 273bc1bbe980266324dc1fcd4f3e0f6d8323cec3)
+error: failed to push some refs to 'https://github.com/ZerilSavior/11408-knowledge-system.git'

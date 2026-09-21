@@ -1,0 +1,62 @@
+﻿node.exe : [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy 
+for fetch requests.[0m
+所在位置 行:1 字符: 1
++ & "C:\Users\20350\AppData\Local\Doubao\User Data\sandbox_runtime\base ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m▲ [43;33m...h requests.[0m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+
+
+ ⛅️ wrangler 4.135.0
+────────────────────
+🌀 Building list of assets...
+✨ Read 758 files from the assets directory C:\Users\20350\Doubao\chats\2026-09-18\new-chat\408-knowledge-system\public
+🌀 Starting asset upload...
+🌀 Found 25 new or modified static assets to upload. Proceeding with upload...
++ /js/main.js
++ /js/core/md-render.js
++ /js/core/cloud.js
++ /js/core/app-init.js
++ /js/features/study-loop.js
++ /data/words-rare.js
++ /js/core/ui-shell.js
++ /js/data/syllabus.js
++ /js/data/topic-content.js
++ /styles/exam.css
++ /js/core/util.js
++ /js/features/drawings.js
++ /js/features/mindmap.js
++ /js/features/exams.js
++ /js/features/notes.js
++ /js/features/words.js
++ /data/word-rel.js
++ /js/core/bootstrap.js
++ /js/core/store.js
++ /js/features/reading.js
++ /js/features/maps.js
++ /js/data/diagrams.js
++ /index.html
++ /styles/base.css
++ /data/words.js
+Uploaded 8 of 25 assets
+Asset upload failed. Retrying... 1 of 5 attempts.
+
+Asset upload failed. Retrying... 2 of 5 attempts.
+
+Uploaded 16 of 25 assets
+Uploaded 25 of 25 assets
+✨ Success! Uploaded 25 files (726 already uploaded) (13.39 sec)
+
+Total Upload: 8.70 KiB / gzip: 2.79 KiB
+Worker Startup Time: 1 ms
+Your Worker has access to the following bindings:
+Binding                            Resource         
+env.DB (k408-db)                   D1 Database      
+env.PHOTOS (k408-exam-photos)      R2 Bucket        
+
+Uploaded 11408-knowledge-system (20.91 sec)
+Deployed 11408-knowledge-system triggers (1.73 sec)
+  https://11408-knowledge-system.203506561.workers.dev
+Current Version ID: fa5e61e0-1b40-4721-a6ec-be76f10d40db

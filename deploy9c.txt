@@ -1,0 +1,142 @@
+﻿node.exe : [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy 
+for fetch requests.[0m
+所在位置 行:1 字符: 1
++ & "C:\Users\20350\AppData\Local\Doubao\User Data\sandbox_runtime\base ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m▲ [43;33m...h requests.[0m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+
+
+ ⛅️ wrangler 4.135.0
+────────────────────
+🌀 Building list of assets...
+✨ Read 732 files from the assets directory C:\Users\20350\Doubao\chats\2026-09-18\new-chat\408-knowledge-system\public
+🌀 Starting asset upload...
+🌀 Found 244 new or modified static assets to upload. Proceeding with upload...
++ /data/mindmap/p506.jpg
++ /data/mindmap/p640.jpg
++ /data/mindmap/p658.jpg
++ /data/mindmap/p477.jpg
++ /data/mindmap/p590.jpg
++ /data/mindmap/p679.jpg
++ /data/mindmap/p662.jpg
++ /data/mindmap/p588.jpg
++ /data/mindmap/p452.jpg
++ /data/mindmap/p632.jpg
++ /data/mindmap/p613.jpg
++ /data/mindmap/p387.jpg
++ /data/mindmap/p440.jpg
++ /data/mindmap/p424.jpg
++ /data/mindmap/p690.jpg
++ /data/mindmap/p711.jpg
++ /data/mindmap/p614.jpg
++ /data/mindmap/p570.jpg
++ /data/mindmap/p537.jpg
++ /data/mindmap/p687.jpg
++ /data/mindmap/p371.jpg
++ /data/mindmap/p353.jpg
++ /data/mindmap/p012.jpg
++ /data/mindmap/p660.jpg
++ /data/mindmap/p372.jpg
++ /data/mindmap/p152.jpg
++ /data/mindmap/p187.jpg
++ /data/mindmap/p725.jpg
++ /data/mindmap/p176.jpg
++ /data/mindmap/p580.jpg
++ /data/mindmap/p385.jpg
++ /data/mindmap/p476.jpg
++ /data/mindmap/p225.jpg
++ /data/mindmap/p689.jpg
++ /data/mindmap/p121.jpg
++ /data/mindmap/p200.jpg
++ /data/mindmap/p192.jpg
++ /data/mindmap/p699.jpg
++ /data/mindmap/p118.jpg
++ /data/mindmap/p509.jpg
++ /data/mindmap/p454.jpg
++ /data/mindmap/p151.jpg
++ /data/mindmap/p523.jpg
++ /data/mindmap/p420.jpg
++ /data/mindmap/p576.jpg
++ /data/mindmap/p723.jpg
++ /data/mindmap/p302.jpg
++ /data/mindmap/p502.jpg
++ /data/mindmap/p213.jpg
++ /data/mindmap/p196.jpg
++ /data/mindmap/p070.jpg
++ /data/mindmap/p282.jpg
++ /data/mindmap/p448.jpg
++ /data/mindmap/p039.jpg
++ /data/mindmap/p270.jpg
++ /data/mindmap/p326.jpg
++ /data/mindmap/p175.jpg
++ /data/mindmap/p181.jpg
++ /data/mindmap/p494.jpg
++ /data/mindmap/p431.jpg
++ /data/mindmap/p412.jpg
++ /data/mindmap/p418.jpg
++ /data/mindmap/p146.jpg
++ /data/mindmap/p280.jpg
++ /data/mindmap/p239.jpg
++ /data/mindmap/p422.jpg
++ /data/mindmap/p364.jpg
++ /data/mindmap/p319.jpg
++ /data/mindmap/p479.jpg
++ /data/mindmap/p094.jpg
++ /data/mindmap/p201.jpg
++ /data/mindmap/p234.jpg
++ /data/mindmap/p392.jpg
++ /data/mindmap/p216.jpg
++ /data/mindmap/p304.jpg
++ /data/mindmap/p054.jpg
++ /data/mindmap/p114.jpg
++ /data/mindmap/p328.jpg
++ /data/mindmap/p147.jpg
++ /data/mindmap/p235.jpg
++ /data/mindmap/p110.jpg
++ /index.html
++ /data/mindmap/p463.jpg
++ /data/mindmap/p664.jpg
++ /data/mindmap/p589.jpg
++ /data/mindmap/p516.jpg
++ /data/mindmap/p555.jpg
++ /data/mindmap/p427.jpg
++ /data/mindmap/p585.jpg
++ /data/mindmap/p560.jpg
++ /data/mindmap/p130.jpg
++ /data/mindmap/p598.jpg
++ /data/mindmap/p433.jpg
++ /data/mindmap/p466.jpg
++ /data/mindmap/p568.jpg
++ /data/mindmap/p099.jpg
++ /data/mindmap/p026.jpg
++ /data/mindmap/p231.jpg
++ /data/mindmap/p695.jpg
++ /data/mindmap/p642.jpg
+   (truncating changed assets log, set `WRANGLER_LOG=debug` environment variable to see full diff)
+Asset upload failed. Retrying... 1 of 5 attempts.
+
+Asset upload failed. Retrying... 1 of 5 attempts.
+
+Asset upload failed. Retrying... 2 of 5 attempts.
+
+Asset upload failed. Retrying... 2 of 5 attempts.
+
+Uploaded 82 of 244 assets
+Uploaded 163 of 244 assets
+Uploaded 244 of 244 assets
+✨ Success! Uploaded 244 files (486 already uploaded) (80.33 sec)
+
+Total Upload: 7.57 KiB / gzip: 2.51 KiB
+Worker Startup Time: 3 ms
+Your Worker has access to the following bindings:
+Binding                            Resource         
+env.DB (k408-db)                   D1 Database      
+env.PHOTOS (k408-exam-photos)      R2 Bucket        
+
+Uploaded 11408-knowledge-system (86.70 sec)
+Deployed 11408-knowledge-system triggers (1.51 sec)
+  https://11408-knowledge-system.203506561.workers.dev
+Current Version ID: 3a31df94-98fe-4457-be5f-61fee102c5fa

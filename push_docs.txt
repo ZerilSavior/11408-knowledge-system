@@ -1,0 +1,10 @@
+﻿git : error: RPC failed; curl 56 schannel: server closed abruptly (missing close_notify)
+所在位置 行:1 字符: 339
++ ... ttp://127.0.0.1:11304"; git push origin main *> push_docs.txt; "PUSH= ...
++                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: RPC fail...g close_notify):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+send-pack: unexpected disconnect while reading sideband packet
+fatal: the remote end hung up unexpectedly
+Everything up-to-date

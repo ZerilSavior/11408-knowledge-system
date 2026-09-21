@@ -70,7 +70,7 @@ function isLearnedChapter(sub,ci){ return (learnedChapters()[sub]||[]).includes(
 
 function isLearnedPath(path){ const a=path.split('/'); return isLearnedChapter(a[0],+a[1]); }
 
-function leafMins(path,mod){ if(mod==='poli')return PLAN_POLI_MINS; return isLearnedPath(path)?PLAN_LEARNED_MINS:PLAN_LEAF_MINS; }
+function leafMins(path,mod){ if(mod==='poli')return PLAN_POLI_MINS; if(path.indexOf('ds/8/')===0)return PLAN_LEARNED_MINS; return isLearnedPath(path)?PLAN_LEARNED_MINS:PLAN_LEAF_MINS; }
 
 function toggleLearnedChapter(sub,ci){
   const lc=learnedChapters(); if(!lc[sub])lc[sub]=[];
@@ -145,6 +145,8 @@ function planBuild(){
   const wordPerDay=cfg.wordPerDay||PLAN_WORD_DEF;
   // 队列
   const Q={}; ['ds','co','os','net'].forEach(s=>Q[s]=planSubQueue(s,'c408'));
+  ['ds','co','os','net'].forEach(s=>{ Q[s].f=Q[s].f.filter(l=>l.path.indexOf('ds/8/')!==0); Q[s].l=Q[s].l.filter(l=>l.path.indexOf('ds/8/')!==0); });
+  const codeQ=planCollect(['ds'],'c408').filter(l=>l.path.indexOf('ds/8/')===0&&!planLeafDone(l.path)); let codePtr=0;
   ['math1','math2','math3'].forEach(s=>Q[s]=planSubQueue(s,'math'));
   const pq=planPoliQueue(true); let pp=0,hp=0;
   // 总量（含已掌握）
@@ -214,6 +216,8 @@ function planBuild(){
     if(idx<Dlearn){
       const cm=consumeModule(PLAN_C408_SUBS,dc,PLAN_C408_DEF,autoFill); leaves.push(...cm.arr); mins.c408=cm.total; leftover.c408=cm.leftover;
       const mm=consumeModule(PLAN_MATH_SUBS,dc,PLAN_MATH_DEF,autoFill); leaves.push(...mm.arr); mins.math=mm.total; leftover.math=mm.leftover;
+      // 每日一题：代码题预测50题，每天1道，0.5h（额外任务，不占用配额）
+      if(codePtr<codeQ.length){ const cl=codeQ[codePtr++]; cl.w=PLAN_LEARNED_MINS; leaves.push(cl); mins.c408+=cl.w; }
     }
     // 政治：全程排，普通1-5顺序，时政只在真题月
     const cap=planPoliCapH(cfg,date), pBudget=cap*60; let pUsed=0;

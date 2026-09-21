@@ -1,0 +1,2 @@
+﻿[main bf1e716] fix(plan): lock today's task list so completed modules finish instead of refilling
+ 2 files changed, 45 insertions(+), 7 deletions(-)

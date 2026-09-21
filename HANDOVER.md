@@ -903,3 +903,9 @@ git push origin main
 * 版本 / 提交：线上 Version **92d82faf-bb37-4632-8f37-30c978f0b2ac**（上传 9 个新/修改前端资产 + Worker bundle 更新）；commit **1e9a63b**（本地=origin/main）。
 * 工作目录（未入库）新增：`patch_batch21.py`（首批补丁，study-loop 处中断，前3文件已写回）、`patch_batch21b.py`（剩余文件，成功）、`patch_harness.py`（harness 加 attach）、`test_mastery.js`（26 项全绿）、`bundle_harness.js`（MAIN_ORDER 已加 features/attach.js）、`cdp_batch21.py`（CDP 回归脚本）、截图 b21_mastered.png/b21_lockedoff.png/b21_notetoolbar.png、deploy_b21.txt/push_b21.txt。
 * 踩坑：①首个补丁脚本 patch_batch21.py 跑到 study-loop locator 行因中点 `·` 字符匹配 0 中断（worker/index.js、index.html、md-render.js 三个已先成功写回），改用不含中点的更小唯一锚点的 patch_batch21b.py 跑剩余文件成功；补丁脚本对每个文件在写回前 assert，故中断文件未被半写。②PowerShell `python -c` 单行内嵌 JS 引号会被转义破坏，改写成 .py 文件跑。③CDP 注入考点数据时 path 必须用页面实时 `leafPath(getNode(currentRoute().path))`，硬编码 hash 段 ds/4/10/0 与 leafPath 实时算出的权威 path 有偏差会导致注入数据不生效。④梯子未开时直连 Cloudflare 部署连续超时（api.cloudflare.com TLS 可达但 Workers Assets 上传体积大不稳），必须经本地代理 11304（用户手动开全局）；git push 经代理较慢（GitHub info/refs 约 15-30s），需后台运行给足时间；PowerShell 会把 git 进度/NativeCommandError 显示成报错且 exit code 污染，以 `git fetch` 后 `git rev-parse HEAD == origin/main` 为准判断 push 成功。
+
+### 21.1 部署后修正（端到端发现并修复）
+- 问题：attachAuthReady() 原读全局 authToken，而 cloud.js 用 Object.assign(globalThis,{authToken}) 做值拷贝快照，登录后 doLogin 只更新模块内 authToken、全局快照仍为空，导致登录后误判未登录——图片走 dataURL 内嵌、文件被拒。
+- 修复：attachAuthReady 加 localStorage.getItem(auth_token) 兜底（doLogin 登录时已写 localStorage）。
+- 已部署 Version 755778b5（仅 attach.js 1 个资产）。
+- 端到端验证（zeril 账号，CDP headless）：图片/文件上传 R2 成功；匿名能力 URL GET 图片 200/image/png（6484B）、文件 200/attachment 带原文件名（text/plain 42B）；笔记保存成功并出现在考点学习记录；测试笔记已 deleteItem+cloudSave 清理。
