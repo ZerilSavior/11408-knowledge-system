@@ -7,7 +7,7 @@ const IMG_MAX = 12 * 1024 * 1024;
 const FILE_MAX = 25 * 1024 * 1024;
 const EMBED_MAX = 3 * 1024 * 1024; // 未登录内嵌 dataURL 上限（localStorage 容量保护）
 
-function attachAuthReady(){ try{ return !!authToken; }catch(e){ return false; } }
+function attachAuthReady(){ try{ return !!(authToken || localStorage.getItem('auth_token')); }catch(e){ return !!localStorage.getItem('auth_token'); } }
 function attachExt(name){ const m=/\.([a-z0-9]+)$/i.exec(name||''); return m?m[1].toLowerCase():''; }
 function attachSafeName(n){ return String(n||'附件').replace(/[\[\]\r\n]/g,' ').trim()||'附件'; }
 
