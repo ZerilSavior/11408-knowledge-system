@@ -339,7 +339,7 @@ function planSwapCandidates(date,fromPath){
     if(l.mod!==from.mod)return;
     if(planLeafDone(p))return;
     if(l.w!==from.w)return;                 // 时长守恒（0.5h↔0.5h、1h↔1h）
-    if(l.mod!=='poli'&&Math.abs((l.lv||0)-(from.lv||0))>1)return;
+    if(l.mod!=='poli'&&(l.lv||0)<(from.lv||0)&&((from.lv||0)-(l.lv||0))>1)return;  // 往低换限≤1级，往高换不限
     const pd=pos[p];
     if(pd===date)return; if(pd&&pd<today)return; if(pd&&pd<date)return;
     if(lockNow&&lockNow.indexOf(p)>=0)return;
@@ -364,7 +364,7 @@ function planSwapOverlayEl(){
 function planCloseSwap(){ const el=document.getElementById('planSwapOverlay'); if(el)el.classList.remove('open'); }
 
 function planShowSwap(inner){ const el=planSwapOverlayEl();
-  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>替换考点 · 同模块 / 同时长 / 同级考频 / 1换1</span><button class="dlg-x" onclick="planCloseSwap()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
+  el.innerHTML='<div class="dlg"><div class="dlg-t"><span>替换考点 · 同模块 / 同时长 / 低换限一级 / 1换1</span><button class="dlg-x" onclick="planCloseSwap()">×</button></div><div class="dlg-b">'+inner+'</div></div>';
   el.classList.add('open');
 }
 
@@ -401,7 +401,7 @@ function planOpenSwap(date,path){
   });
   if(!rows)rows='<div class="sub" style="padding:10px">没有符合条件的同级考点可换（同模块、时长相同、考频接近、未掌握、未排入计划）。</div>';
   const ov=planOverrides()[date]; const swapped=ov&&ov.swaps?ov.swaps.find(sp=>sp.from===path):null;
-  const inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'，'+(from.w===30?'0.5h':'1h')+'）。只列同学科模块、时长相同、考频相差不超过一级、未掌握且未排入的考点，替换前后当天数量与总时长不变。</div>'
+  const inner='<div class="sub" style="margin:0 0 12px">原任务：<b>'+esc(from.title)+'</b>（'+from.subName+'，'+(from.w===30?'0.5h':'1h')+'）。只列同学科模块、时长相同、未掌握且未排入的考点；往低考频换不超过一级，往高考频换不限。替换前后当天数量与总时长不变。</div>'
     +(swapped?'<button class="p-btn" style="margin-bottom:10px" onclick="planUndoSwap(\''+date+'\',\''+path+'\')">撤销这次替换</button>':'')
     +'<div class="p-swlist">'+rows+'</div><button class="p-more" style="margin-top:12px" onclick="planCloseSwap()">取消</button>';
   planShowSwap(inner);
