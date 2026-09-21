@@ -1,4 +1,4 @@
-// 模块: code50（408代码题预测50题独立打卡，题目/答案分离，做完才看答案）
+// 模块: code50（408代码题预测50题 · 做题验证后才算完成）
 
 const CODE50_GROUPS = [
   {name:"图类", start:0, end:13, color:"#0a8a5f", bg:"#e3f6ee"},
@@ -61,98 +61,181 @@ const CODE50_DATA = [
 ];
 
 function ensureCode50(){
-  if(!state.code50||typeof state.code50!=='object') state.code50={start:'',done:{},shown:{}};
+  if(!state.code50||typeof state.code50!=='object') state.code50={start:'',done:{},shown:{},work:{}};
   const c=state.code50;
   if(!c.done||typeof c.done!=='object') c.done={};
   if(!c.shown||typeof c.shown!=='object') c.shown={};
+  if(!c.work||typeof c.work!=='object') c.work={};
   return c;
 }
 
 function mergeCode50(local,cloud){
-  const l=local||{start:'',done:{},shown:{}};
-  const out={start:l.start||(cloud&&cloud.start)||'',done:{},shown:{}};
+  const l=local||{start:'',done:{},shown:{},work:{}};
+  const out={start:l.start||(cloud&&cloud.start)||'',done:{},shown:{},work:{}};
   const dk=new Set([].concat(Object.keys(l.done||{}),Object.keys((cloud&&cloud.done)||{})));
   dk.forEach(k=>{ const a=(l.done||{})[k], b=(cloud&&cloud.done||{})[k]; out.done[k]=b?b:a; });
   const sk=new Set([].concat(Object.keys(l.shown||{}),Object.keys((cloud&&cloud.shown)||{})));
   sk.forEach(k=>{ const a=(l.shown||{})[k], b=(cloud&&cloud.shown||{})[k]; out.shown[k]=b?b:a; });
+  const wk=new Set([].concat(Object.keys(l.work||{}),Object.keys((cloud&&cloud.work)||{})));
+  wk.forEach(k=>{ const a=(l.work||{})[k], b=(cloud&&cloud.work||{})[k]; out.work[k]=b||a||{}; });
   return out;
 }
 
 function code50Start(){ const c=ensureCode50(); return c.start || planTodayStr(); }
 function code50TodayIdx(){ return planDiff(code50Start(), planTodayStr()); }
-function code50DoneN(){ const c=ensureCode50(); let n=0; Object.keys(c.done).forEach(k=>{ if(+k>=0&&+k<50&&c.done[k])n++; }); return n; }
+
+function code50HasWork(idx){
+  const c=ensureCode50(); const w=c.work[idx];
+  if(!w) return false;
+  return !!(w.code && w.code.trim()) || (w.photos && w.photos.length);
+}
+function code50DoneN(){ const c=ensureCode50(); let n=0; for(let i=0;i<50;i++){ if(c.done[i]&&code50HasWork(i))n++; } return n; }
 function code50GroupOf(idx){ for(const g of CODE50_GROUPS){ if(idx>=g.start&&idx<g.end) return g; } return CODE50_GROUPS[0]; }
 
-function code50Toggle(idx){
+function code50ShowAnswer(idx){
   const c=ensureCode50();
-  if(c.done[idx]){ delete c.done[idx]; } else { c.done[idx]=Date.now(); }
-  saveState(); cloudSave(); renderCode50(); renderSidebar();
+  if(!code50HasWork(idx)){ toast('请先在下方做题（敲代码或上传手写/截图照片），提交后才能看答案'); return; }
+  c.shown[idx]=1;
+  saveState(); cloudSave(); renderCode50();
 }
 
-function code50ShowAnswer(idx){
-  const c=ensureCode50(); c.shown[idx]=1;
-  saveState(); cloudSave(); renderCode50();
+function code50Submit(idx){
+  const c=ensureCode50();
+  const ta=document.getElementById('c50code_'+idx);
+  const code=ta?ta.value:'';
+  const w=c.work[idx]||{photos:[]};
+  w.code=code;
+  if(!code.trim() && !(w.photos&&w.photos.length)){ toast('请先写代码或上传照片'); return; }
+  c.work[idx]=w;
+  c.done[idx]=Date.now();
+  c.shown[idx]=1;  // 提交后自动展开答案
+  saveState(); cloudSave(); renderCode50(); renderSidebar();
+  toast('已提交第'+(idx+1)+'题');
+}
+
+function code50Unsubmit(idx){
+  const c=ensureCode50();
+  delete c.done[idx];
+  // 保留 work 但取消完成
+  saveState(); cloudSave(); renderCode50(); renderSidebar();
 }
 
 function code50DoToday(){
   const idx=code50TodayIdx();
   if(idx<0||idx>=50){ toast(idx>=50?'50题已全部排完':'今天还没到开始日'); return; }
-  const c=ensureCode50(); c.done[idx]=Date.now();
+  if(!code50HasWork(idx)){ location.hash='#/code50'; setTimeout(()=>code50Go(idx),100); return; }
+  const c=ensureCode50(); c.done[idx]=Date.now(); c.shown[idx]=1;
   saveState(); cloudSave(); renderCode50(); renderSidebar();
-  toast('已打卡：'+CODE50_DATA[idx].title);
+  toast('第'+(idx+1)+'题已完成');
 }
 
-function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function code50UploadPhoto(idx, input){
+  const c=ensureCode50();
+  const files=Array.from(input.files||[]); input.value='';
+  if(!files.length) return;
+  const f=files[0];
+  const reader=new FileReader();
+  reader.onload=async function(){
+    const dataUrl=reader.result;
+    // 压缩
+    const img=new Image();
+    img.onload=function(){
+      const MAX=1400; let w=img.width,h=img.height;
+      if(Math.max(w,h)>MAX){ const r=MAX/Math.max(w,h); w=Math.round(w*r); h=Math.round(h*r); }
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=cv.toDataURL('image/jpeg',0.7);
+      const wObj=c.work[idx]||{code:'',photos:[]};
+      const ph={key:null,url:compressed,uploading:!!authToken,ts:Date.now()};
+      wObj.photos.push(ph);
+      c.work[idx]=wObj;
+      saveState(); cloudSave();
+      if(authToken){
+        api('/api/photo/upload','POST',{folder:'code50',ext:'jpg',dataBase64:compressed}).then(r=>{
+          if(r&&r.ok){ ph.key=r.key; }
+          saveState(); cloudSave(); renderCode50();
+        }).catch(()=>{ ph.uploading=false; renderCode50(); });
+      }
+      renderCode50();
+    };
+    img.src=dataUrl;
+  };
+  reader.readAsDataURL(f);
+}
+
+function code50DelPhoto(idx, pi){
+  const c=ensureCode50();
+  const w=c.work[idx]; if(!w||!w.photos) return;
+  const ph=w.photos[pi];
+  if(ph&&ph.key&&authToken){ try{ api('/api/photo/'+ph.key,'DELETE'); }catch(e){} }
+  w.photos.splice(pi,1);
+  saveState(); cloudSave(); renderCode50();
+}
 
 function code50ProblemCard(idx){
   const p=CODE50_DATA[idx]; if(!p) return '';
   const c=ensureCode50();
-  const done=!!c.done[idx];
-  const shown=!!c.shown[idx];
+  const w=c.work[idx]||{code:'',photos:[]};
+  const hasWork=!!(w.code&&w.code.trim()) || (w.photos&&w.photos.length);
+  const done=!!c.done[idx] && hasWork;
+  const shown=!!c.shown[idx] && hasWork;
   const g=code50GroupOf(idx);
+
   let h='<div class="p-card" style="margin-bottom:14px;border-left:3px solid '+g.color+'">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
     +'<h3 style="margin:0">第'+p.n+'题 '+p.stars+' '+escHtml(p.title)+'</h3>'
-    +(done?'<span style="color:#0a8a5f;font-weight:600">已完成</span>':'<span style="color:#999">未完成</span>')
+    +(done?'<span style="color:#0a8a5f;font-weight:600">✓ 已完成</span>':'<span style="color:#999">待完成</span>')
     +'</div>'
     +'<div style="margin-top:10px;line-height:1.8"><b>题目：</b>'+escHtml(p.problem)+'</div>';
-  if(shown){
-    h+='<div style="margin-top:12px"><b>参考代码：</b><pre style="background:#1e1e2e;color:#e4e4e4;padding:14px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6"><code>'+escHtml(p.code)+'</code></pre></div>';
-    if(p.complexity) h+='<div style="margin-top:8px;color:#666;font-size:13px"><b>复杂度：</b>'+escHtml(p.complexity)+'</div>';
-  } else {
-    h+='<div style="margin-top:12px;padding:14px;background:#f5f5f5;border-radius:8px;color:#888;font-size:13.5px">做完题目后点击下方按钮查看参考答案与代码</div>';
+
+  // 做题区
+  h+='<div style="margin-top:12px">'
+    +'<label style="font-size:13px;color:#666;display:block;margin-bottom:6px">你的代码（或粘贴/手敲）：</label>'
+    +'<textarea id="c50code_'+idx+'" rows="6" style="width:100%;font-family:monospace;font-size:13px;padding:10px;border:1px solid #ddd;border-radius:6px;background:#fafafa" placeholder="在这里敲你的代码...">'+escHtml(w.code||'')+'</textarea>';
+
+  // 图片上传
+  h+='<div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+    +'<label class="p-btn" style="cursor:pointer;background:#e8e8e8;color:#333;padding:5px 12px;font-size:13px">上传手写照片/截图'
+    +'<input type="file" accept="image/*" style="display:none" onchange="code50UploadPhoto('+idx+',this)"></label>';
+  if(w.photos&&w.photos.length){
+    h+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    w.photos.forEach((ph,pi)=>{
+      h+='<div style="position:relative"><img src="'+(ph.url||'')+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #ddd">'
+        +'<button onclick="code50DelPhoto('+idx+','+pi+')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:11px;cursor:pointer">×</button></div>';
+    });
+    h+='</div>';
   }
-  h+='<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">';
-  if(!shown) h+='<button class="p-btn" onclick="code50ShowAnswer('+idx+')">做完了，显示答案</button>';
-  if(!done) h+='<button class="p-btn" style="background:#0a8a5f;color:#fff" onclick="code50Toggle('+idx+')">标记完成</button>';
-  else h+='<button class="p-btn" onclick="code50Toggle('+idx+')">取消完成</button>';
+  h+='</div>';
+
+  // 提交按钮
+  h+='<div style="margin-top:10px;display:flex;gap:10px">'
+    +'<button class="p-btn" style="background:#c05b1f;color:#fff" onclick="code50Submit('+idx+')">提交并完成</button>';
+  if(done) h+='<button class="p-btn" onclick="code50Unsubmit('+idx+')">取消完成</button>';
   h+='</div></div>';
+
+  // 答案区（只有提交后才显示）
+  if(shown){
+    h+='<div style="margin-top:14px;padding-top:12px;border-top:1px dashed #ddd">'
+      +'<b style="color:#0a8a5f">参考答案：</b>'
+      +'<pre style="background:#1e1e2e;color:#e4e4e4;padding:14px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6;margin-top:8px"><code>'+escHtml(p.code)+'</code></pre>';
+    if(p.complexity) h+='<div style="margin-top:8px;color:#666;font-size:13px"><b>复杂度：</b>'+escHtml(p.complexity)+'</div>';
+    h+='</div>';
+  } else {
+    h+='<div style="margin-top:12px;padding:10px;background:#fff7e6;border-radius:6px;color:#999;font-size:12.5px">提交代码或上传照片后，这里将显示参考答案与代码。</div>';
+  }
+
+  h+='</div>';
   return h;
 }
 
-function code50Grid(){
-  const c=ensureCode50(), todayIdx=code50TodayIdx();
-  let cells='';
-  for(let i=0;i<50;i++){
-    const g=code50GroupOf(i);
-    const done=!!c.done[i], isToday=(i===todayIdx);
-    const bg=done?g.color:(isToday?g.bg:'#f5f5f5');
-    const col=done?'#fff':g.color;
-    const bd=isToday?'box-shadow:0 0 0 2px var(--ink);':'';
-    cells+='<button class="r-cell" title="第'+(i+1)+'题 '+CODE50_DATA[i].title+(done?' · 已完成':'')+(isToday?' · 今日':'')+'" '
-      +'style="background:'+bg+';color:'+col+';'+bd+'" onclick="code50Go('+i+')">'+(i+1)+'</button>';
-  }
-  return '<div class="r-grid">'+cells+'</div>';
-}
-
 function code50Go(idx){
-  ensureCode50();
-  // 滚动到对应题目卡片
-  const cards=document.querySelectorAll('[data-c50idx]');
-  for(const el of cards){ if(+el.dataset.c50idx===idx){ el.scrollIntoView({behavior:'smooth',block:'start'}); el.style.outline='2px solid #c05b1f'; setTimeout(()=>el.style.outline='',1500); return; } }
-  // 如果不在列表里（比如点了网格但题目没展开），直接展开全部
   renderCode50();
-  setTimeout(()=>code50Go(idx),50);
+  setTimeout(()=>{
+    const cards=document.querySelectorAll('[data-c50idx]');
+    for(const el of cards){ if(+el.dataset.c50idx===idx){ el.scrollIntoView({behavior:'smooth',block:'start'}); el.style.outline='2px solid #c05b1f'; setTimeout(()=>el.style.outline='',1500); return; } }
+  },50);
 }
 
 function renderCode50(){
@@ -162,35 +245,25 @@ function renderCode50(){
   const todayIdx=code50TodayIdx();
   const pct=Math.round(100*doneN/50);
   const start=code50Start();
-  const todayTitle=(todayIdx>=0&&todayIdx<50)?CODE50_DATA[todayIdx].title:null;
 
   let h='';
   h+='<div class="p-hero"><div class="p-stat"><div class="n">'+doneN+'<small>/ 50</small></div><div class="l">已完成</div></div>'
-    +'<div class="p-stat"><div class="n">'+(todayIdx+1<50?todayIdx+1:50)+'<small>/ 50</small></div><div class="l">今日题号</div></div>'
+    +'<div class="p-stat"><div class="n">'+(todayIdx>=0&&todayIdx<50?todayIdx+1:50)+'<small>/ 50</small></div><div class="l">今日题号</div></div>'
     +'<div class="p-stat"><div class="n">'+(50-doneN)+'<small>题</small></div><div class="l">剩余</div></div>'
     +'<div class="p-stat"><div class="n">'+pct+'<small>%</small></div><div class="l">进度</div></div></div>';
 
-  // 今日题卡片
-  h+='<div style="margin-bottom:16px">';
-  if(todayTitle){
-    h+='<div class="sub" style="margin-bottom:8px">'+start+' 开始 · 第 <b>'+(todayIdx+1)+'</b> 天（今天）</div>';
+  // 今日题
+  if(todayIdx>=0&&todayIdx<50){
+    h+='<div class="sub" style="margin:10px 0">'+start+' 开始 · 第 <b>'+(todayIdx+1)+'</b> 天（今天）</div>';
     h+=code50ProblemCard(todayIdx);
   } else if(todayIdx>=50){
-    h+='<div class="p-alert ok"><b>50题已全部排完。</b>可在下方逐题回顾或补做。</div>';
-  } else {
-    h+='<div class="sub">今天还没到开始日（'+start+'）。</div>';
+    h+='<div class="p-alert ok" style="margin:10px 0"><b>50题已全部排完。</b></div>';
   }
-  h+='</div>';
 
-  h+='<div class="p-prog" style="margin-bottom:16px"><span>'+doneN+' / 50</span><div class="pbar" style="flex:1"><i style="width:'+pct+'%;background:#c05b1f"></i></div><span>'+pct+'%</span></div>';
+  h+='<div class="p-prog" style="margin:14px 0"><span>'+doneN+' / 50</span><div class="pbar" style="flex:1"><i style="width:'+pct+'%;background:#c05b1f"></i></div><span>'+pct+'%</span></div>';
 
-  // 全部题目列表
-  h+='<div class="p-card"><h3>全部50题（先做题，做完点"显示答案"核对）</h3>';
-  let legend='';
-  for(const g of CODE50_GROUPS){
-    legend+='<span style="display:inline-block;width:10px;height:10px;background:'+g.color+';border-radius:2px;margin-right:5px"></span>'+g.name+' '+(g.start+1)+'-'+g.end+'　';
-  }
-  h+='<div class="sub" style="margin:6px 0 14px">'+legend+'</div>';
+  // 全部题目
+  h+='<div class="p-card"><h3>全部50题（做题 → 提交 → 看答案）</h3>';
   for(let i=0;i<50;i++){
     h+='<div data-c50idx="'+i+'">'+code50ProblemCard(i)+'</div>';
   }
@@ -201,16 +274,14 @@ function renderCode50(){
 
 function code50SideMeta(){ try{ return code50DoneN()+' / 50 题'; }catch(e){ return '50 题'; } }
 
-// 今日计划页用：返回今日代码题摘要
 function code50TodayCard(){
   const idx=code50TodayIdx();
   if(idx<0||idx>=50) return '';
   const p=CODE50_DATA[idx]; if(!p) return '';
-  const c=ensureCode50();
-  const done=!!c.done[idx];
+  const done=!!ensureCode50().done[idx] && code50HasWork(idx);
   return '<div style="margin:12px 0;padding:12px 14px;background:#fff7f0;border:1px solid #f0c8a0;border-radius:8px">'
     +'<div style="font-weight:600;color:#c05b1f;margin-bottom:6px">代码题打卡 · 第'+p.n+'题（408综合应用题）</div>'
-    +'<div style="font-size:13.5px;line-height:1.7;color:#333">'+p.title+'</div>'
+    +'<div style="font-size:13.5px;line-height:1.7;color:#333">'+escHtml(p.title)+'</div>'
     +'<div style="margin-top:8px;display:flex;gap:8px;align-items:center">'
     +(done
       ?'<span style="color:#0a8a5f;font-weight:600">✓ 今日已完成</span>'
@@ -218,5 +289,5 @@ function code50TodayCard(){
     +'</div></div>';
 }
 
-Object.assign(globalThis, { CODE50_DATA, ensureCode50, mergeCode50, code50Start, code50TodayIdx, code50DoneN, code50Toggle, code50ShowAnswer, code50DoToday, code50Go, code50GroupOf, code50ProblemCard, code50Grid, renderCode50, code50SideMeta, code50TodayCard });
-export { CODE50_DATA, ensureCode50, mergeCode50, code50Start, code50TodayIdx, code50DoneN, code50Toggle, code50ShowAnswer, code50DoToday, code50Go, code50GroupOf, code50ProblemCard, code50Grid, renderCode50, code50SideMeta, code50TodayCard };
+Object.assign(globalThis, { CODE50_DATA, ensureCode50, mergeCode50, code50Start, code50TodayIdx, code50HasWork, code50DoneN, code50ShowAnswer, code50Submit, code50Unsubmit, code50DoToday, code50UploadPhoto, code50DelPhoto, code50Go, code50GroupOf, code50ProblemCard, renderCode50, code50SideMeta, code50TodayCard });
+export { CODE50_DATA, ensureCode50, mergeCode50, code50Start, code50TodayIdx, code50HasWork, code50DoneN, code50ShowAnswer, code50Submit, code50Unsubmit, code50DoToday, code50UploadPhoto, code50DelPhoto, code50Go, code50GroupOf, code50ProblemCard, renderCode50, code50SideMeta, code50TodayCard };
