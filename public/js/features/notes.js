@@ -187,18 +187,21 @@ function renderReviewPanel(){
   const now=Date.now();
   const due=state.items.filter(x=>reviewState(x,now).code==='due').sort((a,b)=>a.rv.next-b.rv.next);
   if(due.length){
-    const rows=due.slice(0,5).map(it=>{
+    const rows=due.slice(0,8).map(it=>{
       const k=ITEM_KINDS[it.kind]||ITEM_KINDS.note, r=reviewState(it,now), info=pathInfo(it.path);
       const where=info? esc(info.sub.name+' · '+pathBreadcrumb(it.path)) : '未分类';
       const sched=r.overdueDays>=1?('已逾期 '+r.overdueDays+' 天'):'今日到期';
-      const openAttr=it.kind==='map'?'data-open-map="'+it.id+'"':'data-edit-item="'+it.id+'"';
-      return '<div class="rv-row" style="--kc:'+k.color+'"><span class="rv-k">'+k.label+'</span>'
-        +'<div class="rv-m"><div class="rv-t" '+openAttr+'>'+esc(itemTitle(it))+'</div>'
-        +'<div class="rv-p">'+where+'</div></div>'
-        +'<div class="rv-sched">'+sched+'<br>第 '+(r.stage+1)+'/'+r.total+' 轮</div>'
-        +'<button class="rv-go" data-review="'+it.id+'">复习 ✓</button></div>';
+      const editAttr=it.kind==='map'?'data-open-map="'+it.id+'"':'data-edit-item="'+it.id+'"';
+      return '<div class="rv-card" style="--kc:'+k.color+'">'
+        +'<div class="rv-card-head"><span class="rv-k">'+k.label+'</span>'
+        +'<span class="rv-where">'+where+'</span>'
+        +'<button class="rv-edit" '+editAttr+' title="编辑">✏️</button></div>'
+        +'<div class="rv-card-title">'+esc(itemTitle(it))+'</div>'
+        +'<div class="rv-card-body">'+itemDigestHtml(it)+'</div>'
+        +'<div class="rv-card-foot"><span class="rv-sched">'+sched+' · 第 '+(r.stage+1)+'/'+r.total+' 轮</span>'
+        +'<button class="rv-go" data-review="'+it.id+'">复习 ✓</button></div></div>';
     }).join('');
-    const more=due.length>5?'<div class="rv-more">还有 '+(due.length-5)+' 条到期，可在下方卡片中逐条复习</div>':'';
+    const more=due.length>8?'<div class="rv-more">还有 '+(due.length-8)+' 条到期</div>':'';
     el.style.display='';
     el.innerHTML='<div class="rv-panel"><div class="rv-head"><h3><span class="rv-ico"></span>今日待复习<span class="rv-badge">'+due.length+'</span></h3>'
       +'<span class="rv-sub">按艾宾浩斯遗忘曲线安排，间隔 1 / 2 / 4 / 7 / 15 / 30 天，每完成一轮自动安排下一次</span></div>'
