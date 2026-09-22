@@ -333,6 +333,57 @@ function saveNote(){
 /* ---- 错题编辑器（关联考点） ---- */
 
 /* ---- 错题编辑器（关联考点） ---- */
+
+/* ---- 错题照片上传 ---- */
+let mistakePhotos = [];
+function mistakeRenderThumbs(){
+  const box = document.getElementById('mistakePhotoThumbs');
+  if(!box) return;
+  box.innerHTML = mistakePhotos.map((p,i)=>{
+    const src = p.url || '';
+    const del = '<button onclick="mistakeDelPhoto('+i+')" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:12px;cursor:pointer;line-height:20px;padding:0">×</button>';
+    const uploading = p.uploading ? '<span style="position:absolute;left:0;bottom:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:10px;text-align:center">...</span>' : '';
+    return '<div style="position:relative"><img src="'+src+'" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid #ddd">'+del+uploading+'</div>';
+  }).join('');
+}
+function mistakeDelPhoto(i){
+  const p = mistakePhotos[i];
+  if(p && p.key && authToken){ try{ api('/api/photo/'+p.key,'DELETE'); }catch(e){} }
+  mistakePhotos.splice(i,1);
+  mistakeRenderThumbs();
+}
+function mistakeUploadFiles(input){
+  const files = Array.from(input.files||[]);
+  input.value='';
+  if(!files.length) return;
+  for(const f of files){
+    const reader = new FileReader();
+    reader.onload = async function(){
+      const dataUrl = reader.result;
+      const img = new Image();
+      img.onload = function(){
+        const MAX=1400; let w=img.width,h=img.height;
+        if(Math.max(w,h)>MAX){ const r=MAX/Math.max(w,h); w=Math.round(w*r); h=Math.round(h*r); }
+        const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        const compressed=cv.toDataURL('image/jpeg',0.7);
+        const ph={key:null,url:compressed,uploading:!!authToken,ts:Date.now()};
+        mistakePhotos.push(ph);
+        mistakeRenderThumbs();
+        if(authToken){
+          api('/api/photo/upload','POST',{folder:'mistake',ext:'jpg',dataBase64:compressed}).then(r=>{
+            if(r&&r.ok){ ph.key=r.key; }
+            ph.uploading=false;
+            mistakeRenderThumbs();
+          }).catch(()=>{ ph.uploading=false; ph.error=true; mistakeRenderThumbs(); });
+        }
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(f);
+  }
+}
+
 function openMistakeEditor(id, presetPath){
   fillPathSelects();
   mistakeEditingId=id||null;
@@ -348,13 +399,15 @@ function openMistakeEditor(id, presetPath){
   $('#mistakePage').value=m?(m.page||''):'';
   $('#mistakeQno').value=m?(m.qno||''):'';
   fillMistakeBook(); const _mb=$('#mistakeBook'); if(m&&m.bookId&&_mb) _mb.value=m.bookId;
+  mistakePhotos = (m && m.photos) ? m.photos.map(p=>({key:p.key||null,url:p.url||'',uploading:false,ts:p.ts||Date.now()})) : [];
+  mistakeRenderThumbs();
   refreshMistakeReasons(m?(m.reasons||[]):[]);
   $('#mistakeOverlay').classList.add('open');
   $('#mistakeQuestion').focus();
 }
 
 function closeMistakeEditor(){
-  $('#mistakeOverlay').classList.remove('open'); mistakeEditingId=null;
+  $('#mistakeOverlay').classList.remove('open'); mistakeEditingId=null; mistakePhotos=[];
   if(location.hash.indexOf('#/notes/')===0) location.hash='#/notes';
 }
 
@@ -370,8 +423,9 @@ function saveMistake(){
   const reasons=selectedReasons($('#mistakeReasons'));
   const now=Date.now();
   let m=mistakeEditingId?getItem(mistakeEditingId):null;
-  if(m){ Object.assign(m,{title,path,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,updated:now}); ensureReview(m); setItemSubject(m); }
-  else{ m={id:genItemId('k'),kind:'mistake',path,subject:'other',title,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,created:now,updated:now,rv:newReview(now)};
+  const photos = mistakePhotos.filter(p=>p.url && !p.error).map(p=>({key:p.key||null,url:p.url,ts:p.ts||now}));
+  if(m){ Object.assign(m,{title,path,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,photos,updated:now}); ensureReview(m); setItemSubject(m); }
+  else{ m={id:genItemId('k'),kind:'mistake',path,subject:'other',title,question,wrong,analysis,status,bookId,chapter,page,qno,reasons,photos,created:now,updated:now,rv:newReview(now)};
     setItemSubject(m); state.items.push(m); }
   saveState(); closeMistakeEditor(); afterItemChange(); recheckMastery(path); toast('错题已保存');
 }
@@ -399,5 +453,5 @@ function newMap(presetPath){
  * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
  * ============================================================ */
 
-Object.assign(globalThis, { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap });
-export { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap };
+Object.assign(globalThis, { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap, mistakePhotos, mistakeRenderThumbs, mistakeDelPhoto, mistakeUploadFiles });
+export { emptyBox, emptyDetail, ITEM_KINDS, kindFilter, editingId, pathInfoMap, pathInfo, itemSubject, pathBreadcrumb, pathOptionsHtml, fillPathSelects, genItemId, getItem, itemsOf, countItems, stripMd, itemTitle, mapNodeText, itemSearchText, itemDigestHtml, journalDigest, setItemSubject, deleteItem, bindDelConfirm, afterItemChange, filteredItems, reviewTagHtml, renderReviewPanel, itemCard, journalRow, bindItemCardEvents, renderNotes, openNoteEditor, closeNoteEditor, saveNote, openMistakeEditor, closeMistakeEditor, saveMistake, openItemById, newMap, mistakePhotos, mistakeRenderThumbs, mistakeDelPhoto, mistakeUploadFiles };

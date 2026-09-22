@@ -954,9 +954,9 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .sj-item{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel-2);border-left:4px solid var(--kc)}
 .sj-kind{flex:none;font-size:10.5px;font-weight:700;font-family:var(--font-mono);letter-spacing:.5px;color:#fff;background:var(--kc);border-radius:6px;padding:3px 8px;margin-top:2px}
 .sj-main{flex:1;min-width:0}
-.sj-title{font-weight:700;font-size:13.5px;line-height:1.4;cursor:pointer;color:var(--ink);word-break:break-word}
+.sj-title{font-weight:700;font-size:13.5px;line-height:1.4;cursor:pointer;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sj-title:hover{color:var(--kc-note)}
-.sj-preview{font-size:12px;color:var(--ink-3);line-height:1.55;margin-top:2px;max-height:38px;overflow:hidden;word-break:break-word}
+.sj-preview{font-size:12px;color:var(--ink-3);line-height:1.55;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sj-ops{flex:none;display:flex;gap:6px}
 .sj-ops button{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:7px;padding:4px 10px;font-size:11.5px;font-weight:600;cursor:pointer}
 .sj-ops .del:hover{border-color:var(--kc-mistake);color:var(--kc-mistake)}
@@ -990,7 +990,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .ncard-foot .rv-go{padding:4px 12px;font-size:11.5px}
 .sj-ops .rv-go{background:var(--kc-wait);border-color:var(--kc-wait);color:#fff}
 .sj-ops button.rv-go:hover{opacity:.88;color:#fff}
-.sj-rv{font-size:11px;color:var(--ink-3);margin-top:3px;font-family:var(--font-mono)}
+.sj-rv{font-size:11px;color:var(--ink-3);margin-top:3px;font-family:var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sj-rv.over{color:var(--kc-mistake);font-weight:700}
 .tag.k-note{background:var(--kc-note)}
 .tag.k-map{background:var(--kc-map)}
@@ -1561,7 +1561,7 @@ body.side-collapsed .sidebar{width:0;padding-left:0;padding-right:0;border-right
 .pr-main b{color:var(--ink)}
 .pr-rs{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
 .pr-r{font-size:10.5px;color:var(--kc-mistake);border:1px solid var(--kc-mistake);border-radius:5px;padding:1px 6px}
-.sj-src{font-size:11px;color:var(--ink-3);margin-top:2px}
+.sj-src{font-size:11px;color:var(--ink-3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .reason-tags{display:flex;flex-wrap:wrap;gap:7px}
 .reason-chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--ink-2);user-select:none}
 .reason-chip.on{border-color:var(--kc-mistake);background:var(--kc-mistake);color:#fff}

@@ -135,6 +135,7 @@ function init(){
   $('#mistakeCloseBtn').addEventListener('click', closeMistakeEditor);
   $('#mistakeCancelBtn').addEventListener('click', closeMistakeEditor);
   $('#mistakeSaveBtn').addEventListener('click', saveMistake);
+  $('#mistakePhotoInput').addEventListener('change', function(){ mistakeUploadFiles(this); });
 
   /* 批4：知识定位 / 做题 / 书源错因库 */
   $('#locatorOverlay').addEventListener('click', ev=>{ if(ev.target.id==='locatorOverlay') closeLocatorEditor(); });

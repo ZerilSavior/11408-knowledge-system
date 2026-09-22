@@ -605,6 +605,13 @@
         <textarea id="mistakeQuestion" class="mk-area" spellcheck="false" placeholder="把题目贴在这里，支持 Markdown 与 $公式$…"></textarea>
       </div>
       <div class="mk-field">
+        <label>题目照片（手写 / 截图，可直接拍照不用敲字）</label>
+        <div id="mistakePhotoThumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <label class="p-btn" style="cursor:pointer;background:#e8e8e8;color:#333;padding:6px 14px;font-size:13px;border-radius:6px;display:inline-block">＋ 上传照片
+          <input type="file" id="mistakePhotoInput" accept="image/*" multiple style="display:none">
+        </label>
+      </div>
+      <div class="mk-field">
         <label>我的错解 / 错因</label>
         <textarea id="mistakeWrong" class="mk-area" spellcheck="false" placeholder="当时怎么想的、错在哪一步、踩了什么坑…"></textarea>
       </div>
