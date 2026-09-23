@@ -211,9 +211,20 @@ let drawPointer = null;
 /* ============================================================
  * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
  * ============================================================ */
+const ALLOWED_HTML_TAGS = new Set(['div','span','table','thead','tbody','tfoot','tr','td','th','img','b','i','u','s','br','hr','p','ul','ol','li','h1','h2','h3','h4','h5','h6','blockquote','pre','code','strong','em','sup','sub','a','font','center','mark','small','del','ins']);
+function sanitizeHtml(raw){
+  // 防 XSS：移除 on* 事件属性、javascript: 协议，只放行白名单标签
+  return raw
+    .replace(/<(\/?)(\w+)/g, (mm, slash, tag) => ALLOWED_HTML_TAGS.has(tag.toLowerCase()) ? '<'+slash+tag.toLowerCase() : '<'+slash+'__esc__'+tag)
+    .replace(/<__esc__/g, '&lt;')
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+    .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
+    .replace(/javascript:/gi, '');
+}
 const mdRenderer = {
 
-  html(html){ return esc(html); },
+  html(html){ return sanitizeHtml(html); },
 
   image(href, title, text){
 

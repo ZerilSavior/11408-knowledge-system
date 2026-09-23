@@ -137,6 +137,58 @@ function init(){
   $('#mistakeSaveBtn').addEventListener('click', saveMistake);
   $('#mistakePhotoInput').addEventListener('change', function(){ mistakeUploadFiles(this); });
 
+  // 笔记编辑器：Ctrl+V 直接粘贴图片
+  const noteTA = $('#noteContent');
+  if(noteTA){
+    noteTA.addEventListener('paste', function(ev){
+      const items = (ev.clipboardData || window.clipboardData).items;
+      if(!items) return;
+      for(const item of items){
+        if(item.type && item.type.indexOf('image/') === 0){
+          ev.preventDefault();
+          const file = item.getAsFile();
+          if(!file) continue;
+          const reader = new FileReader();
+          reader.onload = function(){
+            const img = new Image();
+            img.onload = function(){
+              const MAX = 1400; let w = img.width, h = img.height;
+              if(Math.max(w,h) > MAX){ const r = MAX/Math.max(w,h); w = Math.round(w*r); h = Math.round(h*r); }
+              const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+              cv.getContext('2d').drawImage(img, 0, 0, w, h);
+              const compressed = cv.toDataURL('image/jpeg', 0.72);
+              if(authToken){
+                toast('正在上传粘贴的图片...');
+                api('/api/photo/upload', 'POST', {folder:'note', ext:'jpg', dataBase64: compressed}).then(r=>{
+                  if(r && r.ok){
+                    const md = '\n![粘贴图片]('+r.key+')\n';
+                    noteTA.setRangeText(md, noteTA.selectionStart, noteTA.selectionEnd, 'end');
+                    updatePreview(); toast('图片已插入');
+                  } else {
+                    const md = '\n![粘贴图片]('+compressed+')\n';
+                    noteTA.setRangeText(md, noteTA.selectionStart, noteTA.selectionEnd, 'end');
+                    updatePreview(); toast('图片已插入本地（未登录不上云）');
+                  }
+                }).catch(()=>{
+                  const md = '\n![粘贴图片]('+compressed+')\n';
+                  noteTA.setRangeText(md, noteTA.selectionStart, noteTA.selectionEnd, 'end');
+                  updatePreview();
+                });
+              } else {
+                const md = '\n![粘贴图片]('+compressed+')\n';
+                noteTA.setRangeText(md, noteTA.selectionStart, noteTA.selectionEnd, 'end');
+                updatePreview();
+              }
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+          break;
+        }
+      }
+    });
+  }
+
   /* 批4：知识定位 / 做题 / 书源错因库 */
   $('#locatorOverlay').addEventListener('click', ev=>{ if(ev.target.id==='locatorOverlay') closeLocatorEditor(); });
   $('#locatorCloseBtn').addEventListener('click', closeLocatorEditor);
