@@ -293,7 +293,12 @@ function mdRenderMath(text){
     const prot = text.replace(/\$\$[\s\S]+?\$\$|\$[^\n$]+?\$/g, m=>{
       store.push(m); return '@@MATH'+(store.length-1)+'@@';
     });
-    let html = window.marked ? marked.parse(prot) : esc(prot);
+    let html;
+    if(/<(svg|div|table|section|article|header|footer|main|figure|picture)\b/i.test(prot)){
+      html = sanitizeHtml(prot);
+    } else {
+      html = window.marked ? marked.parse(prot) : esc(prot);
+    }
     html = html.replace(/@@MATH(\d+)@@/g, (mm,i)=> store[+i]!=null ? store[+i] : mm);
     return html;
   }catch(e){ return mdRender(text); }
