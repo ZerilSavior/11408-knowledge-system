@@ -211,12 +211,11 @@ let drawPointer = null;
 /* ============================================================
  * Markdown 渲染（marked + highlight.js，转义原始 HTML 防注入）
  * ============================================================ */
-const ALLOWED_HTML_TAGS = new Set(['div','span','table','thead','tbody','tfoot','tr','td','th','img','b','i','u','s','br','hr','p','ul','ol','li','h1','h2','h3','h4','h5','h6','blockquote','pre','code','strong','em','sup','sub','a','font','center','mark','small','del','ins']);
+const ALLOWED_HTML_TAGS = new Set(['div','span','table','thead','tbody','tfoot','tr','td','th','img','b','i','u','s','br','hr','p','ul','ol','li','h1','h2','h3','h4','h5','h6','blockquote','pre','code','strong','em','sup','sub','a','font','center','mark','small','del','ins','svg','defs','marker','path','rect','circle','ellipse','line','polygon','polyline','g','use','image','tspan']);
 function sanitizeHtml(raw){
   // 防 XSS：移除 on* 事件属性、javascript: 协议，只放行白名单标签
   return raw
-    .replace(/<(\/?)(\w+)/g, (mm, slash, tag) => ALLOWED_HTML_TAGS.has(tag.toLowerCase()) ? '<'+slash+tag.toLowerCase() : '<'+slash+'__esc__'+tag)
-    .replace(/<__esc__/g, '&lt;')
+    .replace(/<(\/?)([a-zA-Z][\w-]*)/g, (mm, slash, tag) => ALLOWED_HTML_TAGS.has(tag.toLowerCase()) ? '<'+slash+tag.toLowerCase() : '&lt;'+slash+tag)
     .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
     .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
     .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
@@ -233,6 +232,10 @@ const mdRenderer = {
     if(href && href.startsWith('drawing://')){
 
       src = state.drawings[href.slice(10)] || '';
+
+    } else if(href && !href.startsWith('http') && !href.startsWith('data:') && !href.startsWith('/')){
+
+      src = '/api/photo/' + href;
 
     }
 
